@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{::link},~{})">
+  <title>智汇| 个人中心</title>
+  <!-- 剪裁图片 -->
+  <link href="/css/imageCut.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/css/cutPicture_normalize.css"/>
+  <link rel="stylesheet" type="text/css" href="/css/cutPicture_default.css">
+  <!-- cropper -->
+  <link href="https://cdn.bootcss.com/cropper/4.0.0/cropper.min.css" rel="stylesheet">
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <!-- 主 头部 -->
+  <header th:insert="common/top :: top"></header>
+  <!-- 左侧菜单，包含logo、搜索、菜单-->
+  <aside th:insert="common/left :: left"></aside>
+
+
+  <!-- Content Wrapper. 页面内容 -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        个人资料
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
+        <li class="">个人资料</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-9">
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#profile" data-toggle="tab">详细资料</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="active tab-pane" id="profile">
+                <form class="form-horizontal" action="/user/updateProfile.action" method="post" >
+                  <div class="form-group">
+                    <div class="user-panel">
+
+                      <div style="text-align:center;margin:0 auto;">
+                        <img th:src="${session.user}?${session.user.headImage}:'/AdminLTE/dist/img/user2-160x160.jpg'" class="img-circle" alt="头像"
+                             data-container="body" data-toggle="modal" data-target="#changeHeadImageModal" data-placement="right"
+                             data-content="点击修改" rel="drevil" id="headImage">
+                      </div>
+                    </div>
+                  </div>
+                  <!-- 按钮触发模态框 -->
+
+                  <div class="form-group">
+                    <label for="nickName" class="col-sm-2 control-label">昵称</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" id="nickName" placeholder="昵称"
+                             name="nickName" th:value="${session.user.nickname}">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="realName" class="col-sm-2 control-label">真实姓名</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" id="realName" placeholder="真实姓名" name="realName"
+                             th:value="${#strings.substring(session.user.realname,0,1) + '*'}"
+                             th:disabled="${!#strings.isEmpty(session.user.realname)}"
+                      >
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="sex" class="col-sm-2 control-label">性别</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" id="sex" name="sex" th:value="${session.user.sex}"
+                             th:disabled="${!#strings.equals('空',session.user.sex)}">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="tel" class="col-sm-2 control-label">手机号码</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" id="tel" placeholder="手机号码" name="tel"
+                             th:value="${#strings.substring(session.user.tel,0,2) + '******' + #strings.substring(session.user.tel,9,11)}"
+                             maxlength="11" th:disabled="${!#strings.isEmpty(session.user.tel)}"
+                             onkeyup="this.value=this.value.replace(/[^\d]/g,'')">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="idcard" class="col-sm-2 control-label">身份证号</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" id="idcard" placeholder="身份证号" name="idcard"
+                             th:value="${#strings.substring(session.user.idcard,0,1) + '****************' + #strings.substring(session.user.idcard,17,18)}"
+                             maxlength="18" th:disabled="${!#strings.isEmpty(session.user.idcard)}"
+                             onkeyup="this.value=this.value.replace(/[^\d]/g,'')">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="qq" class="col-sm-2 control-label">QQ</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" id="qq" placeholder="QQ号" name="qq"
+                             th:value="${session.user.qq}" maxlength="12"
+                             onkeyup="this.value=this.value.replace(/[^\d]/g,'')">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="wechat" class="col-sm-2 control-label">微信</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" id="wechat" placeholder="微信号" name="wechat"
+                             th:value="${session.user.wechat}" maxlength="11"
+                             onkeyup="this.value=this.value.replace(/[^\w]/g,'')">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="email" class="col-sm-2 control-label">邮箱</label>
+                    <div class="col-sm-8">
+                      <input type="email" class="form-control" id="email" placeholder="邮箱" name="email"
+                             th:value="${session.user.email}">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-8">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" checked> 我同意 <a href="#">《用户隐私条款》</a>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                      <button type="submit" class="btn btn-danger">保存</button>
+                    </div>
+                  </div>
+                </form>
+                <!-- 修改头像模态框（Modal） -->
+                <div class="modal fade bs-example-modal-lg" id="changeHeadImageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">修改头像</h4>
+                      </div>
+                      <div class="modal-body">
+                          <!-- 模态框内容（Start）**************************************************** -->
+                          <div class="container">
+                              <div class="row">
+                                  <div class="col-md-9">
+                                      <!-- <h3 class="page-header">示例:</h3> -->
+                                      <div class="img-container">
+                                          <img src="" alt="点击选择图片上传新头像">
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="row">
+                                  <!-- 图片下方的按钮 -->
+                                  <div class="col-md-9 docs-buttons">
+                                      <!-- <h3 class="page-header">第一行左侧按钮组（放大，缩小，逆时针、顺时针旋转）:</h3> -->
+                                      <div class="btn-group">
+                                          <button class="btn btn-primary" data-method="zoom" data-option="0.1" type="button" title="Zoom In">
+              <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;zoom&quot;, 0.1)">
+                <span class=" fa fa-plus"></span>
+              </span>
+                                          </button>
+                                          <button class="btn btn-primary" data-method="zoom" data-option="-0.1" type="button" title="Zoom Out">
+              <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;zoom&quot;, -0.1)">
+                <span class="fa fa-minus"></span>
+              </span>
+                                          </button>
+                                          <button class="btn btn-primary" data-method="rotate" data-option="-45" type="button" title="Rotate Left">
+              <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;rotate&quot;, -45)">
+                <span class="fa fa-mail-reply"></span>
+              </span>
+                                          </button>
+                                          <button class="btn btn-primary" data-method="rotate" data-option="45" type="button" title="Rotate Right">
+              <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;rotate&quot;, 45)">
+                <span class="fa fa-mail-forward"></span>
+              </span>
+                                          </button>
+                                      </div>
+
+                                      <!-- <h3 class="page-header">第一行中间按钮组（锁定，解锁，清除剪切框，重置图片位置，从本地上传图片、清除所选区域内容）:</h3> -->
+                                      <div class="btn-group">
+                                          <button class="btn btn-primary" data-method="reset" type="button" title="重置">
+              <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;reset&quot;)">
+                <span class="fa fa-refresh"></span> 重置
+              </span>
+                                          </button>
+                                          <label class="btn btn-primary btn-upload" for="inputImage" title="选择图片">
+                                              <input class="sr-only" id="inputImage" name="file" type="file" accept="image/*">
+                                              <span class="docs-tooltip" data-toggle="tooltip" title="选择图片">
+                <span class="glyphicon glyphicon-upload"></span> 选择图片
+              </span>
+                                          </label>
+                                      </div>
+
+                                      <!-- <h3 class="page-header">第一行右侧按钮组（显示所选区域：原大小，固定大小160*90， 固定大小320*180）:</h3> -->
+                                      <div class="btn-group btn-group-crop">
+                                          <button class="btn btn-primary" data-method="getCroppedCanvas" data-option="{ &quot;width&quot;: 320, &quot;height&quot;: 180 }" type="button">
+              <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;getCroppedCanvas&quot;, { &quot;width&quot;: 320, &quot;height&quot;: 180 })">
+                预览
+              </span>
+                                          </button>
+                                      </div>
+
+                                      <!-- 展示所选区域图片时用到的模态框 -->
+                                      <div class="modal fade docs-cropped" id="getCroppedCanvasModal" aria-hidden="true" aria-labelledby="getCroppedCanvasTitle" role="dialog" tabindex="-1">
+                                          <div class="modal-dialog">
+                                              <div class="modal-content">
+                                                  <div class="modal-header">
+                                                      <!--<button class="close" data-dismiss="modal" type="button" aria-hidden="true">&times;</button>-->
+                                                      <h4 class="modal-title" id="getCroppedCanvasTitle">预览</h4>
+                                                  </div>
+                                                  <div class="modal-body"></div>
+                                                  <!--<div class="modal-footer">
+                                                   <button class="btn btn-primary" data-dismiss="modal" type="button">确定</button>
+                                                 </div>-->
+                                              </div>
+                                          </div>
+                                      </div><!-- /.modal -->
+                                      <!--<div class="btn-group">
+                                    &lt;!&ndash; 第二行按钮：获取、设置相应数据 （在下方input框展示或设置数据） &ndash;&gt;
+
+                                    &lt;!&ndash; 获取数据&#45;&#45;结果示例：{"x":127.99999999999994,"y":72,"width":1024,"height":576,"rotate":0}
+                                              （裁剪框对画布的偏移量）横向偏移，纵向偏移，裁剪框内实际像素的宽、高，旋转角度
+                                              即页面右侧所见数据
+                                     &ndash;&gt;
+                                      <br>
+                                    <button class="btn btn-primary" data-method="getData" data-option="" data-target="#putData" type="button">
+                              <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;getData&quot;)">
+                                获取数据
+                              </span>&lt;!&ndash; (坐标等) &ndash;&gt;
+                                    </button>
+
+                                    &lt;!&ndash; 获取原图数据&#45;&#45;结果示例：{"naturalWidth":720,"naturalHeight":1440,"aspectRatio":0.5,"rotate":0,"width":233,"height":466,"left":0,"top":0}
+                                              原始图片本来的 宽、高、宽高比率，旋转角度，在页面上展示的（css样式）宽、高
+                                     &ndash;&gt;
+                                    <button class="btn btn-primary" data-method="getImageData" data-option="" data-target="#putData" type="button">
+                              <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;getImageData&quot;)">
+                                获取原图数据&lt;!&ndash; () &ndash;&gt;
+                              </span>
+                                    </button>
+
+                                    &lt;!&ndash; 获取画布数据&#45;&#45;结果示例：{"left":-182.9833244444447,"top":-129.42812000000018,"width":1213.9666488888895,"height":682.8562400000004}
+                                                  画布（原始图片） 距最左侧xx像素，距最上xx像素，画布（原始图片）宽xx像素， 高xx像素
+                                         （改变该设置，可以改变原始图片的位置，大小）
+                                     &ndash;&gt;
+                                    <button class="btn btn-primary" data-method="getCanvasData" data-option="" data-target="#putData" type="button">
+                              <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;getCanvasData&quot;)">
+                                获取画布数据&lt;!&ndash; (原始图片的css参数) &ndash;&gt;
+                              </span>
+                                    </button>
+
+                                    &lt;!&ndash; 获取画布数据&#45;&#45;结果示例：{"left":-182.9833244444447,"top":-129.42812000000018,"width":1213.9666488888895,"height":682.8562400000004}
+                                                  画布（原始图片） 距最左侧xx像素，距最上xx像素，画布（原始图片）宽xx像素， 高xx像素
+                                     &ndash;&gt;
+                                    <button class="btn btn-primary" data-method="setCanvasData" data-target="#putData" type="button">
+                              <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;setCanvasData&quot;, data)">
+                                设置画布数据&lt;!&ndash; (原始图片的css参数) &ndash;&gt;
+                              </span>
+                                    </button>
+
+                                    &lt;!&ndash; 结果示例：{"left":86.11111111111113,"top":84.80000000000001,"width":339.20000000000005,"height":339.20000000000005}
+                                                  裁剪框 距最左侧xx像素，距最上xx像素，裁剪框宽xx像素， 高xx像素
+                                           (改变该设置，可以改变裁剪框的位置，大小)
+                                     &ndash;&gt;
+                                    <button class="btn btn-primary" data-method="getCropBoxData" data-option="" data-target="#putData" type="button">
+                              <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;getCropBoxData&quot;)">
+                                获取裁剪框数据
+                              </span>
+                                    </button>
+
+                                    &lt;!&ndash; 使用示例：{"left":86.11111111111113,"top":84.80000000000001,"width":339.20000000000005,"height":339.20000000000005}
+                                                  裁剪框 距最左侧xx像素，距最上xx像素，裁剪框宽xx像素， 高xx像素
+                                         注意：需要取消设置裁剪框比例限制，即任意， 该操作才会生效，否则无效。
+                                     &ndash;&gt;
+                                    <button class="btn btn-primary" data-method="setCropBoxData" data-target="#putData" type="button">
+                              <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;setCropBoxData&quot;, data)">
+                                设置裁剪框数据
+                              </span>
+                                    </button>
+                                    <input class="form-control" id="putData" type="text" placeholder="点击获取数据将放在这   或   根据该框的值设置数据">
+                                      </div>-->
+                                  </div><!-- /.docs-buttons -->
+                              </div>
+                          </div>
+                          <!-- 模态框内容（END）**************************************************** -->
+                      </div><!-- modal-body END-->
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary">确定</button>
+                      </div>
+                    </div><!-- /.modal-content -->
+                  </div><!-- /.modal -->
+                </div>
+              </div>
+              <!-- /.tab-pane -->
+            </div>
+            <!-- /.tab-content -->
+          </div>
+          <!-- /.nav-tabs-custom -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+
+  <!-- /.content-wrapper -->
+
+  <!-- 页脚 -->
+  <footer th:insert="common/bottom :: footer"></footer>
+  <!-- Control Sidebar 右侧边栏 -->
+  <aside th:insert="common/right :: aside"></aside>
+  <!-- 右侧边栏的背景，必须紧接着control sidebar放这个  -->
+  <div th:insert="common/right :: aside2"></div>
+</div>
+<!-- ./wrapper -->
+<!-- Js 脚本 -->
+<div th:insert="common/html_js :: div_js"></div>
+
+<!-- cropper -->
+<script src="https://cdn.bootcss.com/cropper/4.0.0/cropper.min.js"></script>
+<!-- 剪裁图片 -->
+<script src="/js/imageCut.js"></script>
+<script>
+    //划过头像时候的提示
+    $(function () {
+        $("[data-toggle='popover']").popover();
+    });
+    $("#headImage").popover({
+        trigger:'manual',
+        //placement : 'bottom', //替换html中设置的弹出的位置 top, bottom, left or right
+        //title : '<div style="text-align:center; color:red; text-decoration:underline; font-size:14px;">我是标题</div>',//弹出的标题，html中的优先
+        html: 'true', //needed to show html of course
+        //content : '<div id="popOverBox"><img src="http://www.hd-report.com/wp-content/uploads/2008/08/mr-evil.jpg" width="251" height="201" /></div>', //弹出的提示内容，html中的优先
+        animation: false
+    }).on("mouseenter", function () {
+        var _this = this;
+        $(this).popover("show");
+        $(this).siblings(".popover").on("mouseleave", function () {
+            $(_this).popover('hide');
+        });
+    }).on("mouseleave", function () {
+        var _this = this;
+        setTimeout(function () {
+            if (!$(".popover:hover").length) {
+                $(_this).popover("hide")
+            }
+        }, 300);
+    });
+
+</script>
+</body>
+</html>

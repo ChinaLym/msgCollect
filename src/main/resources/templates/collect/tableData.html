@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{::link},~{})">
+  <title th:text="${table.name}">xxx信息收集表</title>
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/AdminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+</head>
+<!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
+<body class="hold-transition skin-blue layout-top-nav">
+<div class="wrapper">
+
+  <header class="main-header">headImage
+    <nav class="navbar navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="/index.html" class="navbar-brand"><b>智汇</b>信息</a>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <i class="fa fa-bars"></i>
+          </button>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
+          <form action="/search" method="get" class="navbar-form navbar-left" role="search">
+            <div class="input-group">
+              <input type="text" name="tableName" class="form-control" placeholder="搜索收集表..." required
+                     onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\w]/g,'')">
+              <span class="input-group-btn">
+              <button type="submit" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+              </button>
+            </span>
+            </div>
+          </form>
+        </div>
+        <!-- /.navbar-collapse -->
+        <!-- Navbar Right Menu -->
+        <div th:insert="common/top :: rightMenu"></div>
+        <!-- /.navbar-custom-menu -->
+      </div>
+      <!-- /.container-fluid -->
+    </nav>
+  </header>
+  <!-- Full Width Column -->
+  <div class="content-wrapper">
+    <div class="container">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <h1><span th:text="${table.name}"></span>
+          <small th:text="${table.state}">收集中</small>
+        </h1>
+        <ol class="breadcrumb">
+          <li><a href="/index"><i class="fa fa-dashboard"></i> 首页</a></li>
+          <li><a href="/collect/my">我的表</a></li>
+          <li><a th:href="'/collect/my/detail?t=' + ${table.id}" th:text="${table.name}">xxx收集表</a></li>
+          <li class="active">表数据</li>
+        </ol>
+      </section>
+
+      <!-- Main content -->
+      <section class="content">
+
+        <div class="box">
+          <div class="box-header">
+            <h3 class="box-title">表数据</h3>
+            <div class=" pull-right">
+              <a th:href="'/collect/export?t=' + ${table.id}">
+                <button type="button" class="btn btn-sm btn-success" th:remove="${'编辑中' == table.state ? 'all' : 'none'}">
+                  <i class="glyphicon glyphicon-export"> </i> 导出
+                </button>
+              </a>
+            </div>
+
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body" id="tableArea">
+            <table id="example1" class="table table-bordered table-striped table-responsive" style="width:100%">
+              <thead>
+              <tr>
+                <th th:each="head : ${headers}" th:text="${head}">Rendering engine</th>
+                <th th:if="${session.user.id eq table.owner}">IP</th>
+                <th th:if="${session.user.id eq table.owner}">浏览器</th>
+                <th th:if="${session.user.id eq table.owner}">系统</th>
+                <th th:if="${session.user.id eq table.owner}">填写时间</th>
+              </tr>
+              </thead>
+              <tbody>
+                <tr th:each="answerRecord : ${answerRecords}">
+                  <div th:each="answer : ${answerRecord.answerList}">
+                    <td th:text="${answer.content}" th:remove="${answer.type == '文件'} ? 'all' : 'none'">回答内容</td>
+                    <td th:remove="${answer.type == '文件'} ? 'none' : 'all'">
+                      <a th:href="${answer.content}" th:text="文件"></a>
+                       </td>
+                  </div>
+                  <td th:if="${session.user.id eq table.owner}" th:text="${answerRecord.ip}">IP</td>
+                  <td th:if="${session.user.id eq table.owner}" th:text="${answerRecord.deviceSystem}">IP</td>
+                  <td th:if="${session.user.id eq table.owner}" th:text="${answerRecord.browser}">IP</td>
+                  <td th:if="${session.user.id eq table.owner}" th:text="${#dates.format(answerRecord.update_time, 'yyyy-MM-dd HH:mm')}">5-20</td>
+                </tr>
+              </tbody>
+              <tfoot>
+              <tr>
+                <th th:each="head : ${headers}" th:text="${head}">Rendering engine</th>
+                <th th:if="${session.user.id eq table.owner}">IP</th>
+                <th th:if="${session.user.id eq table.owner}">浏览器</th>
+                <th th:if="${session.user.id eq table.owner}">系统</th>
+                <th th:if="${session.user.id eq table.owner}">填写时间</th>
+              </tr>
+              </tfoot>
+            </table>
+              <a th:href="'/collect/share/' + ${table.id}">
+                <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> 分享</button>
+              </a>
+                <button type="button" class="btn btn-default btn-xs"><i class="fa fa-thumbs-o-up"></i> 赞</button>
+            <span class="pull-right text-muted"><span >1</span> 赞 - <span th:text="${#lists.size(commentList)}"></span> 评论</span>
+          </div>
+          <!-- /.box-body -->
+
+          <!-- 评论 -->
+          <div class="box-footer box-comments">
+
+            <div class="box-comment" th:each="comment : ${commentList}">
+              <!-- User image -->
+              <img class="img-circle img-sm" th:src="${comment.userHeadImage}" th:alt="${comment.userName}" >
+
+              <div class="comment-text">
+                <span class="username">
+                  <span th:text="${comment.userName}">张三</span>
+                  <span class="text-muted pull-right" th:text="${#dates.format(comment.createTime, 'MM-dd HH:mm')}"> 10-16 13:14</span>
+                </span>
+                <span th:text="${comment.content}">我是评论内容</span>
+                <br>
+                <a href="javascript:void(0)">赞 ( <span >0</span> ) </a>
+                <a href="javascript:void(0)">回复 ( <span th:text="${#lists.isEmpty(comment.replyList) ? '0' : #lists.size(comment.replyList)}">0</span> ) </a>
+                <a href="javascript:void(0)" th:if="${comment.userId == session.user.id}">删除</a>
+              </div>
+              <!-- /.comment-text -->
+            </div>
+
+          </div>
+          <!-- /.box-footer 评论结束 -->
+          <div class="box-footer">
+            <form th:action="'/comment/table/'+ ${table.id}" method="post" name="commentForm">
+              <input hidden="hidden" name="aimCommentId">
+              <img class="img-responsive img-circle img-sm" th:src="${session.user.headImage}" alt="我的头像">
+              <!-- .img-push is used to add margin to elements next to floating images -->
+              <div class="input-group margin img-push">
+                <input type="text" class="form-control input-sm"  placeholder="回车可以评论提问哟~"
+                       name="commentContent"
+                       onkeydown="if(event.keyCode=='13') commentForm.submit.click();">
+                <span class="input-group-btn">
+                      <button class="btn btn-info btn-flat" type="submit" id="commentBtn" name="submit">发送</button>
+                    </span>
+              </div>
+            </form>
+          </div>
+          <!-- /.box-footer -->
+
+        </div>
+        <!-- /.box -->
+      </section>
+      <!-- /.content -->
+    </div>
+    <!-- /.container -->
+  </div>
+
+  <!-- /.content-wrapper -->
+  <!-- 页脚 -->
+  <footer th:insert="common/bottom :: footer"></footer>
+  <!-- Control Sidebar 右侧边栏 -->
+  <aside th:insert="common/right :: aside"></aside>
+  <!-- 右侧边栏的背景，必须紧接着control sidebar放这个  -->
+  <div th:insert="common/right :: aside2"></div>
+</div>
+<!-- ./wrapper -->
+<!-- Js 脚本 -->
+<div th:insert="common/html_js :: div_js"></div>
+<!-- DataTables -->
+<script src="/AdminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<!-- page script -->
+<script>
+    $(function () {
+        $('#example1').DataTable({
+            scrollX:true,
+            lengthMenu:[10, 20, 35, 50],
+            language: {
+                "sProcessing": "处理中...",
+                "sLengthMenu": "显示 _MENU_ 项结果",
+                "sZeroRecords": "没有匹配结果",
+                "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                "sInfoPostFix": "",
+                "sSearch": "过滤:",
+                "sUrl": "",
+                "sEmptyTable": "表中数据为空",
+                "sLoadingRecords": "载入中...",
+                "sInfoThousands": ",",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上页",
+                    "sNext": "下页",
+                    "sLast": "尾页"
+                },
+                "decimal":",",
+                "thousands":".",
+                "oAria": {
+                    "sSortAscending": ": 以升序排列此列",
+                    "sSortDescending": ": 以降序排列此列"
+                }
+            }
+        })
+    })
+</script>
+
+</body>
+</html>

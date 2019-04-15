@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{},~{})">
+  <title>组详情</title>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <!-- 主 头部 -->
+  <header th:insert="common/top :: top"></header>
+  <!-- 左侧菜单，包含logo、搜索、菜单-->
+  <aside th:insert="common/left :: left"></aside>
+
+  <!-- Content Wrapper. 页面内容 -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        xxx组
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/index"><i class="fa fa-dashboard"></i> 首页</a></li>
+        <li><a href="/group/my">我的组</a></li>
+        <li class="active">xxx组</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <div class="row">
+        <div class="col-md-3">
+          <!-- Profile Image -->
+          <div class="box box-primary">
+            <div class="box-body box-profile">
+              <div style="text-align:center;"><i class="fa fa-group img-responsive" style="font-size:100px;margin:0 auto"></i></div>
+              <!--<img class="profile-user-img img-responsive img-circle" src="/AdminLTE/dist/img/user4-128x128.jpg" alt="组头像">-->
+
+              <h3 class="profile-username text-center">xxx组</h3>
+
+              <p class="text-muted text-center">300天</p>
+
+              <ul class="list-group list-group-unbordered">
+                <li class="list-group-item">
+                  <b>组长</b> <a class="pull-right">张三</a>
+                </li>
+                <li class="list-group-item">
+                  <b>组员数</b> <a class="pull-right">99</a>
+                </li>
+                <li class="list-group-item">
+                  <b>创建时间</b> <a class="pull-right">2019-1</a>
+                </li>
+              </ul>
+
+              <a href="#" class="btn btn-primary btn-block"><b>加入</b></a>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+
+          <!-- About Me Box -->
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title"><i class="fa fa-file-text-o margin-r-5"></i>简介</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <strong>张三</strong>
+              <p class="text-muted">
+                第五人格修机小队专组
+              </p>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-9">
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#collects" data-toggle="tab">收集表</a></li>
+              <li ><a href="#memeber" data-toggle="tab">组成员</a></li>
+              <li><a href="#manager" data-toggle="tab">管理</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="active tab-pane" id="collects">
+                <!-- The timeline -->
+                <ul class="timeline timeline-inverse">
+                  <!-- timeline time label -->
+                  <li class="time-label">
+                        <span class="bg-red">
+                          时间
+                        </span>
+                  </li>
+                  <!-- /.timeline-label -->
+                  <!-- timeline item -->
+                  <li>
+                    <i class="fa fa-table bg-red"></i>
+
+                    <div class="timeline-item">
+                      <span class="time"><i class="fa fa-clock-o"></i> 12:05</span>
+
+                      <h3 class="timeline-header"><a class="text-red" href="#">意向统计表</a> </h3>
+
+                      <div class="timeline-body">
+                        填写的时候注意...
+                      </div>
+                      <div class="timeline-footer">
+                        <a class="btn btn-danger btn-xs">去填写</a>
+                      </div>
+                    </div>
+                  </li>
+                  <!-- END timeline item -->
+
+
+                  <!-- timeline item -->
+                  <li>
+                    <i class="fa fa-table bg-green"></i>
+
+                    <div class="timeline-item">
+                      <span class="time"><i class="fa fa-clock-o"></i> 12:05</span>
+
+                      <h3 class="timeline-header"><a class="text-green" href="#">人格统计表</a> </h3>
+
+                      <div class="timeline-body">
+                        填写的时候注意...
+                      </div>
+                      <div class="timeline-footer">
+                        <a class="btn btn-success btn-flat btn-xs">修改</a>
+                      </div>
+                    </div>
+                  </li>
+                  <!-- END timeline item -->
+
+
+                  <!-- timeline item -->
+                  <li>
+                    <i class="fa fa-bullhorn bg-yellow"></i>
+
+                    <div class="timeline-item">
+                      <span class="time"><i class="fa fa-clock-o"></i> 27 mins ago</span>
+
+                      <h3 class="timeline-header"><a class="text-yellow" href="#">组公告</a></h3>
+
+                      <div class="timeline-body">
+                        不准偷偷玩游戏！
+                      </div>
+                      <div class="timeline-footer">
+                        <a class="btn btn-warning btn-flat btn-xs">详情</a>
+                      </div>
+                    </div>
+                  </li>
+                  <!-- END timeline item -->
+                  <!-- timeline time label -->
+                  <li class="time-label">
+                        <span class="bg-aqua">
+                          时间
+                        </span>
+                  </li>
+                  <!-- /.timeline-label -->
+                  <!-- timeline item -->
+                  <!-- timeline item -->
+                  <li>
+                    <i class="fa fa-table bg-blue"></i>
+
+                    <div class="timeline-item">
+                      <span class="time"><i class="fa fa-clock-o"></i> 12:05</span>
+
+                      <h3 class="timeline-header"><a class="text-blue" href="#">视力统计表</a> </h3>
+
+                      <div class="timeline-body">
+                        填写的时候注意...
+                      </div>
+                      <div class="timeline-footer">
+                        <a class="btn btn-primary btn-flat btn-xs">查看</a>
+                      </div>
+                    </div>
+                  </li>
+                  <!-- END timeline item -->
+                  <li>
+                    <i class="fa fa-clock-o bg-gray"></i>
+                  </li>
+                </ul>
+              </div>
+              <!-- /.tab-pane -->
+
+              <div class="tab-pane" id="memeber">
+
+              </div>
+              <!-- /.tab-pane -->
+
+              <div class="tab-pane" id="manager">
+                <form class="form-horizontal" method="post" action="/group/10">
+                  <div class="form-group">
+                    <label for="groupName" class="col-sm-2 control-label">组名</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="groupName" placeholder="组名"
+                             name="groupName">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="intro" class="col-sm-2 control-label">组介绍</label>
+                    <div class="col-sm-10">
+                      <textarea class="form-control" id="intro" placeholder="介绍一下这个组吧"
+                                name="groupName" style="resize: none;"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="notifyMessage" class="col-sm-2 control-label">组公告</label>
+                    <div class="col-sm-10">
+                      <textarea class="form-control" id="notifyMessage" placeholder="向组内成员发布一条公共"
+                                name="groupName" style="resize: none;"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                      <button type="submit" class="btn btn-danger">保存</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <!-- /.tab-pane -->
+            </div>
+            <!-- /.tab-content -->
+          </div>
+          <!-- /.nav-tabs-custom -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+
+
+  <!-- /.content-wrapper -->
+
+  <!-- 页脚 -->
+  <footer th:insert="common/bottom :: footer"></footer>
+  <!-- Control Sidebar 右侧边栏 -->
+  <aside th:insert="common/right :: aside"></aside>
+  <!-- 右侧边栏的背景，必须紧接着control sidebar放这个  -->
+  <div th:insert="common/right :: aside2"></div>
+</div>
+<!-- ./wrapper -->
+<!-- Js 脚本 -->
+<div th:insert="common/html_js :: div_js"></div>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{},~{})">
+  <title>我参与的表</title>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+  <!-- 主 头部 -->
+  <header th:insert="common/top :: top"></header>
+  <!-- 左侧菜单，包含logo、搜索、菜单-->
+  <aside th:insert="common/left :: left"></aside>
+
+  <!-- Content Wrapper. 页面内容 -->
+  <div class="content-wrapper">
+    <!-- 页面头部  -->
+    <section class="content-header">
+      <h1>
+        我参与的
+        <small>我参与过或需要我参与的信息收集</small>
+      </h1>
+      <!-- 导航栏 -->
+      <ol class="breadcrumb">
+          <li><a href="/index"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="active">我参与的</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--------------------------
+        |      页面内容放在这      |
+        -------------------------->
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">我参与过的</h3>
+            </div>
+            <!-- /.box-header -->
+            <h4 th:remove="${tableList.size() > 0 ? 'all' : 'none'}">&nbsp;&nbsp;&nbsp;&nbsp;空空如也，去参与填写吧~</h4>
+            <div class="box-body" th:remove="${tableList.size() > 0 ? 'none' : 'all'}">
+              <table class="table table-bordered table-striped">
+
+                <thead>
+                <tr>
+                  <th>名称</th>
+                  <th>填写时间</th>
+                  <th>IP</th>
+                  <th>浏览器</th>
+                  <th>已填</th>
+                  <th width="10%">操作</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="table, iterator : ${tableList}">
+                  <td th:text="${table.name}">15计科生源统计表</td>
+                  <td th:text="${#dates.format(recordList[iterator.index].update_time,'yyyy-MM-dd HH:mm')}">2019-3-15</td>
+                  <td th:text="${ipList[iterator.index]}">192.168.1.1</td>
+                  <td th:text="${recordList[iterator.index].browser}">192.168.1.1</td>
+                  <td th:text="${table.filledNum}">10</td>
+                  <th>
+                      <a th:href="'/collect/share/start?t=' + ${table.id}">
+                          <button type="submit" class="btn btn-block btn-info" >
+                              <i class="glyphicon glyphicon-edit"> </i> 修改重填
+                          </button>
+                      </a>
+                  </th>
+                </tr>
+
+                </tbody>
+
+                <tfoot>
+                <tr>
+                  <th>名称</th>
+                  <th>填写时间</th>
+                  <th>IP</th>
+                  <th>浏览器</th>
+                  <th>已填</th>
+                  <th width="10%">操作</th>
+                </tr>
+                </tfoot>
+
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- 页脚 -->
+  <footer th:insert="common/bottom :: footer"></footer>
+  <!-- Control Sidebar 右侧边栏 -->
+  <aside th:insert="common/right :: aside"></aside>
+  <!-- 右侧边栏的背景，必须紧接着control sidebar放这个  -->
+  <div th:insert="common/right :: aside2"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- Js 脚本 -->
+<div th:insert="common/html_js :: div_js"></div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{},~{})">
+  <title>新建</title>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <!-- 主 头部 -->
+  <header th:insert="common/top :: top"></header>
+  <!-- 左侧菜单，包含logo、搜索、菜单-->
+  <aside th:insert="common/left :: left"></aside>
+
+  <!-- Content Wrapper. 页面内容 -->
+  <div class="content-wrapper">
+    <!-- 页面头部  -->
+    <section class="content-header">
+      <h1>
+        发起收集
+        <small>新建一个收集表</small>
+      </h1>
+      <!-- 导航栏 -->
+      <ol class="breadcrumb">
+        <li><a href="/index"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="active">发起收集</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--------------------------
+        |      页面内容放在这      |
+        -------------------------->
+      <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <a href="/collect/new/byUpload">
+            <div class="info-box bg-green">
+              <span class="info-box-icon"><i class="glyphicon glyphicon-open-file"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-number">通过已有文档</span>
+                <span class="info-box-more"> 上传excel，简单修改后快速发布</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </a>
+        </div>
+        <!-- /.col -->
+
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <a href="/collect/new/byOnlineProduction">
+            <div class="info-box bg-aqua">
+              <span class="info-box-icon"><i class="glyphicon glyphicon-hand-right"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-number">在线制作（荐）</span>
+                <span class="info-box-more"> 在线快速制作（推荐开启屏幕旋转或使用电脑）</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </a>
+        </div>
+        <!-- /.col -->
+
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <a href="/collect/my">
+            <div class="info-box bg-yellow">
+              <span class="info-box-icon"><i class="glyphicon glyphicon-paste"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-number">复制已有表</span>
+                <span class="info-box-more"> 选择一份已有表，进行复制，简单修改，快速发布</span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </a>
+        </div>
+        <!-- /.col -->
+
+
+      </div>
+
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- 页脚 -->
+  <footer th:insert="common/bottom :: footer"></footer>
+  <!-- Control Sidebar 右侧边栏 -->
+  <aside th:insert="common/right :: aside"></aside>
+  <!-- 右侧边栏的背景，必须紧接着control sidebar放这个  -->
+  <div th:insert="common/right :: aside2"></div>
+</div>
+<!-- ./wrapper -->
+<!-- Js 脚本 -->
+<div th:insert="common/html_js :: div_js"></div>
+</body>
+</html>

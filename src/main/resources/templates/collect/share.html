@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{},~{})">
+  <title>智汇| 分享</title>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <!-- 主 头部 -->
+  <header th:insert="common/top :: top"></header>
+  <!-- 左侧菜单，包含logo、搜索、菜单-->
+  <aside th:insert="common/left :: left"></aside>
+
+  <!-- Content Wrapper. 页面内容 -->
+  <div class="content-wrapper">
+    <!-- 页面头部  -->
+    <section class="content-header">
+      <h1>
+          分享 <a th:href="'/collect/data/' + ${table.id}" th:text="${table.name}"></a>
+        <small>分享给朋友来填写该表吧~</small>
+      </h1>
+      <br>
+      <span>状态：</span>
+        <span class="text-bold" style="color: red"
+              th:text="${table.state}"> 收集中</span>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <span>参加人数：</span> <span th:text="${table.filledNum}"> 10</span>
+      <!-- 导航栏 -->
+      <ol class="breadcrumb">
+          <li><a href="/index"><i class="fa fa-dashboard"></i> 主页</a></li>
+          <li><a th:href="'/collect/data/' + ${table.id}" th:text="${table.name}"> xx表</a></li>
+        <li class="active">分享</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--------------------------
+        |      页面内容放在这      |
+        -------------------------->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#timeline" data-toggle="tab">链接分享</a></li>
+              <li><a href="#socialSites" data-toggle="tab">二维码分享</a></li>
+            </ul>
+            <div class="tab-content">
+
+              <div class="active tab-pane" id="timeline">
+                <!-- The timeline -->
+                <ul class="timeline timeline-inverse">
+                  <!-- timeline time label -->
+                  <li class="time-label">
+                        <span class="bg-red">
+                          链接地址
+                        </span>
+                  </li>
+                  <!-- /.timeline-label -->
+                  <!-- timeline item -->
+                  <li>
+                    <i class="fa fa-link bg-blue"></i>
+
+                    <div class="timeline-item">
+                      <h3 class="timeline-header"><a href="#">填写地址 </a> 复制下面链接到 QQ 微信 等工具中直接发给朋友</h3>
+                      <div class="timeline-body">
+                          <div class="row">
+                              <div class="col-md-6">
+                                <input class="form-control input-lg" th:value="${shareURL}" type="text" placeholder="URL" readonly id="shareURL">
+                              </div>
+                              <div class="col-md-1">
+                                  &nbsp;
+                              </div>
+                              <div class="col-md-2">
+                                <button class="btn btn-block btn-primary" id="cpoyShareURLBtn" type="button"  data-clipboard-target="#shareURL">
+                                    复制链接</button>
+                              </div>
+                              <div class="col-md-1" >
+                                  <br>
+                              </div>
+                              <div class="col-md-2">
+                                  <a th:href="${shareURL}">
+                                      <input type="button" class="btn btn-block btn-info" title="直接打开" value="直接打开" />
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="timeline-footer">
+                          <div class="bshare-custom icon-medium-plus" title="智汇|信息"
+                               th:url="${shareURL}" summary="我在智汇信息创建了一张收集表，特邀你来填写~"
+                               th:pic="'/collect/QrCode/' + ${table.id}">
+                              <div class="bsPromo bsPromo2"></div>
+                              <span title="分享到"  id="bshare-shareto" class="bshare-more">分享到</span>
+                              <a title="分享到微信" class="bshare-weixin"></a>
+                              <a title="分享到QQ好友" class="bshare-qqim"></a>
+                              <a title="分享到新浪微博" class="bshare-sinaminiblog"></a>
+                          <script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=3&amp;lang=zh"></script>
+                          <script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+                      </div>
+                    </div>
+                    </div>
+                  </li>
+                  <!-- END timeline item -->
+                  <li>
+                    <i class="fa fa-share bg-gray"></i>
+                  </li>
+                </ul>
+              </div>
+              <!-- /.tab-pane -->
+                <div class="tab-pane" id="socialSites">
+                    <!-- The timeline -->
+                    <ul class="timeline timeline-inverse">
+                        <li class="time-label">
+                            <span class="bg-green">
+                              二维码
+                            </span>
+                        </li>
+                        <li>
+                            <i class="fa fa-camera bg-purple"></i>
+                            <div class="timeline-item">
+                                <h3 class="timeline-header"><a href="#">二维码</a> 手机填写</h3>
+                                <div class="timeline-body">
+                                    用手机扫描下方二维码，直接进入填写页面 ~
+                                </div>
+                                <div class="timeline-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <img th:src="'/collect/QrCode/' + ${table.id}" height="200" width="200" alt="..." class="margin">
+                                        </div>
+                                        <div class="col-md-2" style="display: table;">
+                                            <div style="display: table-cell;vertical-align: middle;">
+                                                <br>
+                                                <br>
+                                                <button type="button" class="btn btn-block btn-primary">下载二维码</button>
+                                                <br>
+                                                <span>下载二维码，</span>
+                                                <span>分享给好友，</span>
+                                                <span>快速开始填写</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa fa-share bg-gray"></i>
+                        </li>
+                    </ul>
+                </div>
+              <!-- /.tab-pane -->
+            </div>
+            <!-- /.tab-content -->
+          </div>
+          <!-- /.nav-tabs-custom -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+        <div class="modal fade  bs-example-modal-sm" id="afterCopyModal" tabindex="-1" role="dialog" aria-labelledby="afterCopyModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="afterCopyModalLabel">
+                            复制成功
+                        </h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">好的
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- 页脚 -->
+  <footer th:insert="common/bottom :: footer"></footer>
+  <!-- Control Sidebar 右侧边栏 -->
+  <aside th:insert="common/right :: aside"></aside>
+  <!-- 右侧边栏的背景，必须紧接着control sidebar放这个  -->
+  <div th:insert="common/right :: aside2"></div>
+</div>
+<!-- ./wrapper -->
+<!-- Js 脚本 -->
+<div th:insert="common/html_js :: div_js"></div>
+<script src="https://cdn.bootcss.com/clipboard.js/2.0.4/clipboard.min.js"></script>
+<!-- Js 脚本 -->
+<script type="text/javascript">
+    bShare.addEntry({
+        title: "",
+        url: "",
+        summary: "我在智汇信息创建了一张收集表，特邀你来填写~",
+        pic: ""
+    });
+
+var clipboard = new ClipboardJS('#cpoyShareURLBtn');
+clipboard.on('success', function(e) {
+    //console.info('Text:', e.text);
+    e.clearSelection();
+    $("#afterCopyModalLabel").text('复制成功');
+    $('#afterCopyModal').modal('show');
+});
+</script>
+
+</body>
+</html>

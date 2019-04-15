@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<!--
+该页面是将最右边的重复性代码分离出来
+
+方便管理
+
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!-- 边栏， -->
+<footer th:fragment="footer" class="main-footer">
+    <!-- To the right -->
+    <div class="pull-right hidden-xs">
+        Version 0.0.1
+    </div>
+    <!-- Default to the left -->
+    <strong>Copyright &copy; 2019 <a href="#">智汇信息</a>.</strong>
+</footer>
+
+</body>
+</html>

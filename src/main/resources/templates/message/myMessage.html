@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{},~{})">
+  <title>智汇| 消息</title>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+  <!-- 主 头部 -->
+  <header th:insert="common/top :: top"></header>
+  <!-- 左侧菜单，包含logo、搜索、菜单-->
+  <aside th:insert="common/left :: left"></aside>
+
+  <!-- Content Wrapper. 页面内容 -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        我的消息
+        <small> 我收到的消息提醒</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/index"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="active">我的消息</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title"><span th:text="${messageType}"></span>
+                <small><span th:text="${#lists.size(messageList)}">3</span> 条未读</small></h3>
+              <div class="box-tools pull-right">
+                <a href="javascript:void(0)">全部标记为已读 </a> | <a href="javascript:void(0)"> 清空所有消息</a>
+              </div>
+              <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+              <div class="table-responsive mailbox-messages">
+                <table class="table table-hover table-striped">
+                  <tbody>
+                  <tr>
+                    <td><i class="fa fa-circle text-red"></i></td>
+                    <td class="mailbox-subject">标题</td>
+                    <td class="mailbox-name"><a href="#">内容</a></td>
+                    <td class="mailbox-attachment"></td>
+                    <td class="mailbox-date">5 mins ago</td>
+                    <td> <button type="button" class="btn btn-default btn-sm">
+                      <i class="fa fa-trash-o"></i>
+                    </button> </td>
+                  </tr>
+                  <tr>
+                    <td><i></i></td>
+                    <td class="mailbox-subject">消息标题</td>
+                    <td class="mailbox-name"><a href="#">内容</a></td>
+                    <td class="mailbox-attachment"></td>
+                    <td class="mailbox-date">5 mins ago</td>
+                    <td> <button type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button> </td>
+                  </tr>
+                  </tbody>
+                </table>
+                <!-- /.table -->
+              </div>
+              <!-- /.mail-box-messages -->
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer no-padding">
+              <div class="mailbox-controls">
+                <!-- Check all button -->
+                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
+                </button>
+                <!-- /.btn-group -->
+                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
+                <div class="pull-right">
+                  1-50/200
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
+                    <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
+                  </div>
+                  <!-- /.btn-group -->
+                </div>
+                <!-- /.pull-right -->
+              </div>
+            </div>
+          </div>
+          <!-- /. box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- 页脚 -->
+  <footer th:insert="common/bottom :: footer"></footer>
+  <!-- Control Sidebar 右侧边栏 -->
+  <aside th:insert="common/right :: aside"></aside>
+  <!-- 右侧边栏的背景，必须紧接着control sidebar放这个  -->
+  <div th:insert="common/right :: aside2"></div>
+</div>
+<!-- ./wrapper -->
+<!-- Js 脚本 -->
+<div th:insert="common/html_js :: div_js"></div>
+<script>
+    //星星
+    $(".mailbox-star").click(function (e) {
+        e.preventDefault();
+        //detect type
+        var $this = $(this).find("a > i");
+        var glyph = $this.hasClass("glyphicon");
+        var fa = $this.hasClass("fa");
+
+        //Switch states
+        if (glyph) {
+            $this.toggleClass("glyphicon-star");
+            $this.toggleClass("glyphicon-star-empty");
+        }
+
+        if (fa) {
+            $this.toggleClass("fa-star");
+            $this.toggleClass("fa-star-o");
+        }
+    });
+
+</script>
+</body>
+</html>

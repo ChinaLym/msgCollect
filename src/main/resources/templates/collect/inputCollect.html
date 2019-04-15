@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head th:replace="common/html_head :: head(~{::title},~{::link},~{})">
+  <title>智汇 | 填写</title>
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="/AdminLTE/plugins/iCheck/all.css">
+</head>
+<body class="hold-transition lockscreen">
+<!-- Automatic element centering -->
+<div class="lockscreen-wrapper" style="max-width:600px;margin-top:0">
+  <div class="lockscreen-logo">
+    <h3 class="box-title">
+      <span th:text="${table.name}">收集表名</span>
+      <small th:remove="${answerList} ? 'none' : 'all'"> 已经填写过哟~</small>
+    </h3>
+  </div>
+  <div class="row">
+    <!-- left column -->
+    <div class="col-md-12">
+      <!-- general form elements -->
+      <div class="box box-primary">
+        <!-- form start -->
+        <form role="form" action="/collect/share/commit.action" method="post" enctype="multipart/form-data">
+            <input hidden="hidden" name="table_id" th:value="${table.id}">
+          <div class="box-body">
+            <input name="isReFill" th:value="${answerList} ? 'true' : 'false'" hidden="hidden">
+            <div class="form-group" th:each="field, i : ${fieldList}">
+              <label th:for="'item-' + ${field.num}" th:text="${field.name}">项名</label>
+              <input th:type="${field.type.htmlType}" class="form-control"
+                     th:id="'item-' + ${field.num}"
+                     th:name="${'file'.equals(field.type.htmlType)} ? 'file' : 'item-' + ${field.num} "
+                     th:required="${field.required}?'required':''"
+                     th:placeholder="${field.name}"
+                     th:value="${answerList} ? (${!'file'.equals(field.type.htmlType)} ? ${answerList[i.index]} : ${field.defaultValue} ): ${field.defaultValue}"
+                     th:maxlength="${answerList != null && 'text'.equals(field.type.htmlType)} ? ${field.maxLength} : ''"
+              >
+                <small style="color: red" th:text="${answerList} ? (${'file'.equals(field.type.htmlType)} ? '已上传，再次上传将覆盖原文件。' : '' ): ''"></small>
+            </div>
+              <!-- 若没有登录则需要提供自己的真实姓名 -->
+              <div class="form-group" th:remove="${session.user} ? 'all' : 'none'">
+                <br>
+                <hr>
+                  <label >您的真实姓名</label>
+                  <input name="user-real-name" class="form-control"
+                         onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5\w]/g,'')"
+                         required="required">
+              </div>
+           <!-- <div class="form-group">
+              <label for="item-2">项2</label>
+              <input type="input" class="form-control" id="item-2" placeholder="项2"
+                     onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5\w]/g,'')">
+            </div>
+            <div class="form-group">
+              <label for="item-3">项3</label>
+              <input type="file" id="item-3">
+              <p class="help-block">提示信息.</p>
+            </div>
+            <div class="form-group">
+              <label for="item-4">项4</label><br>
+              <input type="checkbox" class="flat-red" id="item-4">
+            </div>
+            <div class="form-group">
+              <label for="item-5">项5</label>
+              <input class="form-control" id="item-5" placeholder="项5">
+            </div>
+            <div class="form-group">
+              <label for="item-6">项6</label>
+              <input class="form-control" id="item-6" placeholder="项6">
+            </div>
+            <div class="form-group">
+              <label for="item-7">项7</label>
+              <input class="form-control" id="item-7" placeholder="项7">
+            </div>-->
+
+          </div>
+          <!-- /.box-body -->
+
+          <div class="box-footer" >
+            <div class="col-sm-2" style="float:left" th:remove="${session.user} ? 'all' : 'none'">
+              <a th:href="'/login?redirectUrl=%2fcollect%2fshare%2fstart%3ft%3d' + ${table.id}">
+                <button type="button" class="btn btn-block btn-primary">
+                  <i class="fa fa-user"> </i> 登录
+                </button>
+            </a>
+            </div>
+
+            <div class="col-sm-2" style="float:left">
+              <a href="/collect/filled">
+                <input type="button" class="btn btn-block btn-primary" value="返回">
+              </a>
+            </div>
+
+            <div class="col-sm-2" style="float:right">
+              <button type="submit" class="btn btn-block btn-danger" >
+                <i class="fa fa-save"> </i> 提交
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="bshare-custom icon-medium-plus">
+        <div class="bsPromo bsPromo2"></div>
+        <span title="分享到" id="bshare-shareto" class="bshare-more">分享到</span>
+        <a title="分享到微信" class="bshare-weixin"></a>
+        <a title="分享到QQ好友" class="bshare-qqim"></a>
+        <a title="分享到新浪微博" class="bshare-sinaminiblog"></a>
+        <script type="text/javascript" charset="utf-8"
+                src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=3&amp;lang=zh"></script>
+        <script type="text/javascript" charset="utf-8"
+                src="http://static.bshare.cn/b/bshareC0.js"></script>
+      </div>
+      <!-- /.box -->
+
+    </div>
+    <!--/.col (left) -->
+    <!-- right column -->
+  </div>
+  <div class="text-center">
+    <br>
+    <a href="/index">回到主页</a>
+  </div>
+
+  <div class="lockscreen-footer text-center">
+    <br>
+    <strong>Copyright &copy; 2019 <a href="#">智汇信息</a>.</strong>
+  </div>
+</div>
+<!-- /.center -->
+
+
+<!-- Js 脚本 -->
+<div th:include="common/html_js :: div_js"></div>
+<!-- iCheck 1.0.1 -->
+<script src="/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+<!-- layUI time picker -->
+<script src="/laydate/laydate.js"></script>
+<script>
+    //laydate
+    laydate.render({
+        elem: '#item-5'
+        ,trigger: 'click'
+    });
+    laydate.render({
+        elem: '#item-6'
+        ,trigger: 'click'
+        ,type: 'time'
+    });
+    laydate.render({
+        elem: '#item-7'
+        ,trigger: 'click'
+        ,type: 'datetime'
+    });
+    //iCheck for checkbox and radio inputs
+    $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+        checkboxClass: 'icheckbox_minimal-blue',
+        radioClass   : 'iradio_minimal-blue'
+    })
+    //Red color scheme for iCheck
+    $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+        checkboxClass: 'icheckbox_minimal-red',
+        radioClass   : 'iradio_minimal-red'
+    })
+    //Flat red color scheme for iCheck
+    $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+        checkboxClass: 'icheckbox_flat-green',
+        radioClass   : 'iradio_flat-green'
+    })
+</script>
+<!-- 百度分享 -->
+<script>
+    window._bd_share_config = {
+        "common": {
+            "bdSnsKey": {},
+            "bdText": "",
+            "bdMini": "2",
+            "bdMiniList": false,
+            "bdPic": "",
+            "bdStyle": "0",
+            "bdSize": "16"
+        },
+        "slide": {
+            "type": "slide",
+            "bdImg": "2",
+            "bdPos": "right",
+            "bdTop": "74"
+        },
+        "image": {
+            "viewList": ["sqq", "weixin", "qzone", "tsina", "fx", "copy"],
+            "viewText": "分享到：",
+            "viewSize": "32"
+        }
+    };
+    with(document)[
+        (getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src =
+            'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' +
+            ~ (-new Date() / 36e5)];
+</script>
+</body>
+</html>

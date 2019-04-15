@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<!--
+该页面是将最右边的重复性代码分离出来
+
+方便管理
+
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!-- 顶部边栏， -->
+<header th:fragment="top" class="main-header">
+
+    <!-- Logo -->
+    <a href="/index" class="logo">
+        <!-- mini logo for sidebar mini 50x50 pixels -->
+        <span class="logo-mini"><b>智</b>汇</span>
+        <!-- logo for regular state and mobile devices -->
+        <span class="logo-lg"><b>智汇</b>信息</span>
+    </a>
+
+    <!-- Header Navbar 点击可以折叠-->
+    <nav class="navbar navbar-static-top" role="navigation">
+        <!-- Sidebar toggle button-->
+        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+            <span class="sr-only">Toggle navigation</span>
+        </a>
+        <div th:insert="common/top :: rightMenu"></div>
+    </nav>
+</header>
+<!-- Navbar Right Menu 右侧菜单-->
+<div th:fragment="rightMenu" class="navbar-custom-menu">
+    <ul class="nav navbar-nav">
+        <!-- 消息: 样式在 dropdown.less  [指bootstrap/less/dropdown.less-->
+        <li class="dropdown messages-menu"><!-- dropdown messages-menu open代表打开 -->
+            <!-- Menu toggle button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-bell-o"></i>
+                <span class="label label-success" th:text="${session.unreadMessage}?${session.unreadMessage.num}:''"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="header">您有 <font th:text="${session.unreadMessage}?${session.unreadMessage.num}:'0'"></font> 条未读信息</li>
+                <li>
+                    <!-- inner menu: contains the messages -->
+                    <ul class="menu" th:remove="${session.unreadMessage}?'none':'all'">
+                        <li th:each="msg : ${session.unreadMessage.messages}"><!-- start message -->
+                            <a th:href="'/message/detail?msgid=' + ${msg.id}" >
+                                <div class="pull-left">
+                                    <!-- 发送人的头像 Image -->
+                                    <img th:src="${msg.sender.headImage}?${msg.sender.headImage}:'/AdminLTE/dist/img/user2-160x160.jpg'" class="img-circle" alt="User Image">
+                                </div>
+                                <!-- Message title and timestamp -->
+                                <h4 th:text="${msg.sender.realname}?${msg.sender.nickname} + ' ( ' + ${msg.sender.realname} + ' )':'匿名'">
+                                    昵称( 真实姓名 )
+                                    <small ><i class="fa fa-clock-o"></i> 5 分钟</small>
+                                </h4>
+                                <!-- The message -->
+                                <p th:text="${#strings.abbreviate(msg.content,20)}">消息内容</p>
+                            </a>
+                        </li>
+                        <!-- end message -->
+                    </ul>
+                    <!-- /.menu -->
+                </li>
+                <li class="footer"><a href="/message/all">查看所有消息</a></li>
+            </ul>
+        </li>
+        <!-- /.消息菜单 -->
+
+        <!-- 提醒菜单 -->
+        <li class="dropdown notifications-menu" th:remove="all">
+            <!-- Menu toggle button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-bell-o"></i>
+                <span class="label label-warning" th:text="${session.unreadMessage}?${session.unreadMessage.num}:''"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="header"> 当前 <font th:text="${session.unreadMessage}?${session.unreadMessage.num}:'0'"></font> 条提醒</li>
+                <li>
+                    <!-- Inner Menu: contains the notifications -->
+                    <ul class="menu" th:remove="${session.unreadMessage}?'none':'all'">
+                        <li th:each="msg : ${session.unreadMessage.messages}"><!-- start notification -->
+                            <a th:href="'/message/detail?msgid=' + ${msg.id}" th:text="${msg.content}">
+                                <i class="fa fa-users text-aqua"></i> 提醒内容
+                            </a>
+                        </li>
+                        <!-- end notification -->
+                    </ul>
+                </li>
+                <li class="footer"><a href="/message/all">查看所有提醒</a></li>
+            </ul>
+        </li>
+
+
+        <!-- User Account Menu 账号菜单-->
+        <li class="dropdown user user-menu">
+            <!-- Menu Toggle Button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <!-- The user image in the navbar-->
+                <img th:src="${session.user}?${session.user.headImage}:'/AdminLTE/dist/img/user2-160x160.jpg'" class="user-image" alt="User Image">
+                <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                <span class="hidden-xs" th:text="${session.user}?${session.user.nickname}:'昵称'">用户名</span>
+            </a>
+            <ul class="dropdown-menu">
+                <!-- The user image in the menu -->
+                <li class="user-header">
+                    <img th:src="${session.user}?${session.user.headImage}:'/AdminLTE/dist/img/user2-160x160.jpg'" class="img-circle" alt="User Image">
+
+                    <p th:text="${session.user}?${session.user.nickname} + ' - ' + ${session.user.realname}:'昵称 - 真实姓名'">
+                        昵称
+                        <small>个性的签名（暂未开放）</small>
+                    </p>
+                </li>
+                <!-- Menu Body -->
+                <li class="user-body">
+                    <div class="row">
+                        <div class="col-xs-4 text-center">
+                            <a href="/collect/my">收集表</a>
+                        </div>
+                        <div class="col-xs-4 text-center">
+                            <a href="/group/my">我的组</a>
+                        </div>
+                        <div class="col-xs-4 text-center">
+                            <a href="/message/all">看消息</a>
+                        </div>
+                    </div>
+                    <!-- /.row -->
+                </li>
+                <!-- Menu Footer-->
+                <li class="user-footer">
+                    <div class="pull-left">
+                        <a href="/user/profile" class="btn btn-default btn-flat">个人信息</a>
+                    </div>
+                    <div class="pull-right">
+                        <a href="/user/logout.action" class="btn btn-default btn-flat">退出登录</a>
+                    </div>
+                </li>
+            </ul>
+        </li>
+
+        <!-- Control Sidebar Toggle Button 侧边栏的开关-->
+        <li>
+            <a href="#" data-toggle="control-sidebar"><i class="fa fa-line-chart"></i></a>
+        </li>
+
+    </ul>
+</div>
+
+</body>
+</html>

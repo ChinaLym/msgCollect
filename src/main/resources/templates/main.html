@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{},~{})">
+  <title>智汇| 待填写</title>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <!-- 主 头部 -->
+  <header th:insert="common/top :: top"></header>
+
+  <!-- 左侧菜单，包含logo、搜索、菜单-->
+  <aside th:insert="common/left :: left"></aside>
+
+  <!-- Content Wrapper. 页面内容 -->
+  <div class="content-wrapper">
+    <!-- 页面头部  -->
+    <section class="content-header">
+      <h1>
+        待参与
+        <small>需要我参与的信息收集</small>
+      </h1>
+      <!-- 导航栏 -->
+      <ol class="breadcrumb">
+          <li><a href="/index"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="active">待参与</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--------------------------
+        |      页面内容放在这      |
+        -------------------------->
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">收藏列表</h3>
+            </div>
+            <!-- /.box-header -->
+            <h4 th:remove="${tableList.size() > 0 ? 'all' : 'none'}">&nbsp;&nbsp;&nbsp;&nbsp;空空如也，遇到喜欢的表就不要犹豫收藏啦~</h4>
+            <div class="box-body" th:remove="${tableList.size() > 0 ? 'none' : 'all'}">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>表名</th>
+                    <th>发起人</th>
+                    <th>发起时间</th>
+                    <th>截止时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="table : ${tableList}">
+                  <td th:text="${table.name}">表名</td>
+                  <td th:text="${table.ownerName}">发起人</td>
+                  <td th:text="${#dates.format(table.startTime,'yyyy-MM-dd HH:mm')}">发起时间</td>
+                  <td th:text="${#dates.format(table.endTime,'yyyy-MM-dd HH:mm')}">截止时间</td>
+                  <td>
+                    <a th:href="'/collect/share/start?t=' + ${table.id}">
+                      <button type="button" class="btn btn-sm btn-primary" th:onclick="'table_edit_fun(' + ${table.id} +  ')'">
+                        <i class="fa fa-edit"></i> 填写
+                      </button>
+                    </a>
+                    <a th:href="'/collect/share/' + ${table.id}">
+                      <button type="button" class="btn btn-sm btn-warning" th:onclick="'table_share_fun(' + ${table.id} +  ')'">
+                        <i class="glyphicon glyphicon-share-alt"></i> 分享
+                      </button>
+                  </td>
+                </tr>
+                </tbody>
+
+                <tfoot>
+                  <tr>
+                    <th>表名</th>
+                    <th>发起人</th>
+                    <th>发起时间</th>
+                    <th>截止时间</th>
+                    <th>操作</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.container -->
+</div>
+<!-- /.content-wrapper -->
+
+  <!-- 页脚 -->
+  <footer th:insert="common/bottom :: footer"></footer>
+  <!-- Control Sidebar 右侧边栏 -->
+  <aside th:insert="common/right :: aside"></aside>
+  <!-- 右侧边栏的背景，必须紧接着control sidebar放这个  -->
+  <div th:insert="common/right :: aside2"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- Js 脚本 -->
+<div th:insert="common/html_js :: div_js"></div>
+</body>
+</html>

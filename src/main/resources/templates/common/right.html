@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!--
+该页面是将最右边的重复性代码分离出来
+
+方便管理
+
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!-- Control Sidebar 右侧边栏，自己发布的近期收集部分 -->
+<aside th:fragment="aside" class="control-sidebar control-sidebar-dark">
+    <!-- Create the tabs 该部分包含两个面板-->
+    <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+        <!-- 第一个板块 ，图标为 i 标签-->
+        <li class="active"></li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <!-- Home tab content 示例-->
+        <div class="tab-pane active" id="control-sidebar-home-tab">
+            <h3 class="control-sidebar-heading">近期收集</h3>
+            <ul class="control-sidebar-menu" th:remove="${session.recentCollect}?'none':'all'">
+                <li th:each="table : ${session.recentCollect}">
+                    <a th:href="'/collect/my/detail?t=' + ${table.id}">
+                        <!-- 图标 -->
+                        <i class="menu-icon fa fa-table bg-red"></i>
+                        <!-- 介绍 -->
+                        <div class="menu-info">
+                            <h4 class="control-sidebar-subheading" th:text="${table.name}">
+                  <span class="pull-right-container">
+                    <span class="label label-danger pull-right" th:text="${table.state}">收集中</span>
+                </span>
+                            </h4>
+
+                            <p th:text="${#dates.format(table.endTime, 'MM-dd 截止')}">10 月 16 日</p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+            <!-- /.control-sidebar-menu 项1结束 -->
+
+
+            <!-- /.control-sidebar-menu 项2结束 -->
+        </div>
+    </div>
+</aside>
+<!-- /.control-sidebar -->
+<!-- 右侧边栏的背景，必须紧接着control sidebar放这个  -->
+<div th:fragment="aside2" class="control-sidebar-bg"></div>
+
+</body>
+</html>

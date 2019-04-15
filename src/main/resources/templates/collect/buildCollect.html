@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{::link},~{})">
+  <title>在线制作</title>
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link rel="stylesheet" href="/AdminLTE/plugins/iCheck/all.css">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="/AdminLTE/bower_components/select2/dist/css/select2.min.css">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <!-- 主 头部 -->
+  <header th:insert="common/top :: top"></header>
+
+  <!-- 左侧菜单，包含logo、搜索、菜单-->
+  <aside th:insert="common/left :: left"></aside>
+
+  <!-- Content Wrapper. 页面内容 -->
+  <div class="content-wrapper">
+    <!-- 页面头部  -->
+    <section class="content-header">
+      <h1>
+        <span th:text="${table} ? (${table.id} ? '编辑' : '复制表') : '在线制作'"></span>
+        <small th:text="${table} ? '快速编辑' : '推荐使用 PC 端制作 或 开启屏幕旋转'"></small>
+      </h1>
+      <!-- 导航栏 -->
+      <ol class="breadcrumb">
+          <li><a href="/index"><i class="fa fa-dashboard"></i> 主页</a></li>
+          <li><a th:href="${table} ? '/collect/my' : '/collect/new'"
+          th:text="${table} ? '我的表' : '发起收集'"> 发起收集</a></li>
+        <li class="active">在线制作</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <!--------------------------
+        |      页面内容放在这      |
+        -------------------------->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box">
+            <div class="box-body">
+              <form action="/collect/new/byOnlineProduction/tableForm.action" method="post" id="tableForm">
+                <div th:remove="${table}?'none':'all'">
+                  <input id = "table-id" name="table-id" hidden="hidden"  th:value="${table}?${table.id}:''">
+                  <input id="table-filledNum" hidden="hidden"  th:value="${table}?${table.filledNum}:''">
+                </div>
+                  <h3 class="box-title">
+                      收集表名称: <span class="text-red">(必填)</span> <input class="input-large" type="input" maxlength="50"
+                             name="table-name" id="table-name" placeholder="收集表名"
+                             onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5\w]/g,'')"
+                             th:value="${table}?${table.name}:''">
+                  </h3>
+                  <h3>简介</h3>
+                  <textarea style="width: 100%; height: 100px;resize: none" name="table-detail"
+                            onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5\w]/g,'')"
+                            placeholder="介绍一下这个表的注意事项吧~" th:value="${table}?${table.detail}:''"></textarea>
+                  <h3>表属性</h3>
+                  <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:20%">收集开始时间: <span class="text-red">(必填)</span></th>
+                            <th><input required class="form-control" name="table-time-start" id="table-time-start" placeholder="开始时间"  th:value="${table}?${#dates.format(table.startTime,'yyyy-MM-dd HH:mm:ss')}:''"></th>
+                        </tr>
+                        <tr>
+                            <th style="width:20%">收集截止时间: <span class="text-red">(必填)</span></th>
+                            <th><input required class="form-control" name="table-time-end" id="table-time-end" placeholder="截止时间"
+                                       th:value="${table}?${#dates.format(table.endTime,'yyyy-MM-dd HH:mm:ss')}:''"></th>
+                        </tr>
+                        <tr>
+                            <th style="width:20%">最大参与人数: <span class="text-red">(必填)</span></th>
+                            <th><input class="form-control" name="table-maxFillNum" placeholder="非vip最大为100" style="width: 30%"
+                                       th:value="${table}?${table.maxFillNum}:''" required
+                                       onkeyup="this.value=this.value.replace(/\D/g,'');if(this.value>100)this.value = 100;" maxlength=3>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th style="width:20%">对参与者展示表数据: </th>
+                            <th><input type="checkbox" name="table-visibility" class="flat-red"
+                                       th:checked="${table}? ${table.visibility eq true} :'checked'">
+                                (使参与者可以看到其他人的公开字段，以便参与者填写)
+                            </th>
+                        </tr>
+                    </thead>
+                  </table>
+                  <h3>表字段</h3>
+                  <input name="table-item-index-array" id="table-item-index-array" hidden="hidden">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th style="width:20%">字段名</th>
+                      <th style="width:15%">字段类型</th>
+                      <th style="width:13%">最大长度</th>
+                      <th>默认值</th>
+                      <th>必填</th>
+                      <th>公开</th>
+                      <th>删除</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="table-tbody">
+                    <tr th:id="'table-item-' + ${field.num}" th:each="field : ${fieldList}" >
+                      <th><input class="form-control" th:name="'table-item-name-' + ${field.num}" type="text" th:placeholder="字段名"
+                                 th:value="${field.name}"
+                                 onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5\w]/g,'')"></th>
+                      <th>
+                        <div class="form-group">
+                          <select class="form-control select2" th:name="'table-item-type-' + ${field.num}" style="width: 100%;"
+                                  th:onchange="|changeType(${field.num})|">
+                            <option th:selected="${field.type.equals('普通')}">普通</option>
+                            <option th:selected="${field.type.equals('文件')}">文件</option>
+                            <option th:selected="${field.type.equals('日期')}">日期</option>
+                            <option th:selected="${field.type.equals('时间')}">时间</option>
+                            <option th:selected="${field.type.equals('日期时间')}">日期时间</option>
+                          </select>
+                        </div>
+                      </th>
+                      <th>
+                        <input class="form-control" th:name="'table-item-maxlength-' + ${field.num}" type="text" placeholder="最长"
+                                 onkeyup="this.value=this.value.replace(/\D/g,'');if(this.value>220)this.value = 220;" maxlength=3
+                                th:value="${field.maxLength} ? ${field.maxLength} : '220'">
+                      </th>
+                      <th><input class="form-control" th:name="'table-item-default-' + ${field.num}" type="text" placeholder="空"
+                                 th:value="${field.defaultValue}"></th>
+                      <th>
+                        <label>
+                          <input type="checkbox" th:name="'table-item-required-' + ${field.num}" class="flat-red" th:checked="${field.required}">
+                        </label>
+                      </th>
+                      <th>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" th:name="'table-item-visibility-' + ${field.num}" class="flat-red" th:checked="${field.visibility}">
+                            </label>
+                        </div>
+                      </th>
+                      <th><button type="button" th:onclick="|item_del_fun(${field.num})|"><i class="fa fa-minus"></i></button></th>
+                    </tr>
+                  </tbody>
+                </table>
+              </form>
+                <small><b>注：最大长度</b> 只对文本类型生效，时间或文件类型无效。</small><br>
+                <!--下一个新增项的下标记录-->
+                <input hidden="hidden" id="startValue" th:value="${fieldList} ? ${fieldList.size() + 1} : '1'">
+              <div class="col-sm-2" style="float:left ">
+                <button class="btn btn-block btn-primary" id="item-new-btn" onclick="item_new_fun()">
+                    <i class="fa fa-plus"> </i> 新增项
+                </button>
+              </div>
+              <div class="col-sm-2" style="float:right">
+                <button class="btn btn-block btn-danger" id="table-save-btn" data-toggle="modal" data-target="#saveBtnModal">
+                    <i class="fa fa-save"> </i> 保存
+                </button>
+                  <div class="modal fade" id="saveBtnModal" tabindex="-1" role="dialog" aria-labelledby="saveBtnModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                      &times;
+                                  </button>
+                                  <h4 class="modal-title" id="saveBtnModalLabel">保存成功</h4>
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-primary" data-dismiss="modal">确定
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- 页脚 -->
+  <footer th:insert="common/bottom :: footer"></footer>
+  <!-- Control Sidebar 右侧边栏 -->
+  <aside th:insert="common/right :: aside"></aside>
+  <!-- 右侧边栏的背景，必须紧接着control sidebar放这个  -->
+  <div th:insert="common/right :: aside2"></div>
+</div>
+<!-- ./wrapper -->
+
+<div th:insert="common/html_js :: div_js"></div>
+<!-- Select2 -->
+<script src="/AdminLTE/bower_components/select2/dist/js/select2.full.min.js"></script>
+<!-- layUI time picker -->
+<script src="/laydate/laydate.js"></script>
+<!-- iCheck 1.0.1 -->
+<script src="/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+
+<!-- Page script -->
+<script>
+    //laydate
+    laydate.render({
+        elem: '#table-time-start'
+        ,calendar: true
+        ,trigger: 'click'
+        ,type: 'datetime'
+    });
+    laydate.render({
+        elem: '#table-time-end'
+        ,calendar: true
+        ,trigger: 'click'
+        ,type: 'datetime'
+    });
+
+    $(function () {
+        //Initialize Select2 Elements
+        $('.select2').select2()
+
+        //Flat red color scheme for iCheck
+        $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+            checkboxClass: 'icheckbox_flat-red',
+            radioClass   : 'iradio_flat-red'
+        })
+    });
+
+    //自增计数器,下一个新增项的下标记录
+    var itemNumIncrement =  Number($("#startValue").val());
+    //保存field下标
+    var indexArray = new Array();
+    if($("#table-id")){
+        for (var i = 1; i < itemNumIncrement; i++) {
+            indexArray.push(i);
+        }
+    }
+
+    //tableForm - item-delete-btn 删除项
+    function item_del_fun(num){
+        var itemId = "#table-item-" + String(num);
+        indexArray.splice(jQuery.inArray(num,indexArray),1);
+        $(itemId).remove();
+    }
+
+    function changeType(itemNum){
+        var elementName = "select[name='table-item-type-" + itemNum + "']";
+        var type = $(elementName).val();
+        elementName = "input[name='table-item-maxlength-" + itemNum +"']";
+        var maxLengthElement = $(elementName);
+        elementName = "input[name='table-item-default-" + itemNum +"']";
+        var defaultValueElement = $(elementName);
+        elementName = "input[name='table-item-required-" + itemNum +"']";
+        var isRequiredElement = $(elementName);
+        elementName = "input[name='table-item-visibility-" + itemNum +"']";
+        var isVisibilityElement = $(elementName);
+        maxLengthElement.val('220');
+        defaultValueElement.val('');
+        isRequiredElement.iCheck('uncheck');
+        isVisibilityElement.iCheck('check');
+        if('普通' == type){
+            maxLengthElement.removeAttr("disabled");
+            defaultValueElement.removeAttr("disabled");
+            defaultValueElement.attr("type","text");
+        }else {
+            defaultValueElement.removeAttr("disabled");
+            maxLengthElement.attr("disabled","disabled");
+            if('文件' == type){
+                defaultValueElement.attr("disabled","disabled");
+                isRequiredElement.iCheck('check');
+                isVisibilityElement.iCheck('uncheck');
+            }
+            if('日期' == type){
+                defaultValueElement.attr("type","date");
+            }
+            if('时间' == type){
+                defaultValueElement.attr("type","time");
+            }
+            if('日期时间' == type){
+                defaultValueElement.attr("type","datetime-local");
+            }
+        }
+    }
+
+    //tableForm - item-new-btn 新增项
+    function item_new_fun(){
+        var htmlText = '<tr id="table-item-xxxNUMxxx">' +
+            '                      <th><input class="form-control" name="table-item-name-xxxNUMxxx" type="text" placeholder="字段名"></th>' +
+            '                      <th>' +
+            '                        <div class="form-group">' +
+            '                          <select class="form-control select2" name="table-item-type-xxxNUMxxx" style="width: 100%;" onchange="changeType(xxxNUMxxx)">' +
+            '                            <option selected="selected">普通</option>' +
+            '                            <option>文件</option>' +
+            '                            <option>日期</option>' +
+            '                            <option>时间</option>' +
+            '                            <option>日期时间</option>' +
+            '                          </select>' +
+            '                        </div>' +
+            '                      </th>' +
+            '                      <th><input class="form-control" name="table-item-maxlength-xxxNUMxxx" type="text" placeholder="最长" onkeyup="this.value=this.value.replace(/\\D/g,\'\');if(this.value>220)this.value = 220;" maxlength=3 value="220"></th>' +
+            '                      <th><input class="form-control" name="table-item-default-xxxNUMxxx" type="text" placeholder="空"></th>' +
+            '                      <th>' +
+            '                        <label>' +
+            '                          <input type="checkbox" name="table-item-required-xxxNUMxxx" class="flat-red">' +
+            '                        </label>' +
+            '                      </th>' +
+            '                      <th>' +
+            '                        <label>' +
+            '                          <input type="checkbox" name="table-item-visibility-1" class="flat-red" checked>' +
+            '                        </label>' +
+            '                      </th>' +
+            '                      <th><button type="button" onclick="item_del_fun(xxxNUMxxx)"><i class="fa fa-minus"></i></button></th>' +
+            '                    </tr>'
+        htmlText = htmlText.replace(new RegExp("xxxNUMxxx","gm"), String(itemNumIncrement));
+        indexArray.push(itemNumIncrement);
+        itemNumIncrement = itemNumIncrement + 1;
+        $("#table-tbody").append(htmlText);
+
+        //为新加的元素添加样式
+        //Flat red color scheme for iCheck
+        $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+            checkboxClass: 'icheckbox_flat-green',
+            radioClass   : 'iradio_flat-green'
+        })
+        //Initialize Select2 Elements
+        $('.select2').select2()
+
+        $("#table-tbody").trigger("create");
+    }
+
+    //table 异步提交 保存按钮
+    $("#table-save-btn").click(function(){
+        if($("#table-id").length > 0 && $('#table-filledNum').val() != '0'){
+            $("#saveBtnModalLabel").text("该表已经发布，不能修改");
+            return;
+        }
+        if(0 == indexArray.length){
+            $("#saveBtnModalLabel").text("请点击新增项，添加至少一项之后再保存");
+            return;
+        }
+        if("" == $("#table-name").val()){
+            $("#saveBtnModalLabel").text("请输入收集表名称");
+            return;
+        }
+        $("#table-item-index-array").val(indexArray.join("-"));
+        var targetUrl = $("#tableForm").attr("action");
+        var data = $("#tableForm").serialize();
+
+        $.ajax({
+            type:'post',
+            url:targetUrl,
+            cache: false,
+            data:data,
+            dataType:'json',
+            success:function(data){
+                data = typeof data == 'string' ? $.parseJSON(data) : data;
+                if(data.message == "success"){
+                    $("#saveBtnModalLabel").text("保存成功");
+                }else{
+                    $("#saveBtnModalLabel").text("保存失败: " + data.detail);
+                }
+            },
+            error:function(){
+                $("#saveBtnModalLabel").text("保存失败");
+            }
+        })
+
+    });
+</script>
+</body>
+</html>

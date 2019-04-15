@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{},~{})">
+  <title>请输入暗号</title>
+</head>
+<body class="hold-transition lockscreen">
+<!-- Automatic element centering -->
+<div class="lockscreen-wrapper">
+  <div class="lockscreen-logo">
+    <a href="/AdminLTE//index"><b>智汇</b>信息</a>
+  </div>
+  <div class="lockscreen-name"><br>给您分享了一个收集表~</div>
+
+  <div class="lockscreen-item">
+    <!-- 分享人头像 -->
+    <div class="lockscreen-image">
+      <img src="/AdminLTE/dist/img/user1-128x128.jpg" alt="User Image">
+    </div>
+    <!-- 分享人头像 -->
+
+    <!-- 解锁表单 -->
+    <form class="lockscreen-credentials" th:action="'/collect/share/checkKey.action}">
+      <div class="input-group">
+        <input hidden="hidden" name="table-id" th:value="${table_id}">
+
+        <input type="password" class="form-control" placeholder="暗号">
+        <div class="input-group-btn">
+          <button type="button" class="btn"><i class="fa fa-arrow-right text-muted"></i></button>
+        </div>
+      </div>
+    </form>
+    <!-- 解锁表单 -->
+
+  </div>
+  <!-- 提示 -->
+  <div class="text-center">
+    <b>输入暗号开启调查表</b>
+  </div>
+  <div class="text-center">
+    <br>
+    <a href="/index">回到主页</a>
+  </div>
+
+  <div class="lockscreen-footer text-center">
+    <br>
+    <strong>Copyright &copy; 2019 <a href="#">智汇信息</a>.</strong>
+  </div>
+</div>
+<!-- /.center -->
+
+<!-- jQuery 3 -->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

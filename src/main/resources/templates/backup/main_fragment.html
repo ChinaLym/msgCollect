@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{},~{})">
+  <title>智汇| </title>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+  <!-- 主 头部 -->
+  <header th:insert="common/top :: top"></header>
+  <!-- 左侧菜单，包含logo、搜索、菜单-->
+  <aside th:insert="common/left :: left"></aside>
+
+  <!-- 页面内容包装器 div -->
+  <div class="content-wrapper">
+    <!-- 页面头部 -->
+    <section class="content-header">
+      <h1>
+        设置
+        <small>可以在这里设置消息提醒等</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/index"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="active">设置</li>
+      </ol>
+    </section>
+
+    <!-- 页面内容 -->
+    <section class="content">
+      <div class="row">
+
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.页面内容结束 -->
+  </div>
+  <!-- /.页面内容包装器 div 结束 -->
+
+  <!-- 页脚 -->
+  <footer th:insert="common/bottom :: footer"></footer>
+  <!-- Control Sidebar 右侧边栏 -->
+  <aside th:insert="common/right :: aside"></aside>
+  <!-- 右侧边栏的背景，必须紧接着control sidebar放这个  -->
+  <div th:insert="common/right :: aside2"></div>
+</div>
+<!-- ./wrapper -->
+<!-- Js 脚本 -->
+<div th:insert="common/html_js :: div_js"></div>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{},~{})">
+  <title>智汇| 设置</title>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <!-- 主 头部 -->
+  <header th:insert="common/top :: top"></header>
+  <!-- 左侧菜单，包含logo、搜索、菜单-->
+  <aside th:insert="common/left :: left"></aside>
+
+  <!-- Content Wrapper. 页面内容 -->
+  <!-- 页面内容包装器 div -->
+  <div class="content-wrapper">
+    <!-- 页面头部 -->
+    <section class="content-header">
+      <h1>
+        设置
+        <small>可以在这里设置消息提醒等</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="/index"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li class="active">设置</li>
+      </ol>
+    </section>
+
+    <!-- 页面内容 -->
+    <section class="content">
+      <!-- 消息设置 -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box box-default">
+            <div class="box-header with-border">
+              <i class="fa fa-bullhorn"></i>
+              <h3 class="box-title">消息设置</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="table-responsive mailbox-messages">
+                <table class="table table-hover table-striped">
+                  <thead>
+                    <tr>
+                      <td></td>
+                      <td width="10%"></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="mailbox-name">他人回复我时通知我</td>
+                      <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
+                    </tr>
+                    <tr>
+                      <td class="mailbox-name">他人对我的表提问 & 评论时通知我</td>
+                      <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
+                    </tr>
+                    <tr>
+                      <td class="mailbox-name">他人填写我的收集表后提醒我</td>
+                      <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
+                    </tr>
+                    <tr>
+                      <td class="mailbox-name">收集表即将截止时提醒我</td>
+                      <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!-- /.table -->
+              </div>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- 填表设置 -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box box-default">
+            <div class="box-header with-border">
+              <i class="glyphicon glyphicon-pencil"></i>
+              <h3 class="box-title">填表设置</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="table-responsive mailbox-messages">
+                <table class="table table-hover table-striped">
+                  <thead>
+                    <tr>
+                      <td></td> <td width="10%"></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td class="mailbox-name">我在填表时，自动填充我的个人信息</td>
+                    <td class="mailbox-star"><a href="#"><i class="fa fa-star-o text-yellow"></i></a></td>
+                  </tr>
+                  </tbody>
+                </table>
+                <!-- /.table -->
+              </div>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row 填表设置-->
+      <!-- 其他设置 -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box box-default">
+            <div class="box-header with-border">
+              <i class="fa fa-gear"></i>
+              <h3 class="box-title">其他设置</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="table-responsive mailbox-messages">
+                <table class="table table-hover table-striped">
+                  <thead>
+                  <tr>
+                    <td></td> <td width="10%"></td>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td class="mailbox-name">自动添加浏览过的收集表至待填写</td>
+                    <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
+                  </tr>
+                  <tr>
+                    <td class="mailbox-name">自动删除我的收藏中不可访问的表</td>
+                    <td class="mailbox-star"><a href="#"><i class="fa fa-star-o text-yellow"></i></a></td>
+                  </tr>
+                  </tbody>
+                </table>
+                <!-- /.table -->
+              </div>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row 其他设置-->
+    </section>
+    <!-- /.页面内容结束 -->
+  </div>
+  <!-- /.页面内容包装器 div 结束 -->
+
+  <!-- 页脚 -->
+  <footer th:insert="common/bottom :: footer"></footer>
+  <!-- Control Sidebar 右侧边栏 -->
+  <aside th:insert="common/right :: aside"></aside>
+  <!-- 右侧边栏的背景，必须紧接着control sidebar放这个  -->
+  <div th:insert="common/right :: aside2"></div>
+</div>
+<!-- ./wrapper -->
+<!-- Js 脚本 -->
+<div th:insert="common/html_js :: div_js"></div>
+<script>
+    //操控星星切换
+    $(".mailbox-star").click(function (e) {
+        e.preventDefault();
+        //detect type
+        var $this = $(this).find("a > i");
+        var glyph = $this.hasClass("glyphicon");
+        var fa = $this.hasClass("fa");
+
+        //Switch states
+        if (glyph) {
+            $this.toggleClass("glyphicon-star");
+            $this.toggleClass("glyphicon-star-empty");
+        }
+
+        if (fa) {
+            $this.toggleClass("fa-star");
+            $this.toggleClass("fa-star-o");
+        }
+    });
+</script>
+</body>
+</html>

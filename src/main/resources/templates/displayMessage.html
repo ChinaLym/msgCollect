@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{},~{})">
+  <title>智汇信息</title>
+</head>
+<body class="hold-transition lockscreen">
+<!-- Automatic element centering -->
+<div class="lockscreen-wrapper">
+  <div class="lockscreen-logo">
+    <a href="/index"><b>智汇</b>信息</a>
+  </div>
+
+  <div class="lockscreen-item">
+    <!-- 分享人头像 -->
+<!--    <div class="lockscreen-image">
+      <img src="/AdminLTE/dist/img/user1-128x128.jpg" alt="User Image">
+    </div>-->
+    <!-- 分享人头像 -->
+
+    <div class="text-center">
+      <h3 th:text="${resultMessage}"> 感谢您的参与！ </h3>
+    </div>
+  </div>
+    <div class="text-center">
+      <br>
+      <h3><a href="/index">回到主页</a></h3>
+    </div>
+
+    <div class="lockscreen-footer text-center">
+      <br>
+      <strong>Copyright &copy; 2019 <a href="#">智汇信息</a>.</strong>
+    </div>
+</div>
+<!-- /.center -->
+
+<!-- jQuery 3 -->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

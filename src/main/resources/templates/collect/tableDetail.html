@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{::link},~{})">
+  <title th:text="${table.name} + '-详情'">xxx信息收集表详情</title>
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="/AdminLTE/plugins/iCheck/all.css">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <!-- 主 头部 -->
+  <header th:insert="common/top :: top"></header>
+  <!-- 左侧菜单，包含logo、搜索、菜单-->
+  <aside th:insert="common/left :: left"></aside>
+
+  <!-- Content Wrapper. 页面内容 -->
+  <div class="content-wrapper">
+    <!-- 页面头部  -->
+    <section class="content-header">
+      <h1>
+        <span th:text="${table.name}"></span>
+        <small th:text="${table.state}"></small>
+      </h1>
+      <!-- 导航栏 -->
+      <ol class="breadcrumb">
+          <li><a href="/index"><i class="fa fa-dashboard"></i> 主页</a></li>
+        <li><a href="/collect/my">我的表</a></li>
+        <li class="active" th:text="${table.name}">表详情</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <!--------------------------
+        |      页面内容放在这      |
+        -------------------------->
+      <div>
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <a th:href="'/collect/data/' + ${table.id}">
+            <div class="small-box bg-green">
+              <div class="inner">
+                <h3><span th:text="${table.filledNum}"></span> <sup style="font-size: 20px"> 人填写</sup></h3>
+                <p>表数据 <i class="fa fa-arrow-circle-right"></i></p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-stats-bars"></i>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-blue">
+              <div class="inner">
+                <h3 class="costTime" th:data-cost-startTime="${#dates.format(table.startTime,'yyyy-MM-dd HH:mm')}"
+                th:data-cost-aimTime="${#dates.format(table.endTime,'yyyy-MM-dd HH:mm')}"></h3>
+                <p>统计图 <i class="fa fa-arrow-circle-right"></i></p>
+              </div>
+              <div class="icon">
+                <i class="fa fa-line-chart"></i>
+              </div>
+          </div>
+
+
+        </div>
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <a th:href="${table.state == 'EDIT'? '/collect/edit?t=' + table.id : '/collect/new/byCopy?t=' + table.id}">
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                  <h3 class="remainingTime" th:data-remaining-aimTime="${#dates.format(table.endTime,'yyyy-MM-dd HH:mm')}"></h3>
+                  <p><span th:text="${table.state == 'EDIT'? '编辑表' : '复制表'}">编辑表</span> <i class="fa fa-arrow-circle-right"></i></p>
+                </div>
+                <div class="icon">
+                  <i class="fa fa-clock-o"></i>
+                </div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box">
+            <div class="box-body">
+              <h3 class="box-title">
+                表名: <input disabled class="input-large" type="input"
+                              th:value="${table.name}">
+              </h3>
+              <h3>简介</h3>
+              <textarea disabled style="width: 100%; height: 100px;resize: none" th:value="${table.detail}"></textarea>
+              <h3>表属性</h3>
+              <table class="table table-striped">
+                <thead>
+                <tr>
+                  <th style="width:20%">收集开始时间: </th>
+                  <th><input disabled class="form-control" th:value="${#dates.format(table.startTime,'yyyy-MM-dd HH:mm:ss')}"></th>
+                </tr>
+                <tr>
+                  <th style="width:20%">收集截止时间: </th>
+                  <th><input disabled class="form-control" th:value="${#dates.format(table.endTime,'yyyy-MM-dd HH:mm:ss')}"></th>
+                </tr>
+                <tr>
+                  <th style="width:20%">最大参与人数: </th>
+                  <th><input disabled class="form-control" style="width: 30%" th:value="${table.maxFillNum}"></th>
+                </tr>
+                <tr>
+                  <th style="width:20%">对参与者展示表数据: </th>
+                  <th><input disabled class="form-control" style="width: 30%" th:value="${table.visibility} ? '是' : '否'"></th>
+                </tr>
+                </thead>
+              </table>
+              <h3>表字段</h3>
+              <table class="table table-striped">
+                <thead>
+                <tr>
+                  <th style="width:20%">字段名</th>
+                  <th style="width:15%">字段类型</th>
+                  <th style="width:13%">最大长度</th>
+                  <th>默认值</th>
+                  <th>必填</th>
+                  <th>公开</th>
+                </tr>
+                </thead>
+
+                <tbody id="table-tbody">
+                <tr th:id="'table-item-' + ${field.num}" th:each="field : ${fieldList}" >
+                  <th><input disabled class="form-control" th:value="${field.name}"></th>
+                  <th><input disabled class="form-control" th:value="${field.type}"></th>
+                  <th><input disabled class="form-control" th:value="${field.maxLength}"></th>
+                  <th><input disabled class="form-control" th:value="${field.defaultValue}"></th>
+                  <th><input disabled class="form-control" th:value="${field.required} ? '是' : '否'"></th>
+                  <th><input disabled class="form-control" th:value="${field.visibility} ? '是' : '否'"></th>
+                </tr>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+      </row>
+
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- 页脚 -->
+  <footer th:insert="common/bottom :: footer"></footer>
+  <!-- Control Sidebar 右侧边栏 -->
+  <aside th:insert="common/right :: aside"></aside>
+  <!-- 右侧边栏的背景，必须紧接着control sidebar放这个  -->
+  <div th:insert="common/right :: aside2"></div>
+</div>
+<!-- ./wrapper -->
+<!-- Js 脚本 -->
+<div th:insert="common/html_js :: div_js"></div>
+<!-- iCheck 1.0.1 -->
+<script src="/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+<script>
+    //Flat red color scheme for iCheck
+    $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+        checkboxClass: 'icheckbox_flat-green',
+        radioClass   : 'iradio_flat-green'
+    })
+
+    var interrupted = false;//是否需要继续计算
+    var aimDateTime = new Date($(".remainingTime").attr('data-remaining-aimTime'));   //截止时间
+    var remainingTimeElement = $('.remainingTime');        //要显示剩余时间的标签
+    //将一位数字添加 0 变成两位
+    function addZeroIfSingle(n) {
+        return n >= 0 && n < 10 ? '0' + n : '' + n;
+    }
+    // 目标日期 - oldTime 的秒数
+    function sencondsIn(oldDate, aimDate){
+        var oldTime = oldDate.getTime();//当前日期时间戳
+        var aimTime = aimDate.getTime();//截止时间时间戳
+        return Math.floor((aimTime - oldTime) / 1000);//距离截止时间秒数
+    }
+    //现在已经花了多少时间 % 显示
+    function percentageFor(oldDate, aimDate){
+        var nowDate = new Date();//获取当前日期
+        if(sencondsIn(nowDate, aimDate) < 0)
+            return '100';
+        return Math.floor(sencondsIn(oldDate, nowDate) / sencondsIn(oldDate, aimDate) * 100);
+    }
+    function flushCost(){
+        var costTime = $('.costTime');        //要显示花费时间百分比的标签
+        var startDate = new Date(costTime.attr('data-cost-startTime'));
+        var aimDate = new Date(costTime.attr('data-cost-aimTime'));
+        costTime.html('已过' + percentageFor(startDate, aimDate) + '%');
+    }
+    flushCost();
+    setInterval(flushCost, 10000);
+    //显示 x 位时间, xx 天 xx 时 xx 分钟 xx秒
+    function formatTime(second, bit){
+        var day = Math.floor(second / 86400);   //剩余天数
+        second = second % 86400;
+        var hour = Math.floor(second / 3600);   //剩余小时
+        second %= 3600;
+        var minute = Math.floor(second / 60);   //剩余分钟
+        second %= 60;                           //剩余秒数
+        var count;                              //输出格式
+        count = 0;
+        var timeStr = '';
+        if((count < bit) && day > 0){
+            timeStr = timeStr + addZeroIfSingle(day) + ' 天 ';
+            count++;
+        }
+        if((count < bit) && hour > 0){
+            timeStr = timeStr + addZeroIfSingle(hour) + ' 小时 ';
+            count++;
+        }
+        if((count < bit) && minute > 0){
+            timeStr = timeStr + addZeroIfSingle(minute) + ' 分 ';
+            count++;
+        }
+        if((count < bit) && second > 0){
+            timeStr = timeStr + addZeroIfSingle(second) + ' 秒 ';
+        }
+        return timeStr;
+    }
+    function flushDate() {
+        if(interrupted)
+            return;
+        var nowDate = new Date();//获取当前日期
+        var second = sencondsIn(nowDate, aimDateTime);   //距离截止时间的秒数
+        var timeStr ;
+
+        if(second <= 0){
+            timeStr = "已截止";
+            interrupted = true; //停止继续计算，节省资源
+        }else{
+            timeStr = '剩 ' + formatTime(second, 1);  //1位主要日期
+        }
+        remainingTimeElement.html(timeStr);
+    }
+    flushDate();
+    setInterval(flushDate, 1000);
+</script>
+</body>
+</html>

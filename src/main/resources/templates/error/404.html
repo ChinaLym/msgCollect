@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/html_head :: head(~{::title},~{},~{})">
+  <title>智汇 | 404 找不到请求资源</title>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+
+    <!-- Main content -->
+      <div class="error-page">
+        <h2 class="headline text-yellow"> 404</h2>
+
+        <div class="error-content">
+          <h3><i class="fa fa-warning text-yellow"></i> 呀！页面找不到...</h3>
+          <p>
+            抱歉，您所访问的页面未能找到，但您可以点击这里<a href="/index.html">返回主页</a> 或者尝试搜索。
+          </p>
+
+          <form class="search-form">
+            <div class="input-group">
+              <input type="text" name="search" class="form-control" placeholder="搜索">
+
+              <div class="input-group-btn">
+                <button type="submit" name="submit" class="btn btn-warning btn-flat"><i class="fa fa-search"></i>
+                </button>
+              </div>
+            </div>
+            <!-- /.input-group -->
+          </form>
+        </div>
+        <!-- /.error-content -->
+      </div>
+      <!-- /.error-page -->
+
+
+    <!-- Js 脚本 -->
+    <div th:insert="common/html_js :: div_js"></div>
+</body>
+</html>
