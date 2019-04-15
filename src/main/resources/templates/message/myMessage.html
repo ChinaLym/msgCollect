@@ -33,7 +33,10 @@
               <h3 class="box-title"><span th:text="${messageType}"></span>
                 <small><span th:text="${#lists.size(messageList)}">3</span> 条未读</small></h3>
               <div class="box-tools pull-right">
-                <a href="javascript:void(0)">全部标记为已读 </a> | <a href="javascript:void(0)"> 清空所有消息</a>
+                <a href="javascript:void(0)">全部标记为已读 </a>
+                <div th:if="${not #lists.isEmpty(messageList)}">
+                  | <a href="javascript:void(0)"> 清空所有消息</a>
+                </div>
               </div>
               <!-- /.box-tools -->
             </div>
@@ -42,23 +45,20 @@
               <div class="table-responsive mailbox-messages">
                 <table class="table table-hover table-striped">
                   <tbody>
-                  <tr>
-                    <td><i class="fa fa-circle text-red"></i></td>
-                    <td class="mailbox-subject">标题</td>
-                    <td class="mailbox-name"><a href="#">内容</a></td>
-                    <td class="mailbox-attachment"></td>
-                    <td class="mailbox-date">5 mins ago</td>
-                    <td> <button type="button" class="btn btn-default btn-sm">
-                      <i class="fa fa-trash-o"></i>
-                    </button> </td>
-                  </tr>
-                  <tr>
-                    <td><i></i></td>
-                    <td class="mailbox-subject">消息标题</td>
-                    <td class="mailbox-name"><a href="#">内容</a></td>
-                    <td class="mailbox-attachment"></td>
-                    <td class="mailbox-date">5 mins ago</td>
-                    <td> <button type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button> </td>
+                    <tr th:if="${#lists.isEmpty(messageList)}">
+                      <td colspan="5" style="text-align:center">这里干干净净哟~</td>
+                    </tr>
+
+                  <tr th:each="message : ${messageList}">
+                    <td><i th:if="${not message.read}" class="fa fa-circle text-red"></i></td>
+                    <td class="mailbox-subject" th:text="${message.title}">标题</td>
+                    <td class="mailbox-name"><a href="#" th:text="${#strings.abbreviate(message.content,10)}">内容</a></td>
+                    <td class="mailbox-date" th:text="${#dates.format(message.createTime,'MM-dd HH:mm')}">5 mins ago</td>
+                    <td>
+                      <button type="button" class="btn btn-default btn-sm" th:id="${message.id}">
+                        <i class="fa fa-trash-o"></i>
+                      </button>
+                    </td>
                   </tr>
                   </tbody>
                 </table>
@@ -69,11 +69,11 @@
             <!-- /.box-body -->
             <div class="box-footer no-padding">
               <div class="mailbox-controls">
-                <!-- Check all button -->
-                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
-                </button>
-                <!-- /.btn-group -->
-                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
+                <a href="javascript:void(0)">全部标记为已读 </a>
+                <div th:if="${not #lists.isEmpty(messageList)}">
+                  | <a href="javascript:void(0)"> 清空所有消息</a>
+                </div>
+
                 <div class="pull-right">
                   1-50/200
                   <div class="btn-group">

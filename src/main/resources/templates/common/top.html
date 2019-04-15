@@ -40,14 +40,14 @@
             <!-- Menu toggle button -->
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <i class="fa fa-bell-o"></i>
-                <span class="label label-success" th:text="${session.unreadMessage}?${session.unreadMessage.num}:''"></span>
+                <span class="label label-success" th:text="${not #lists.isEmpty(session.unreadMessage)}? ${#lists.size(session.unreadMessage)}:''"></span>
             </a>
             <ul class="dropdown-menu">
-                <li class="header">您有 <font th:text="${session.unreadMessage}?${session.unreadMessage.num}:'0'"></font> 条未读信息</li>
+                <li class="header">您有 <font th:text="${session.unreadMessage}?${#lists.size(session.unreadMessage)}:'0'"></font> 条未读信息</li>
                 <li>
                     <!-- inner menu: contains the messages -->
                     <ul class="menu" th:remove="${session.unreadMessage}?'none':'all'">
-                        <li th:each="msg : ${session.unreadMessage.messages}"><!-- start message -->
+                        <li th:each="msg : ${session.unreadMessage}"><!-- start message -->
                             <a th:href="'/message/detail?msgid=' + ${msg.id}" >
                                 <div class="pull-left">
                                     <!-- 发送人的头像 Image -->
