@@ -11,7 +11,7 @@ import com.msgc.service.IUserService;
 import com.msgc.utils.JsonUtil;
 import com.msgc.utils.RandomHeadImageUtil;
 import com.msgc.utils.RegexCheckUtils;
-import com.msgc.utils.SpringUtil;
+import com.msgc.utils.WebUtil;
 import com.msgc.utils.csv.CsvUtilAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,14 +59,14 @@ public class UserController {
         } else {
             // 登录成功
 			//勾选了自动登录
-			if("on".equalsIgnoreCase(SpringUtil.getRequest().getParameter("autoLogin"))){
+			if("on".equalsIgnoreCase(WebUtil.getRequest().getParameter("autoLogin"))){
 				try{
 					UserCookie mapping = new UserCookie();
 					mapping.setCookie(UUID.randomUUID().toString().replace("-", ""));
 					mapping.setUserId(user.getId());
 					mapping.setExpirationDate(new Date(System.currentTimeMillis() + maxEffective));
 					userCookieService.save(mapping);
-					SpringUtil.setCookie("auto-login", mapping.getCookie(), maxEffectiveSecond);
+					WebUtil.setCookie("auto-login", mapping.getCookie(), maxEffectiveSecond);
 				}catch (Exception e){
 					//写数据库 cookieUserMapping 失败
 				}
@@ -74,9 +74,9 @@ public class UserController {
             HttpSession session = LoggedUserSessionContext.getSession(user.getId());
             if(session != null){
                 //使用之前登陆过的 id
-                SpringUtil.setCookie("JSESSIONID", session.getId(), 60 * 30);
+                WebUtil.setCookie("JSESSIONID", session.getId(), 60 * 30);
 			}else{
-				session = SpringUtil.getRequest().getSession();
+				session = WebUtil.getRequest().getSession();
 				session.setAttribute(SessionKey.USER, user);
 				LoggedUserSessionContext.putIfAbsent(user.getId(), session);
 			}
@@ -108,7 +108,7 @@ public class UserController {
 			return "/register";
 		} else {
 			// 注册成功
-			HttpSession session = SpringUtil.getRequest().getSession();
+			HttpSession session = WebUtil.getRequest().getSession();
 			session.setAttribute(SessionKey.USER, user);
 			LoggedUserSessionContext.putIfAbsent(user.getId(), session);
 			if(session.getAttribute(SessionKey.REDIRECT_URL) != null){
@@ -127,7 +127,7 @@ public class UserController {
 	 */
 	@GetMapping(value = "/logout.action")
 	public String logout(HttpSession session) {
-		SpringUtil.expireCookie("auto-login");
+		WebUtil.expireCookie("auto-login");
 		User user = (User)session.getAttribute(SessionKey.USER);
         LoggedUserSessionContext.remove(user.getId());
 		session.invalidate();
@@ -159,7 +159,7 @@ public class UserController {
 	@ResponseBody
 	@PostMapping(value = "/changepasswd.action")
     public String changePasswd() {
-		HttpServletRequest request = SpringUtil.getRequest();
+		HttpServletRequest request = WebUtil.getRequest();
 		User user = (User)request.getSession().getAttribute(SessionKey.USER);
 		if(user != null){
 			String oldPassword = request.getParameter("oldPassword");
@@ -177,7 +177,7 @@ public class UserController {
 
 	@PostMapping(value = "/updateProfile.action")
     public String updateProfile(User userParam) {
-		HttpSession session = SpringUtil.getRequest().getSession();
+		HttpSession session = WebUtil.getRequest().getSession();
 		User user = (User)session.getAttribute(SessionKey.USER);
 		if(user != null){
 			if(StringUtils.isNotBlank(userParam.getHeadImage())){
@@ -203,7 +203,7 @@ public class UserController {
 	@ResponseBody
 	@GetMapping(value = "/import")
     public String importUsers(){
-		HttpSession session = SpringUtil.getRequest().getSession();
+		HttpSession session = WebUtil.getRequest().getSession();
 		User user = (User)session.getAttribute(SessionKey.USER);
 		if(!user.getId().equals(1)){
 			throw new ResourceNotFoundException();
@@ -220,7 +220,7 @@ public class UserController {
 	@ResponseBody
 	@GetMapping(value = "/updateHeadImage")
     public String updateHeadImage(){
-		HttpSession session = SpringUtil.getRequest().getSession();
+		HttpSession session = WebUtil.getRequest().getSession();
 		User user = (User)session.getAttribute(SessionKey.USER);
 		if(!user.getId().equals(1)){
 			throw new ResourceNotFoundException();

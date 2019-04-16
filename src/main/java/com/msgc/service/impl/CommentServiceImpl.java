@@ -5,7 +5,7 @@ import com.msgc.entity.Comment;
 import com.msgc.entity.User;
 import com.msgc.repository.ICommentRepository;
 import com.msgc.service.ICommentService;
-import com.msgc.utils.SpringUtil;
+import com.msgc.utils.WebUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -77,7 +77,7 @@ public class CommentServiceImpl implements ICommentService{
      */
     @Override
     public void addComment(Integer tableId) throws RuntimeException{
-        HttpServletRequest request = SpringUtil.getRequest();
+        HttpServletRequest request = WebUtil.getRequest();
         HttpSession session = request.getSession();
         Integer userId = ((User)session.getAttribute(SessionKey.USER)).getId();
         String content = request.getParameter("commentContent");

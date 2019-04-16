@@ -37,7 +37,7 @@ public class FileTransportUtil {
         // 如果文件名存在，则进行下载
         if (file.exists()) {
             // 配置文件下载
-            HttpServletResponse response = SpringUtil.getResponse();
+            HttpServletResponse response = WebUtil.getResponse();
             response.setHeader("content-type", contentType);
             response.setContentType(contentType);
             // 下载文件能正常显示中文

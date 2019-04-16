@@ -19,7 +19,7 @@ import com.msgc.entity.Message;
 *   modify ------------ updateXXX
 *
 */
-public interface IMessageRepository extends JpaRepository<Message, Integer> {
+public interface IMessageRepository extends JpaRepository<Message, String> {
 
 
 }

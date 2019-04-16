@@ -5,13 +5,14 @@ import com.msgc.constant.enums.MessageTypeEnum;
 import com.msgc.entity.Message;
 import com.msgc.entity.User;
 import com.msgc.service.IMessageService;
-import com.msgc.utils.SpringUtil;
+import com.msgc.utils.WebUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -33,14 +34,14 @@ public class MessageController {
 	}
 
 	@GetMapping("/detail/{messageId}")
-	public String MessageDetailPage(@PathVariable("messageId") Integer messageId) {
+	public String MessageDetailPage(@PathVariable("messageId") String messageId) {
 		messageService.findById(messageId);
 		return "message/detail";
 	}
 
 	@GetMapping("/{typeCode}")
 	public String messagePage(@PathVariable Integer typeCode, Model model) {
-		HttpSession session = SpringUtil.getRequest().getSession();
+		HttpSession session = WebUtil.getRequest().getSession();
 		User user = (User)session.getAttribute(SessionKey.USER);
 		Message messageExample = new Message();
 		messageExample.setType(typeCode);
@@ -52,4 +53,11 @@ public class MessageController {
 		return "message/myMessage";
 	}
 
+	//查看 session 中是否有新消息
+	@RequestMapping("/ifNewMessage")
+	@ResponseBody
+	public Boolean ifNewMessage(){
+		HttpSession session = WebUtil.getRequest().getSession();
+		return (Boolean)session.getAttribute(SessionKey.NEW_MESSAGES_FLAG);
+	}
 }

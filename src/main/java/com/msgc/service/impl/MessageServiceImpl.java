@@ -1,13 +1,18 @@
 package com.msgc.service.impl;
 
+import com.msgc.constant.enums.MessageTypeEnum;
 import com.msgc.entity.Message;
+import com.msgc.notify.MessageQueue;
 import com.msgc.repository.IMessageRepository;
 import com.msgc.service.IMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+
 /**
 * Type: MessageServiceImpl
 * Description: 业务逻辑实现类
@@ -29,12 +34,12 @@ public class MessageServiceImpl implements IMessageService{
     }
     
     @Override
-    public Message findById(Integer id) {
+    public Message findById(String id) {
         return messageRepository.findById(id).orElse(null);
     }
-    
+
     @Override
-    public List<Message> findAllById(List<Integer> idList) {
+    public List<Message> findAllById(List<String> idList) {
         return messageRepository.findAllById(idList);
     }
     
@@ -49,12 +54,31 @@ public class MessageServiceImpl implements IMessageService{
     }
 
     @Override
-	public void deleteById(Integer id) {
+	public void deleteById(String id) {
 		messageRepository.deleteById(id);
 	}
     
     @Override
     public List<Message> save(List<Message> messageList) {
         return messageRepository.saveAll(messageList);
+    }
+
+    @Override
+    public Message createMessage(Message message) {
+        String title;
+        if(MessageTypeEnum.SYSTEM.getCode().equals(message.getType())){
+            title = MessageTypeEnum.SYSTEM.getName();
+        }else if(MessageTypeEnum.COMMENT.getCode().equals(message.getType())){
+            title = MessageTypeEnum.COMMENT.getName();
+        }else if(MessageTypeEnum.REPLY.getCode().equals(message.getType())) {
+            title = MessageTypeEnum.REPLY.getName();
+        }else title = "无标题";
+        message.setTitle(title);
+        message.setId(UUID.randomUUID().toString());
+        message.setRead(false);
+        message.setDelete(false);
+        message.setCreateTime(new Date());
+        MessageQueue.offer(message);
+        return message;
     }
 }

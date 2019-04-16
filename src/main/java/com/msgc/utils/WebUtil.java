@@ -12,25 +12,26 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
-* Type: SpringUtil
+* Type: WebUtil
 * Description: 获取spring中的bean，方便调试和检测
 * @author LYM
 * @date Dec 16, 2018
  */
 @Component
-public class SpringUtil implements ApplicationContextAware {
+public class WebUtil implements ApplicationContextAware {
 
-	private static Logger logger = LoggerFactory.getLogger(SpringUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(WebUtil.class);
 	private static ApplicationContext applicationContext;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		if(SpringUtil.applicationContext == null) {
-			SpringUtil.applicationContext = applicationContext;
+		if(WebUtil.applicationContext == null) {
+			WebUtil.applicationContext = applicationContext;
 		}
-		logger.info("ApplicationContext配置成功,applicationContext对象："+SpringUtil.applicationContext);
+		logger.info("ApplicationContext配置成功,applicationContext对象："+ WebUtil.applicationContext);
 	}
 
 	public static ApplicationContext getApplicationContext() {
@@ -38,7 +39,7 @@ public class SpringUtil implements ApplicationContextAware {
 	}
 
 	public static String getCookie(String cookieName){
-		HttpServletRequest request = SpringUtil.getRequest();
+		HttpServletRequest request = WebUtil.getRequest();
 		Cookie[] cookies = request.getCookies();
 		if(cookies != null){
 			for(Cookie cookie : cookies){
@@ -51,7 +52,7 @@ public class SpringUtil implements ApplicationContextAware {
 	}
 
 	public static void setCookie(String cookieName, String cookieValue, int maxSecond){
-		HttpServletResponse response = SpringUtil.getResponse();
+		HttpServletResponse response = WebUtil.getResponse();
 		Cookie cookie = new Cookie(cookieName, cookieValue);
 		cookie.setMaxAge(maxSecond);//有效期单位为秒
 		cookie.setPath("/");
@@ -59,7 +60,7 @@ public class SpringUtil implements ApplicationContextAware {
 	}
 
 	public static void expireCookie(String cookieName){
-		HttpServletResponse response = SpringUtil.getResponse();
+		HttpServletResponse response = WebUtil.getResponse();
 		Cookie cookie = new Cookie(cookieName, "");
 		cookie.setMaxAge(0);//有效期单位为秒
 		cookie.setPath("/");
@@ -73,6 +74,19 @@ public class SpringUtil implements ApplicationContextAware {
 	public static HttpServletResponse getResponse(){
 		return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
 	}
+
+	public static HttpSession getSession(){
+		return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession();
+	}
+
+	public static Object getSessionKey(String sessionKeyName){
+		return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+				.getRequest().getSession().getAttribute(sessionKeyName);
+	}
+
+
+
+
 
 	/**
 	 * 返回访问服务器的路径如：

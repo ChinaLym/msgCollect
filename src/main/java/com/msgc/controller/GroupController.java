@@ -10,7 +10,7 @@ import com.msgc.service.IGroupToUserService;
 import com.msgc.service.IUserService;
 import com.msgc.utils.JsonUtil;
 import com.msgc.utils.RandomHeadImageUtil;
-import com.msgc.utils.SpringUtil;
+import com.msgc.utils.WebUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +47,7 @@ public class GroupController {
 
 	@GetMapping(value = {"", "/my"})
     public String myGroupPage(Model model){
-		HttpSession session = SpringUtil.getRequest().getSession();
+		HttpSession session = WebUtil.getRequest().getSession();
 		User user = (User)session.getAttribute(SessionKey.USER);
 		List<Group> myGroupList = groupService.findByMasterId(user.getId());
 		model.addAttribute("myGroupList", myGroupList);
@@ -67,7 +67,7 @@ public class GroupController {
 	@Transactional
 	@PostMapping(value = {"/new.action"})
     public String createNewGroup(Model model){
-		HttpServletRequest request = SpringUtil.getRequest();
+		HttpServletRequest request = WebUtil.getRequest();
 		User user = (User)request.getSession().getAttribute(SessionKey.USER);
 		Group group = new Group();
 		group.setName(request.getParameter("newGroupName"));
@@ -84,7 +84,7 @@ public class GroupController {
 	@PostMapping(value = {"/join.action/{groupId}"})
 	public String joinGroup(@PathVariable Integer groupId){
 		Group group = groupService.findById(groupId);
-		HttpServletRequest request = SpringUtil.getRequest();
+		HttpServletRequest request = WebUtil.getRequest();
 		HttpSession session = request.getSession();
 		User user = (User)session.getAttribute(SessionKey.USER);
 		groupToUserService.newRelationShip(user, group);

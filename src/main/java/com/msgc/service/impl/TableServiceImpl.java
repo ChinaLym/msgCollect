@@ -15,7 +15,7 @@ import com.msgc.service.*;
 import com.msgc.utils.FileTransportUtil;
 import com.msgc.utils.FileUtil;
 import com.msgc.utils.JsonUtil;
-import com.msgc.utils.SpringUtil;
+import com.msgc.utils.WebUtil;
 import com.msgc.utils.excel.ExcelUtilAdapter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,7 +102,7 @@ public class TableServiceImpl implements ITableService{
     //TODO
     @Override
     public String export() {
-        HttpServletRequest request = SpringUtil.getRequest();
+        HttpServletRequest request = WebUtil.getRequest();
         HttpSession session = request.getSession();
         User user = (User)session.getAttribute(SessionKey.USER);
         if(user != null){
@@ -274,7 +274,7 @@ public class TableServiceImpl implements ITableService{
 
     @Override
     public void addLikeTable(Integer tableId) {
-        HttpServletRequest request = SpringUtil.getRequest();
+        HttpServletRequest request = WebUtil.getRequest();
         HttpSession session = request.getSession();
         User user =(User)session.getAttribute(SessionKey.USER);
         UnfilledRecord record = new UnfilledRecord();

@@ -11,15 +11,17 @@ public interface IMessageService {
 
     Message save(Message message);
 
-    Message findById(Integer id);
+    Message findById(String id);
     
-    List<Message> findAllById(List<Integer> idList);
+    List<Message> findAllById(List<String> idList);
     
     List<Message> findAll(Message messageExample);
     
     List<Message> findAll();
     
-    void deleteById(Integer id);
+    void deleteById(String id);
     
     List<Message> save(List<Message> messageList);
+
+    Message createMessage(Message message);
 }

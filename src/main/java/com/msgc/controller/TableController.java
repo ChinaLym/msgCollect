@@ -200,7 +200,7 @@ public class TableController {
 
 	//接收页面传来的 table 对象 公共部分，使用需要tryCatch
 	private Table reciveTableFromFront() throws ParseException {
-        HttpServletRequest request = SpringUtil.getRequest();
+        HttpServletRequest request = WebUtil.getRequest();
         Table table = new Table();
         Date nowDateTime = new Date();
         //判断是否是修改
@@ -240,7 +240,7 @@ public class TableController {
 
     //接收页面传来的 field 对象 公共部分，使用需要tryCatch
     private List<Field> reciveFieldsFromFront(int tableId){
-        HttpServletRequest request = SpringUtil.getRequest();
+        HttpServletRequest request = WebUtil.getRequest();
         List<Field> fieldList = new ArrayList<>();
         String[] indexArray = request.getParameter("table-item-index-array").split("-");
         Field field;
@@ -354,7 +354,7 @@ public class TableController {
     @PostMapping("/share/commit.action")
     @Transactional(rollbackFor = Exception.class)
 	public String commitTable(@RequestParam(name = "file", required = false)MultipartFile[] files, Model model){
-        HttpServletRequest request = SpringUtil.getRequest();
+        HttpServletRequest request = WebUtil.getRequest();
         boolean isReFill = Boolean.valueOf(request.getParameter("isReFill"));
         int tid = Integer.parseInt(String.valueOf(request.getParameter("table_id")));
         Table table = tableService.findById(tid);
@@ -522,7 +522,7 @@ public class TableController {
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/new/byUpload.action")
     public String newByUpload(MultipartFile file, Model model){
-        HttpServletRequest request = SpringUtil.getRequest();
+        HttpServletRequest request = WebUtil.getRequest();
         StrategyParam fileAndStrategyDTO = new StrategyParam(request);
         String fileName;
         Table table = new Table();
@@ -534,7 +534,7 @@ public class TableController {
             fileName = FileTransportUtil.uploadFile(file);
             ExcelUtilAdapter.read(fileName, table, fieldList, strategy);
 
-            table.setOwner(((User) SpringUtil.getRequest().getSession().getAttribute(SessionKey.USER)).getId());
+            table.setOwner(((User) WebUtil.getRequest().getSession().getAttribute(SessionKey.USER)).getId());
             Date nowDate = new Date();
             table.setStartTime(nowDate);
             table.setEndTime(new Date(nowDate.getTime() + DEAFILT_END_TIME));
@@ -577,8 +577,8 @@ public class TableController {
     @ResponseBody
     @GetMapping("/download")
     public String download(){
-        HttpServletRequest request = SpringUtil.getRequest();
-        HttpSession session = SpringUtil.getRequest().getSession();
+        HttpServletRequest request = WebUtil.getRequest();
+        HttpSession session = WebUtil.getRequest().getSession();
         User user = (User)session.getAttribute(SessionKey.USER);
         if(user != null){
             int tid = Integer.parseInt(request.getParameter("t"));
@@ -660,7 +660,7 @@ public class TableController {
      */
     @GetMapping("/my/detail")
     public String tableDataPage(Model model){
-        HttpServletRequest request = SpringUtil.getRequest();
+        HttpServletRequest request = WebUtil.getRequest();
         HttpSession session = request.getSession();
         User user = (User)session.getAttribute(SessionKey.USER);
         if(user != null){
@@ -689,7 +689,7 @@ public class TableController {
         if(table == null){
             throw new ResourceNotFoundException();
         }
-        HttpSession session = SpringUtil.getRequest().getSession();
+        HttpSession session = WebUtil.getRequest().getSession();
         User user = (User)session.getAttribute(SessionKey.USER);
         //判断是否是表主人
         boolean isOwner = false;
@@ -713,7 +713,7 @@ public class TableController {
 
     //根据收集表 id 返回其填写地址 URL
     public static String getShareCollectURL(int tableId){
-        String serverURL = SpringUtil.getServerURL();
+        String serverURL = WebUtil.getServerURL();
         return  serverURL + "/collect/share/start?t=" + tableId;
     }
 

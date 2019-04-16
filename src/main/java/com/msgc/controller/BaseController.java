@@ -9,7 +9,7 @@ import com.msgc.service.ITableService;
 import com.msgc.service.IUnfilledRecordService;
 import com.msgc.service.IUserCookieService;
 import com.msgc.service.IUserService;
-import com.msgc.utils.SpringUtil;
+import com.msgc.utils.WebUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -57,7 +57,7 @@ public class BaseController {
     public String loginPage(HttpServletRequest request, HttpSession session) {
         if (StringUtils.isNotEmpty(request.getParameter("redirectUrl")))
             session.setAttribute(SessionKey.REDIRECT_URL, request.getParameter("redirectUrl"));
-        String autoLoginCookie = SpringUtil.getCookie("auto-login");
+        String autoLoginCookie = WebUtil.getCookie("auto-login");
         if(autoLoginCookie != null){
             UserCookie cuMapping = userCookieService.findByCookie(autoLoginCookie);
             if(cuMapping != null){

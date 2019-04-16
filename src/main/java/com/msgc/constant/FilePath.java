@@ -1,7 +1,7 @@
 package com.msgc.constant;
 
 import com.msgc.entity.Field;
-import com.msgc.utils.SpringUtil;
+import com.msgc.utils.WebUtil;
 
 /**
  * 统一管理上传下载文件目录
@@ -93,7 +93,7 @@ public class FilePath {
     public static String generaterDownloadURL(int tableId, Field field, String fileName){
         if(field == null)
             return null;
-        return SpringUtil.getServerURL() +  "/api/v1/download/table/" +
+        return WebUtil.getServerURL() +  "/api/v1/download/table/" +
         tableId + "/field/" + field.getNum() + FILE_NAME_CONNECT + field.getName() + "/" + fileName;
     }
 }
