@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IFieldService {
 
-    List<Field> save(List fieldList);
+    List<Field> save(List<Field> fieldList);
 
     List<Field> findAll(Field example);
 

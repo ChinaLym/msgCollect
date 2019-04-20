@@ -13,7 +13,7 @@
     <nav class="navbar navbar-static-top">
       <div class="container">
         <div class="navbar-header">
-          <a href="/index.html" class="navbar-brand"><b>智汇</b>信息</a>
+          <a href="/index" class="navbar-brand"><b>智汇</b>信息</a>
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
             <i class="fa fa-bars"></i>
           </button>
@@ -62,7 +62,7 @@
         <div class="box">
           <div class="box-header">
             <h3 class="box-title">表数据</h3>
-            <div class=" pull-right">
+            <div class=" pull-right" th:if="${table.owner eq session.user.id}">
               <a th:href="'/collect/export?t=' + ${table.id}">
                 <button type="button" class="btn btn-sm btn-success" th:remove="${'编辑中' == table.state ? 'all' : 'none'}">
                   <i class="glyphicon glyphicon-export"> </i> 导出
@@ -114,30 +114,6 @@
             <span class="pull-right text-muted"><span >1</span> 赞 - <span th:text="${#lists.size(commentList)}"></span> 评论</span>
           </div>
           <!-- /.box-body -->
-
-          <!-- 评论 -->
-          <div class="box-footer box-comments">
-
-            <div class="box-comment" th:each="comment : ${commentList}">
-              <!-- User image -->
-              <img class="img-circle img-sm" th:src="${comment.userHeadImage}" th:alt="${comment.userName}" >
-
-              <div class="comment-text">
-                <span class="username">
-                  <span th:text="${comment.userName}">张三</span>
-                  <span class="text-muted pull-right" th:text="${#dates.format(comment.createTime, 'MM-dd HH:mm')}"> 10-16 13:14</span>
-                </span>
-                <span th:text="${comment.content}">我是评论内容</span>
-                <br>
-                <a href="javascript:void(0)">赞 ( <span >0</span> ) </a>
-                <a href="javascript:void(0)">回复 ( <span th:text="${#lists.isEmpty(comment.replyList) ? '0' : #lists.size(comment.replyList)}">0</span> ) </a>
-                <a href="javascript:void(0)" th:if="${comment.userId == session.user.id}">删除</a>
-              </div>
-              <!-- /.comment-text -->
-            </div>
-
-          </div>
-          <!-- /.box-footer 评论结束 -->
           <div class="box-footer">
             <form th:action="'/comment/table/'+ ${table.id}" method="post" name="commentForm">
               <input hidden="hidden" name="aimCommentId">
@@ -145,8 +121,8 @@
               <!-- .img-push is used to add margin to elements next to floating images -->
               <div class="input-group margin img-push">
                 <input type="text" class="form-control input-sm"  placeholder="回车可以评论提问哟~"
-                       name="commentContent"
-                       onkeydown="if(event.keyCode=='13') commentForm.submit.click();">
+                       name="commentContent" id="commentContent"
+                       onkeydown="if(event.keyCode=='13') commentForm.submit.click();else if(event.keyCode=='8')resetContetnt();">
                 <span class="input-group-btn">
                       <button class="btn btn-info btn-flat" type="submit" id="commentBtn" name="submit">发送</button>
                     </span>
@@ -154,6 +130,54 @@
             </form>
           </div>
           <!-- /.box-footer -->
+          <!-- 评论 -->
+          <div class="box-footer box-comments">
+
+            <div class="box-comment" th:each="comment : ${commentList}" th:id="'comment-' + ${comment.id}">
+              <!-- User image -->
+              <img class="img-circle img-sm" th:src="${comment.userHeadImage}" th:alt="${comment.userName}">
+
+              <div class="comment-text">
+                <span class="username">
+                  <span th:text="${comment.userName}">张三</span>
+                  <span class="text-muted pull-right" th:text="${#dates.format(comment.createTime, 'MM-dd HH:mm')}"> 10-16 13:14</span>
+                </span>
+                <span th:text="${comment.content}">我是张三的评论内容</span>
+                <br>
+                <!--<a href="javascript:void(0)">赞 ( <span >0</span> ) </a>-->
+                <a th:onclick="'replyComment(' + ${comment.id} + ')'">
+                  回复 (
+                  <span th:text="${#lists.isEmpty(comment.replyList) ? '0' : #lists.size(comment.replyList)}">0</span>
+                  )
+                </a>
+                <a th:onclick="'deleteComentById(' + ${comment.id} + ')'" th:if="${table.owner eq session.user.id or comment.userId eq session.user.id}">删除</a>
+              </div>
+                <!-- 回复 -->
+                <div class="box-comment" style="margin-left:30px" th:each="reply : ${comment.replyList}" th:id="'comment-' + ${reply.id}">
+                    <!-- User image -->
+                    <img class="img-circle img-sm" th:src="${reply.userHeadImage}" th:alt="${reply.userName}">
+
+                    <div class="comment-text">
+                <span class="username">
+                  <span th:text="${reply.userName}">李四</span>
+                  <span class="text-muted pull-right" th:text="${#dates.format(reply.createTime, 'MM-dd HH:mm')}"> 10-16 13:14</span>
+                </span>
+                        <span  style="color: #999999;" oncopy="event.returnValue=false;" ondragstart="window.event.returnValue=false" oncontextmenu="window.event.returnValue=false" onselectstart="event.returnValue=false">
+                            回复 <span th:text="${comment.userName}">张三</span> :
+                        </span>
+                        <span th:text="${reply.content}">李四回复张三的内容</span>
+                        <br>
+                        <!--<a href="javascript:void(0)">赞 ( <span >0</span> ) </a>-->
+                      <!--<a th:onclick="'replyComment(' + ${reply.id} + ')'">回复</a>-->
+                        <a th:onclick="'deleteComentById(' + ${reply.id} + ')'" th:if="${table.owner eq session.user.id or reply.userId eq session.user.id}">删除</a>
+                    </div>
+                    <!-- /.comment-text -->
+                </div>
+              <!-- /.comment-text -->
+            </div>
+
+          </div>
+          <!-- /.box-footer 评论结束 -->
 
         </div>
         <!-- /.box -->
@@ -179,6 +203,40 @@
 <script src="/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <!-- page script -->
 <script>
+    function replyComment(comentId){
+        $("#commentContent").val('[reply]' + comentId + '[/reply]');
+        $("#commentContent").focus();
+        $("html,body").animate({scrollTop: $("#commentContent").offsetTop}, 1000);
+    }
+    String.prototype.endWith=function(endStr){
+        var d=this.length-endStr.length;
+        return (d>=0&&this.lastIndexOf(endStr)==d)
+    }
+    function resetContetnt(){
+        var content = $("#commentContent").val('');
+        if(content.indexOf('[reply]') && content.endWith('[/reply'))
+          $("#commentContent").val('');
+    }
+  function deleteComentById(comentId){
+      var targetUrl = '/comment/delete/' + comentId;
+      $.ajax({
+          type:'post',
+          url:targetUrl,
+          dataType:'json',
+          success:function(data){
+              if(data.message == "success"){
+                  $('#comment-' + comentId).remove();
+                  alert("删除成功");
+              }else{
+                  alert("操作失败" + data.detail);
+              }
+          },
+          error:function(){
+              alert("错误");
+          }
+      })
+  }
+
     $(function () {
         $('#example1').DataTable({
             scrollX:true,

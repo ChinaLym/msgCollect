@@ -20,5 +20,5 @@ public interface ICommentService {
     
     List<Comment> save(List<Comment> commentList);
 
-    void addComment(Integer tableId);
+    Comment addComment(Integer tableId);
 }

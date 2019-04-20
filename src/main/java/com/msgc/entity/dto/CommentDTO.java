@@ -19,11 +19,7 @@ public class CommentDTO {
 
 	private String userHeadImage;
 
-	//如果本条是回复，则该字段表示目标评论发表人的昵称，这里限制不能回复他人的回复，不使用该字段
-	//private String aimName;
-
-	//回复这条评论的评论，这里使用Comment来限制不能回复他人的回复
-	private List<Comment> replyList;
+	private List<CommentDTO> replyList;
 
 	public CommentDTO() {
 	}
@@ -83,11 +79,11 @@ public class CommentDTO {
 		this.userHeadImage = userHeadImage;
 	}
 
-	public List<Comment> getReplyList() {
+	public List<CommentDTO> getReplyList() {
 		return replyList;
 	}
 
-	public void setReplyList(List<Comment> replyList) {
+	public void setReplyList(List<CommentDTO> replyList) {
 		this.replyList = replyList;
 	}
 }

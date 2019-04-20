@@ -38,4 +38,6 @@ public interface ITableService {
     List<TableDTO> constructTableDTO(List<Table> tableList);
 
     void addLikeTable(Integer tableId);
+
+    void save(List<Table> endTableList);
 }

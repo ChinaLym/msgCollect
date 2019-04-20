@@ -55,7 +55,13 @@
 
                 <tbody>
                 <tr th:each="table, iterator : ${tableList}">
-                  <td th:text="${table.name}">15计科生源统计表</td>
+                  <td>
+                    <a th:href="'/collect/data/' + ${table.id}">
+                      <b>
+                        <span th:id="'table-name-' + ${table.id}" th:text="${table.name}">15计科生源统计表</span>
+                      </b>
+                    </a>
+                  </td>
                   <td th:text="${#dates.format(recordList[iterator.index].update_time,'yyyy-MM-dd HH:mm')}">2019-3-15</td>
                   <td th:text="${ipList[iterator.index]}">192.168.1.1</td>
                   <td th:text="${recordList[iterator.index].browser}">192.168.1.1</td>

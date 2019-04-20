@@ -2,6 +2,9 @@ package com.msgc.repository;
 
 import com.msgc.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,4 +27,9 @@ import java.util.List;
 public interface ICommentRepository extends JpaRepository<Comment, Integer> {
 
     List<Comment> findAllByTableIdAndEffective(Integer id, boolean isEffective);
+
+    @Transactional
+    @Modifying
+    @Query("update Comment set effective=false where id=?1 and effective=true")
+    void setDeleteStateById(Integer id);
 }

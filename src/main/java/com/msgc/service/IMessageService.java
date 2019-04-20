@@ -1,6 +1,8 @@
 package com.msgc.service;
 
+import com.msgc.constant.enums.MessageTypeEnum;
 import com.msgc.entity.Message;
+import com.msgc.entity.Table;
 
 import java.util.List;
 
@@ -23,5 +25,18 @@ public interface IMessageService {
     
     List<Message> save(List<Message> messageList);
 
-    Message createMessage(Message message);
+    void read(String messageId);
+
+    /**
+     * 根据消息类型，收集表信息，自动发送异步消息
+     * @param messageType 消息类型
+     * @param table         收集表信息
+     */
+    void sendMessage(MessageTypeEnum messageType, Table table);
+
+    void readAll(Integer typeCode);
+
+    void deleteAllByType(Integer typeCode);
+
+    List<Message> findUnreadByReceiverAndLimit(Integer receiver, int limitNum);
 }

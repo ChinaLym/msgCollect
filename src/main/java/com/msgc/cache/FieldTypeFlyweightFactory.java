@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @ClassName:  TabletatusEnum
+ * @ClassName:  FieldTypeFlyweightFactory
  * @Description:
- *      收集表字段的类型
+ *      缓存所有字段类型
  * @Author:         LYM
  * @CreateDate:     2019/2/26 16:59
 */
@@ -22,17 +22,18 @@ public class FieldTypeFlyweightFactory {
 
 	private static FieldTypeFlyweightFactory instance;
 
-	private volatile Map<String, FieldType> cache = new HashMap();
-
-	private FieldTypeFlyweightFactory(){}
+	private volatile Map<String, FieldType> cache = new HashMap<>();
 
 	@Autowired
-	IFieldTypeService fieldTypeService;
+	private FieldTypeFlyweightFactory(IFieldTypeService fieldTypeService){
+		this.fieldTypeService = fieldTypeService;
+	}
+
+	private final IFieldTypeService fieldTypeService;
 
 	@PostConstruct
 	public void initFieldTypeService() {
 		instance = this;
-		instance.fieldTypeService = this.fieldTypeService;
 	}
 
 
@@ -42,7 +43,7 @@ public class FieldTypeFlyweightFactory {
 
 	public FieldType getFlyweight(String key){
 		if(cache.size() == 0){
-			synchronized (cache){
+			synchronized (fieldTypeService){
 				if(cache.size() == 0){
 					List<FieldType> allType = fieldTypeService.findAll();
 					allType.forEach(

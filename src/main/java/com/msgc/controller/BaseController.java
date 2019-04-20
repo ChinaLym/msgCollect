@@ -2,13 +2,11 @@ package com.msgc.controller;
 
 import com.msgc.config.WebMvcConfig;
 import com.msgc.constant.SessionKey;
+import com.msgc.constant.enums.MessageTypeEnum;
 import com.msgc.constant.enums.TableStatusEnum;
 import com.msgc.entity.*;
 import com.msgc.entity.dto.TableDTO;
-import com.msgc.service.ITableService;
-import com.msgc.service.IUnfilledRecordService;
-import com.msgc.service.IUserCookieService;
-import com.msgc.service.IUserService;
+import com.msgc.service.*;
 import com.msgc.utils.WebUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +36,15 @@ public class BaseController {
     private final IUserCookieService userCookieService;
     private final ITableService tableService;
     private final IUnfilledRecordService unfilledRecordService;
+    private final IMessageService messageService;
 
     @Autowired
-    public BaseController(IUserService userService, IUserCookieService userCookieService, ITableService tableService, IUnfilledRecordService unfilledRecordService) {
+    public BaseController(IUserService userService, IUserCookieService userCookieService, ITableService tableService, IUnfilledRecordService unfilledRecordService, IMessageService messageService) {
         this.userService = userService;
         this.userCookieService = userCookieService;
         this.tableService = tableService;
         this.unfilledRecordService = unfilledRecordService;
+        this.messageService = messageService;
     }
 
 
@@ -54,31 +54,35 @@ public class BaseController {
     }
 
     @GetMapping("/login")
-    public String loginPage(HttpServletRequest request, HttpSession session) {
+    public String loginPage(HttpServletRequest request, HttpSession httpSession) {
         if (StringUtils.isNotEmpty(request.getParameter("redirectUrl")))
-            session.setAttribute(SessionKey.REDIRECT_URL, request.getParameter("redirectUrl"));
+            httpSession.setAttribute(SessionKey.REDIRECT_URL, request.getParameter("redirectUrl"));
         String autoLoginCookie = WebUtil.getCookie("auto-login");
+        // 有自动登录的 cookie
         if(autoLoginCookie != null){
             UserCookie cuMapping = userCookieService.findByCookie(autoLoginCookie);
             if(cuMapping != null){
                 int userId = cuMapping.getUserId();
                 long nowTime = System.currentTimeMillis();
+                // cookie 有效
                 if(nowTime < cuMapping.getExpirationDate().getTime()){
                     User u = userService.findById(userId);
                     if(u != null){
-                        session.setAttribute(SessionKey.USER, u);
-                        if(session.getAttribute(SessionKey.REDIRECT_URL) != null){
-                            String redirect = "redirect:" + String.valueOf(session.getAttribute(SessionKey.REDIRECT_URL));
+                        HttpSession session = WebUtil.setSessionUser(u);
+                        if (StringUtils.isNotEmpty(request.getParameter("redirectUrl"))){
+                            String redirect = "redirect:" + request.getParameter("redirectUrl");
                             session.removeAttribute(SessionKey.REDIRECT_URL);
                             return redirect;
                         }
                         return "redirect:/index";
                     }
                 }else {
+                    // 自动登录凭证 过期，从数据库删除
                     userCookieService.deleteByCookie(autoLoginCookie);
                 }
             }
         }
+        // 没有自动登录成功，需要跳转到登录页面
         return "login";
     }
 
@@ -91,19 +95,17 @@ public class BaseController {
 
     @GetMapping(value = {"/index", "/main"})
     public String indexPage(HttpSession session, Model model) {
-
-        //TODO 查询未读消息
-        Message unMsg = new Message();
-        List<Message> unReadMessageList = new ArrayList<>();
-
         User user = (User)session.getAttribute(SessionKey.USER);
-        //找出所有待填写的收集表
+        // 查询未读消息
+        List<Message> unReadMessageList = messageService.findUnreadByReceiverAndLimit(user.getId(), 5);
+
+        // 找出所有待填写的收集表
         List<UnfilledRecord> recordList = unfilledRecordService.findAllByUserId(user.getId());
         List<Integer> unfilledTableIdList = recordList.stream()
                 .map(UnfilledRecord::getTableId)
                 .collect(Collectors.toList());
         List<Table> unfilledTableList = tableService.findAllById(unfilledTableIdList);
-        //从收藏中移除不可填写的表记录（状态为已经截止,或者删除）
+        // 从收藏中移除不可填写的表记录（状态为已经截止,或者删除）
         List<Integer> inAccessibleTableIdList = new LinkedList<>();
         List<Table> accessibleUnfilledTableList = new LinkedList<>();
         unfilledTableList.forEach(table -> {
@@ -114,13 +116,33 @@ public class BaseController {
             }
         });
         unfilledRecordService.deleteByTableIds(inAccessibleTableIdList);
-        List<TableDTO> resultList = tableService.constructTableDTO(accessibleUnfilledTableList);
-        //近期收集
+        List<TableDTO> unfilledTableDTOList = tableService.constructTableDTO(accessibleUnfilledTableList);
+        // 近期收集
+        Table tableExample = new Table();
+        tableExample.setOwner(user.getId());
+        tableExample.setState(TableStatusEnum.COLLECTING.getValue());
+        List<Table> tableList = tableService.findAllByExample(tableExample);
         List<Table> recentCollectList = new LinkedList<>();
-
+        //将已超出截止时间，但状态未变更的表状态变更为已截止
+        long nowTime = System.currentTimeMillis();
+        List<Table> endTableList = new LinkedList<>();
+        tableList.forEach(table -> {
+            if(table.getEndTime().getTime() < nowTime){
+                table.setState(TableStatusEnum.END.getValue());
+                endTableList.add(table);
+                //发送消息提醒用户表截止
+                messageService.sendMessage(MessageTypeEnum.TABLE_END, table);
+            }else {
+                recentCollectList.add(table);
+            }
+        });
+        if (endTableList.size() > 0){
+            //回写数据库，保存已截止状态
+            tableService.save(endTableList);
+        }
         session.setAttribute(SessionKey.UNREAD_MESSAGE, unReadMessageList);
         session.setAttribute(SessionKey.RECENT_COLLECT, recentCollectList);
-        model.addAttribute("tableList", resultList);
+        model.addAttribute("tableList", unfilledTableDTOList);
         return "main";
     }
 
@@ -132,8 +154,8 @@ public class BaseController {
     public String downloadResource(@PathVariable("tableId") String tableId,
                                    @PathVariable("fieldIdAndName") String fieldIdAndName,
                                    @PathVariable("fileName") String fileName){
-        //验证表存在************************
-        //验证身份是否是表的拥有者 先 session 后 cookie
+        //TODO 验证表存在
+        //验证身份是否是表的拥有者 先 session 后 cookie ，都不通过则需要登录
         return "forward:" + WebMvcConfig.VIRTUL_DIR +
                 "upload/" + tableId + "/" + fieldIdAndName + "/" + fileName;
         //返回 permission deny
@@ -152,7 +174,7 @@ public class BaseController {
             List<Table> tableList = tableService.searchByNameAndState(tableName, TableStatusEnum.COLLECTING);
             tableDTOList = tableService.constructTableDTO(tableList);
         }
-        model.addAttribute("tableList",tableDTOList);
+        model.addAttribute("tableList", tableDTOList);
         return "collect/searchResult";
     }
 }

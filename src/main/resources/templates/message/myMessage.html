@@ -31,11 +31,11 @@
           <div class="box box-primary">
             <div class="box-header with-border">
               <h3 class="box-title"><span th:text="${messageType}"></span>
-                <small><span th:text="${#lists.size(messageList)}">3</span> 条未读</small></h3>
+                <small><span th:text="${#lists.size(messageList)}">3</span> 条消息</small></h3>
               <div class="box-tools pull-right">
-                <a href="javascript:void(0)">全部标记为已读 </a>
+                <a onclick="readAllMessageByType()" name="readAll">全部标记为已读 </a>
                 <div th:if="${not #lists.isEmpty(messageList)}">
-                  | <a href="javascript:void(0)"> 清空所有消息</a>
+                  | <a onclick="deleteAllMessageByType()" name="deleteAll"> 清空所有消息</a>
                 </div>
               </div>
               <!-- /.box-tools -->
@@ -48,17 +48,20 @@
                     <tr th:if="${#lists.isEmpty(messageList)}">
                       <td colspan="5" style="text-align:center">这里干干净净哟~</td>
                     </tr>
-
-                  <tr th:each="message : ${messageList}">
-                    <td><i th:if="${not message.read}" class="fa fa-circle text-red"></i></td>
-                    <td class="mailbox-subject" th:text="${message.title}">标题</td>
-                    <td class="mailbox-name"><a href="#" th:text="${#strings.abbreviate(message.content,10)}">内容</a></td>
-                    <td class="mailbox-date" th:text="${#dates.format(message.createTime,'MM-dd HH:mm')}">5 mins ago</td>
-                    <td>
-                      <button type="button" class="btn btn-default btn-sm" th:id="${message.id}">
-                        <i class="fa fa-trash-o"></i>
-                      </button>
-                    </td>
+                  <tr th:each="message : ${messageList}" th:id="'message-' + ${message.id}" th:onclick="readMessageById([[${message.id}]])">
+                      <td width="3%"><i th:if="${not message.read}" class="fa fa-circle text-red" th:id="'messageReadState-' + ${message.id}" name="unreadMark"></i></td>
+                      <!--<td width="30%" class="mailbox-subject">
+                        <span th:text="${message.title}">标题</span>
+                      </td>-->
+                      <td width="50%" class="mailbox-name">
+                          <a th:href="${message.href}" th:text="${#strings.abbreviate(message.content,20)}">内容</a>
+                      </td>
+                      <td width="15%"class="mailbox-date" th:text="${#dates.format(message.createTime,'MM-dd HH:mm')}">5 mins ago</td>
+                      <td width="3%">
+                        <button type="button" class="btn btn-default btn-sm" th:onclick="deleteMessageById([[${message.id}]])">
+                          <i class="fa fa-trash-o"></i>
+                        </button>
+                      </td>
                   </tr>
                   </tbody>
                 </table>
@@ -69,19 +72,18 @@
             <!-- /.box-body -->
             <div class="box-footer no-padding">
               <div class="mailbox-controls">
-                <a href="javascript:void(0)">全部标记为已读 </a>
+                <a onclick="readAllMessageByType()" name="readAll">全部标记为已读 </a>
                 <div th:if="${not #lists.isEmpty(messageList)}">
-                  | <a href="javascript:void(0)"> 清空所有消息</a>
+                  | <a onclick="deleteAllMessageByType()" name="deleteAll"> 清空所有消息</a>
                 </div>
 
-                <div class="pull-right">
+                <!--<div class="pull-right">
                   1-50/200
                   <div class="btn-group">
                     <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
                     <button type="button" class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
                   </div>
-                  <!-- /.btn-group -->
-                </div>
+                </div>-->
                 <!-- /.pull-right -->
               </div>
             </div>
@@ -108,26 +110,75 @@
 <!-- Js 脚本 -->
 <div th:insert="common/html_js :: div_js"></div>
 <script>
-    //星星
-    $(".mailbox-star").click(function (e) {
-        e.preventDefault();
-        //detect type
-        var $this = $(this).find("a > i");
-        var glyph = $this.hasClass("glyphicon");
-        var fa = $this.hasClass("fa");
+      if($('i[name="unreadMark"]').length == 0)
+          $('a[name="readAll"]').remove();
 
-        //Switch states
-        if (glyph) {
-            $this.toggleClass("glyphicon-star");
-            $this.toggleClass("glyphicon-star-empty");
-        }
+      var messageTypeCode = window.location.pathname.charAt(window.location.pathname.length - 1);
 
-        if (fa) {
-            $this.toggleClass("fa-star");
-            $this.toggleClass("fa-star-o");
-        }
-    });
-
+    function deleteMessageById(comentId){
+        var targetUrl = '/message/delete/' + comentId;
+        $.ajax({
+            type:'post',
+            url:targetUrl,
+            dataType:'json',
+            success:function(data){
+                if(data.message == "success"){
+                    $('#message-' + comentId).remove();
+                    alert("删除成功");
+                }else{
+                    alert("操作失败" + data.detail);
+                }
+            },
+            error:function(){
+                alert("错误");
+            }
+        })
+    }
+    function deleteAllMessageByType(){
+        // 全部标记已读
+        if($('tr[onclick]').length == 0)
+            return;
+        var targetUrl = '/message/deleteAll/' + messageTypeCode;
+        $.ajax({
+            type:'post',
+            url:targetUrl,
+            dataType:'json',
+            success:function(data){
+                $('tr[onclick]').remove();
+                $('a[name="deleteAll"]').remove();
+                $('a[name="readAll"]').remove();
+            }
+        })
+    }
+    function readMessageById(messageId){
+        // 标记已读
+        if(! $('#messageReadState-' + messageId).length > 0)
+            return;
+        var targetUrl = '/message/read/' + messageId;
+        $.ajax({
+            type:'post',
+            url:targetUrl,
+            dataType:'json',
+            success:function(data){
+                $('#messageReadState-' + messageId).remove();
+            }
+        })
+    }
+    function readAllMessageByType(){
+        // 全部标记已读
+        if($('i[name="unreadMark"]').length == 0)
+            return;
+        var targetUrl = '/message/readAll/' + messageTypeCode;
+        $.ajax({
+            type:'post',
+            url:targetUrl,
+            dataType:'json',
+            success:function(data){
+                $('i[name="unreadMark"]').remove();
+                $('a[name="readAll"]').remove();
+            }
+        })
+    }
 </script>
 </body>
 </html>

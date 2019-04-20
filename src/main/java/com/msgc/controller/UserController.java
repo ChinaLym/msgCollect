@@ -34,15 +34,20 @@ import java.util.UUID;
 @Controller
 @RequestMapping(value = "/user")
 public class UserController {
-	@Autowired
-	private IUserService userService;
+	private final IUserService userService;
+	private final IUserCookieService userCookieService;
 
 	@Autowired
-	private IUserCookieService userCookieService;
-	//过期时间2周
-	long maxEffective = 1000 * 60 * 60 * 24 * 14;
+	public UserController(IUserCookieService userCookieService, IUserService userService) {
+		this.userCookieService = userCookieService;
+		this.userService = userService;
+	}
 
-	int maxEffectiveSecond = 60 * 60 * 24 * 14;
+	// 自动登录有效时间，毫秒表示 2周
+	private final long maxEffective = 1000 * 60 * 60 * 24 * 14;
+
+	private final int maxEffectiveSecond = 60 * 60 * 24 * 14;
+
 	/**
 	 * 登录
 	 * @param userParam 接收传来的 user
@@ -68,18 +73,11 @@ public class UserController {
 					userCookieService.save(mapping);
 					WebUtil.setCookie("auto-login", mapping.getCookie(), maxEffectiveSecond);
 				}catch (Exception e){
+					e.printStackTrace();
 					//写数据库 cookieUserMapping 失败
 				}
 			}
-            HttpSession session = LoggedUserSessionContext.getSession(user.getId());
-            if(session != null){
-                //使用之前登陆过的 id
-                WebUtil.setCookie("JSESSIONID", session.getId(), 60 * 30);
-			}else{
-				session = WebUtil.getRequest().getSession();
-				session.setAttribute(SessionKey.USER, user);
-				LoggedUserSessionContext.putIfAbsent(user.getId(), session);
-			}
+			HttpSession session = WebUtil.setSessionUser(user);
             if(session.getAttribute(SessionKey.REDIRECT_URL) != null){
 				String redirect = "redirect:" + String.valueOf(session.getAttribute(SessionKey.REDIRECT_URL));
 				session.removeAttribute(SessionKey.REDIRECT_URL);
@@ -93,11 +91,11 @@ public class UserController {
 	 * 用户注册
 	 * @param user	接收的用户类
 	 * @param model	视图返回字段
-	 * @return
+	 * @return 原本请求的 url 或 index
 	 */
 	@PostMapping(value = "/register.action")
 	public String register(@ModelAttribute User user, Model model) {
-		user.setHeadImage("/AdminLTE/dist/img/user2-160x160.jpg");
+		user.setHeadImage(RandomHeadImageUtil.next());
 		user.setNickname("用户" + UUID.randomUUID().toString().substring(0, 10));
 		user.setCreateTime(new Date());
 		user.setUpdateTime(new Date());
@@ -121,10 +119,7 @@ public class UserController {
 	}
 
 
-	/**
-	 * 退出登录，清空 session 中的 user, 清除cookie
-	 * @return
-	 */
+	// 退出登录，清空 session 中的 user, 清除cookie
 	@GetMapping(value = "/logout.action")
 	public String logout(HttpSession session) {
 		WebUtil.expireCookie("auto-login");
@@ -134,28 +129,19 @@ public class UserController {
 		return "redirect:/login";
 	}
 
-    /**
-     * 到个人中心页profile
-     * @return
-     */
+    //到个人中心页profile
     @GetMapping(value = "/profile")
     public String profilePage() {
         return "/user/profile";
     }
 
-    /**
-     * 到修改密码页
-     * @return
-     */
+    // 到修改密码页
     @GetMapping(value = "/changepasswd")
     public String changePasswdPage() {
         return "/user/modifyPassword";
     }
 
-	/**
-	 *
-	 * @return
-	 */
+	// 修改密码提交
 	@ResponseBody
 	@PostMapping(value = "/changepasswd.action")
     public String changePasswd() {
@@ -175,6 +161,7 @@ public class UserController {
         return JsonUtil.toJson(ResponseWrapper.fail("未登录"));
     }
 
+    // 修改个人信息
 	@PostMapping(value = "/updateProfile.action")
     public String updateProfile(User userParam) {
 		HttpSession session = WebUtil.getRequest().getSession();
@@ -200,6 +187,7 @@ public class UserController {
 		return "login";
     }
 
+    // 批量导入，只测试用
 	@ResponseBody
 	@GetMapping(value = "/import")
     public String importUsers(){
@@ -217,6 +205,7 @@ public class UserController {
 		return "ok";
 	}
 
+	// 更新所有用户的头像 仅测试使用
 	@ResponseBody
 	@GetMapping(value = "/updateHeadImage")
     public String updateHeadImage(){

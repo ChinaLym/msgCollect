@@ -4,30 +4,37 @@ import com.msgc.config.LoggedUserSessionContext;
 import com.msgc.constant.SessionKey;
 import com.msgc.entity.Message;
 import com.msgc.service.IMessageService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.msgc.utils.WebUtil;
 
 import javax.servlet.http.HttpSession;
 
-/**
- * MessageSender 高耦合的类，业务增加时需要解耦
- */
-@Component
 public class MessageSender implements Runnable {
 
-    private volatile boolean isRuning = true;
+    private volatile boolean isRunning = true;
 
-    @Autowired
-    IMessageService messageService;
+    private final IMessageService messageService;
+
+    private MessageSender() {
+        messageService = WebUtil.getBean(IMessageService.class);
+    }
+    private static final MessageSender instance = new MessageSender();
+
+    public static MessageSender getInstance(){
+        return instance;
+    }
 
     public void stop(){
-        isRuning = false;
+        isRunning = false;
     }
 
     @Override
     public void run() {
-        System.out.println(Thread.currentThread().getName() + " start success.");
-        while (isRuning){
+        if(messageService == null){
+            System.err.println("MessageSender start fail !!");
+            return;
+        }
+        System.out.println("MessageSender start success.");
+        while (isRunning){
             try{
                 Message message = MessageQueue.take();
                 //消费 Message
@@ -36,12 +43,11 @@ public class MessageSender implements Runnable {
                 if(session != null){
                     session.setAttribute(SessionKey.NEW_MESSAGES_FLAG,true);
                 }
-                //不管用户在不在线，存数据库
                 messageService.save(message);
             }catch(Exception e){
                 e.printStackTrace();
             }
         }
-        System.out.println(Thread.currentThread().getName() + " stop success.");
+        System.out.println("MessageSender stop success.");
     }
 }

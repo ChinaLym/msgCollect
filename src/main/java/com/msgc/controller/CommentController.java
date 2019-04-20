@@ -1,16 +1,13 @@
 package com.msgc.controller;
 
-import com.msgc.constant.SessionKey;
 import com.msgc.constant.enums.MessageTypeEnum;
 import com.msgc.constant.response.ResponseWrapper;
-import com.msgc.entity.Message;
+import com.msgc.entity.Comment;
 import com.msgc.entity.Table;
-import com.msgc.entity.User;
 import com.msgc.service.ICommentService;
 import com.msgc.service.IMessageService;
 import com.msgc.service.ITableService;
 import com.msgc.utils.JsonUtil;
-import com.msgc.utils.WebUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,26 +37,34 @@ public class CommentController {
 	/**
 	 * 添加一条评论
 	 * @param tableId 评论表 Id
-	 * @return
 	 */
 	@PostMapping("/table/{tableId}")
 	@ResponseBody
 	public String addComment(@PathVariable("tableId") Integer tableId){
 		Table table = tableService.findById(tableId);
 		if(table != null){
-			Integer owner = table.getOwner();
-			commentService.addComment(tableId);
-			User user = (User)WebUtil.getSessionKey(SessionKey.USER);
-			Message message = new Message();
-			message.setReceiver(owner);
-			message.setType(MessageTypeEnum.COMMENT.getCode());
-			message.setTitle(user.getNickname() + " 评论了您的收集表 " + table.getName());
-			message.setHref("/collect/data/" + table.getId());
-			messageService.createMessage(message);
-
+			Comment comment = commentService.addComment(tableId);
+			//发送消息
+			messageService.sendMessage(
+					comment.getParentId() == -1
+							? MessageTypeEnum.COMMENT
+							: MessageTypeEnum.REPLY,
+					table);
 		}
-
 		return JsonUtil.toJson(ResponseWrapper.success("评论成功"));
+	}
+
+	/**
+	 * 删除自己的评论
+	 * @param commentId 评论 Id
+	 * @return 返回是否删除成功
+	 */
+	@PostMapping("/delete/{commentId}")
+	@ResponseBody
+	public String deleteComment(@PathVariable("commentId") Integer commentId){
+        commentService.deleteById(commentId);
+        //TODO 判断是否删除成功
+		return JsonUtil.toJson(ResponseWrapper.success("删除成功"));
 	}
 
 }

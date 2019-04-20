@@ -62,7 +62,7 @@ public class CommentServiceImpl implements ICommentService{
 
     @Override
 	public void deleteById(Integer id) {
-		commentRepository.deleteById(id);
+		commentRepository.setDeleteStateById(id);
 	}
     
     @Override
@@ -76,25 +76,29 @@ public class CommentServiceImpl implements ICommentService{
      * @throws RuntimeException 格式不正确等
      */
     @Override
-    public void addComment(Integer tableId) throws RuntimeException{
+    public Comment addComment(Integer tableId) throws RuntimeException{
         HttpServletRequest request = WebUtil.getRequest();
         HttpSession session = request.getSession();
         Integer userId = ((User)session.getAttribute(SessionKey.USER)).getId();
         String content = request.getParameter("commentContent");
-        String aimCommentIdStr = request.getParameter("aimCommentId");
-        if(StringUtils.isBlank(content)){
-            throw new RuntimeException("评论内容为空");
-        }
+        //String aimCommentIdStr = request.getParameter("aimCommentId");
         Comment comment = new Comment();
+        // 如果不存在回复的 目标评论Id 则目标评论Id 为 -1， 表示直接评论表
+        comment.setParentId(ROOT_COMMENT_PARENTID);
+        if(StringUtils.isEmpty(content)){
+            throw new RuntimeException("评论内容为空");
+        }else if(content.startsWith("[reply]") && content.contains("[/reply]")) {
+            //是回复
+            int cutIndex = content.indexOf("[/reply]");
+            String replyAim = content.substring(7, cutIndex);
+            comment.setParentId(Integer.parseInt(replyAim));
+            content = content.substring(cutIndex + 8);
+        }
         comment.setTableId(tableId);
         comment.setUserId(userId);
-        // 如果不存在回复的 目标评论Id 则目标评论Id 为 -1， 表示直接评论表
-        comment.setParentId(StringUtils.isNotEmpty(aimCommentIdStr)
-                ? Integer.parseInt(aimCommentIdStr)
-                : ROOT_COMMENT_PARENTID);
         comment.setContent(content);
         comment.setCreateTime(new Date());
         comment.setEffective(true);
-        commentRepository.save(comment);
+        return commentRepository.save(comment);
     }
 }

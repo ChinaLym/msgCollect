@@ -1,5 +1,8 @@
 package com.msgc.utils;
 
+import com.msgc.config.LoggedUserSessionContext;
+import com.msgc.constant.SessionKey;
+import com.msgc.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -77,6 +80,21 @@ public class WebUtil implements ApplicationContextAware {
 
 	public static HttpSession getSession(){
 		return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession();
+	}
+
+	public static HttpSession setSessionUser(User user){
+		HttpSession session = LoggedUserSessionContext.getSession(user.getId());
+		if(session != null){
+			// session 有效时间 30 分钟
+			int maxSessionEffectiveSecond = 60 * 30;
+			//使用之前登陆过的 id
+			WebUtil.setCookie("JSESSIONID", session.getId(), maxSessionEffectiveSecond);
+		}else{
+			session = WebUtil.getSession();
+			session.setAttribute(SessionKey.USER, user);
+			LoggedUserSessionContext.putIfAbsent(user.getId(), session);
+		}
+		return session;
 	}
 
 	public static Object getSessionKey(String sessionKeyName){

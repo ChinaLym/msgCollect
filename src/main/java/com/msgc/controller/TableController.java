@@ -4,6 +4,7 @@ import com.msgc.cache.FieldTypeFlyweightFactory;
 import com.msgc.config.WebMvcConfig;
 import com.msgc.constant.FilePath;
 import com.msgc.constant.SessionKey;
+import com.msgc.constant.enums.MessageTypeEnum;
 import com.msgc.constant.enums.TableStatusEnum;
 import com.msgc.constant.response.ResponseWrapper;
 import com.msgc.entity.*;
@@ -11,16 +12,15 @@ import com.msgc.entity.bo.ExcelReadStrategy;
 import com.msgc.entity.dto.FieldDTO;
 import com.msgc.entity.dto.StrategyParam;
 import com.msgc.exception.ResourceNotFoundException;
-import com.msgc.service.IAnswerRecordService;
-import com.msgc.service.IAnswerService;
-import com.msgc.service.IFieldService;
-import com.msgc.service.ITableService;
+import com.msgc.service.*;
 import com.msgc.utils.*;
 import com.msgc.utils.excel.ExcelUtilAdapter;
 import com.msgc.utils.qrCode.QrCodeUtilAdapter;
 import com.msgc.utils.zip.ZipUtil;
 import eu.bitwalker.useragentutils.UserAgent;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,21 +50,26 @@ import java.util.stream.Stream;
 @Controller
 @RequestMapping("/collect")
 public class TableController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TableController.class);
+
 	private final ITableService tableService;
 	private final IFieldService fieldService;
 	private final IAnswerRecordService answerRecordService;
 	private final IAnswerService answerService;
+    private final IMessageService messageService;
 
+    // 一周的毫秒数
 	private final long ONE_WEEK_TIME = 7 * 24 * 60 * 60 * 1000;
-	//默认的截止时间，当前时间 + 一周
+	// 默认的截止时间，当前时间 + 一周
 	private final long DEAFILT_END_TIME = ONE_WEEK_TIME;
 
     @Autowired
-    public TableController(ITableService tableService, IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService) {
+    public TableController(ITableService tableService, IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, IMessageService messageService) {
         this.tableService = tableService;
         this.fieldService = fieldService;
         this.answerRecordService = answerRecordService;
         this.answerService = answerService;
+        this.messageService = messageService;
     }
 
 
@@ -76,7 +81,7 @@ public class TableController {
 
     //在线制作页面
     @GetMapping("/new/byOnlineProduction")
-    public String newByOnlinePage(Model model){
+    public String newByOnlinePage(){
         return "collect/buildCollect";
     }
 
@@ -193,7 +198,7 @@ public class TableController {
 		if(tableId == null){
 			return JsonUtil.toJson(ResponseWrapper.fail("保存出错"));
 		}
-        List fieldList = reciveFieldsFromFront(tableId);
+        List<Field> fieldList = reciveFieldsFromFront(tableId);
         fieldService.save(fieldList);
 		return JsonUtil.toJson(ResponseWrapper.success("已保存"));
 	}
@@ -418,16 +423,23 @@ public class TableController {
                 //fileName，saveFile 表示上传文件保存路径
                 String fileName = FilePath.getFieldFilesUploadPath(table.getId(), field);
                 File saveFile = new File(fileName);
-                if(!saveFile.exists()) {
-                    saveFile.mkdirs();
+                if(!saveFile.exists() && !saveFile.mkdirs()) {
+                    throw new RuntimeException(saveFile + "mkdirs failed!");
                 }
                 try {
                     String resourceFileName = file.getResource().getFilename();
                     //fileName，saveFile 表示上传文件保存路径+名称
-                    fileName += UUID.randomUUID() + (resourceFileName.contains(".") ? resourceFileName.substring(resourceFileName.lastIndexOf(".")) : "");
+                    if(StringUtils.isBlank(resourceFileName)){
+                        throw new RuntimeException("resourceFileName is blank");
+                    }
+                    fileName += UUID.randomUUID() + (resourceFileName.indexOf(".") > 0 ? resourceFileName.substring(resourceFileName.lastIndexOf(".")) : "");
                     saveFile = new File(fileName);
-                    saveFile.delete();
-                    saveFile.createNewFile();
+                    if(!saveFile.delete()){
+                        LOGGER.error(fileName + "delete failed!");
+                    }
+                    if(!saveFile.createNewFile()){
+                        throw new RuntimeException(saveFile + "mkdirs failed!");
+                    }
                     file.getOriginalFilename();
                     file.transferTo(saveFile);
                     answer.setContent(saveFile.getAbsolutePath());
@@ -445,6 +457,9 @@ public class TableController {
             if(!isReFill){
                 tableService.increaseFilledNum(table.getId());
             }
+            //向表主人发送消息，有人填写
+            messageService.sendMessage(MessageTypeEnum.SYSTEM, table);
+            //返回前端
             model.addAttribute("resultMessage","感谢您的参与！");
             return "/displayMessage";
         }
@@ -500,7 +515,6 @@ public class TableController {
         }
     }
 
-    //TODO 放入service层复用，展示表数据会用
     /**
      * 收集表下载
      * @return null:校验通过，进入下载，其他：下载失败，返回提示信息
@@ -521,7 +535,7 @@ public class TableController {
     //上传excel制作收集表页面，若上传并解析成功，则生成表，保存至数据库
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/new/byUpload.action")
-    public String newByUpload(MultipartFile file, Model model){
+    public String newByUpload(MultipartFile file){
         HttpServletRequest request = WebUtil.getRequest();
         StrategyParam fileAndStrategyDTO = new StrategyParam(request);
         String fileName;
@@ -543,6 +557,7 @@ public class TableController {
             table.setState(TableStatusEnum.EDIT.getValue());
             table.setMaxFillNum(100);
             table.setFilledNum(0);
+            table.setVisibility(true);
             table = tableService.save(table);
 
             int fieldNum = 1;
@@ -553,7 +568,7 @@ public class TableController {
                     field.setType("普通");
                     field.setMaxLength(220);
                     field.setRequired(false);
-                    field.setVisibility(false);
+                    field.setVisibility(true);
 
                 }
             }
@@ -703,6 +718,7 @@ public class TableController {
         try{
             tableService.processTableData(tableId, isOwner, model);
         }catch (RuntimeException e){
+            e.printStackTrace();
             model.addAttribute("resultMessage", "只有表主人可以查看这张表哦~");
             return "displayMessage";
         }

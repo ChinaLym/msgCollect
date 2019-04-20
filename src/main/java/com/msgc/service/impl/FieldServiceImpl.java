@@ -3,6 +3,7 @@ package com.msgc.service.impl;
 import com.msgc.entity.Field;
 import com.msgc.repository.IFieldRepository;
 import com.msgc.service.IFieldService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,10 @@ public class FieldServiceImpl implements IFieldService{
 
 
     @Override
-    public List<Field> save(List fieldList) {
-        return fieldRepository.saveAll(fieldList);
+    public List<Field> save(List<Field> fieldList) {
+        if(CollectionUtils.isNotEmpty(fieldList))
+            return fieldRepository.saveAll(fieldList);
+        else throw new NullPointerException();
     }
 
     @Override

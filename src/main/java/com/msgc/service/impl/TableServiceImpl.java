@@ -99,7 +99,10 @@ public class TableServiceImpl implements ITableService{
         return tableRepository.increaseFilledNum(tableId) > 0;
     }
 
-    //TODO
+    /**
+     * 表数据导出功能
+     * @return 导出结果
+     */
     @Override
     public String export() {
         HttpServletRequest request = WebUtil.getRequest();
@@ -148,7 +151,7 @@ public class TableServiceImpl implements ITableService{
      */
     public void processTableData(Integer tableId, boolean isOwner,
                                   Model model){
-
+//TODO 增加缓存，组装回复和评论部分待优化。
         // 1. 根据 tableId 找出全部 Field 组成表头
         Field field = new Field();
         field.setTableId(tableId);
@@ -232,7 +235,16 @@ public class TableServiceImpl implements ITableService{
             commentDTO.setUserName(userMap.get(commentDTO.getUserId()).getNickname());
             commentDTO.setUserHeadImage(userMap.get(commentDTO.getUserId()).getHeadImage());
             //TODO 未对回复进行排序
-            commentDTO.setReplyList(replyCommentMap.get(commentDTO.getId()));
+            //组装评论
+            if(replyCommentMap.get(commentDTO.getId()) != null){
+                commentDTO.setReplyList(replyCommentMap.get(commentDTO.getId()).stream()
+                        .map(comment -> {
+                            CommentDTO dto = new CommentDTO(comment);
+                            dto.setUserHeadImage(userMap.get(comment.getUserId()).getHeadImage());
+                            dto.setUserName(userMap.get(comment.getUserId()).getNickname());
+                            return dto;
+                        }).collect(Collectors.toList()));
+            }
         }
         // 添加 model
 
@@ -241,6 +253,12 @@ public class TableServiceImpl implements ITableService{
         model.addAttribute("commentList", commentDTOList);
     }
 
+    /**
+     * 搜索功能
+     * @param tableName 表名
+     * @param state 表状态
+     * @return
+     */
     @Override
     public List<Table> searchByNameAndState(String tableName, TableStatusEnum state){
         //TODO 需要限制查询结果个数
@@ -292,5 +310,10 @@ public class TableServiceImpl implements ITableService{
                 unfilledTableRepository.save(dbRecord);
             }
         }
+    }
+
+    @Override
+    public void save(List<Table> endTableList) {
+        tableRepository.saveAll(endTableList);
     }
 }
