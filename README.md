@@ -1,14 +1,15 @@
 # 部署
 ## 基础环境
 ### 必须：
-java 8
-maven 3.5.4+
-mysql 5.5（数据库版本过高时需要处理 ssh）
+- java 8+						
+- maven 3.5.4+	[官网最新地址](http://maven.apache.org/download.cgi)
+- mysql 5.5	（数据库版本过高时需要处理 ssh）[官网5.5地址](https://dev.mysql.com/downloads/mysql/5.5.html)
 ----
 ### 开发可选：
-IDEA
-git
+- IDEA	
+- git		 
 
+自行解决如何下载、安装、使用
 
 ## 依赖
 ### 依赖框架
@@ -27,6 +28,7 @@ git
 - msg_collect_files.rar 包含基本的头像，需要解压至任意路径，并修改  src/main/java/com/msgc/config/WebMvcConfig.java 的 FILE_DIR 变量，若无此目录会自动创建
 - 日志文件保存目录为 log4j.properties 中的目录，若无此目录会自动创建
 
+## 运行时需要先注册，无内置账号
 
 ## 需要修改
 - 项目的静态路径 WebMvcConfig.java(com/msgc/config)
