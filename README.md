@@ -1,8 +1,32 @@
 # 部署
+## 基础环境
+### 必须：
+java 8
+maven 3.5.4+
+mysql 5.5（数据库版本过高时需要处理 ssh）
+----
+### 开发可选：
+IDEA
+git
+
+
 ## 依赖
-- 依赖的JS css 等在src/main/resources，需要解压到项目内src/main/resources
-- msg_collect_files.rar 包含基本的头像，需要解压至任意路径
-- 数据库表结构在 msg_collect.sqk，不包含表数据，需要导入数据库中
+### 依赖框架
+- Spring Boot   整合
+- Spring 		松耦合
+- Spring MVC	web 请求流程
+- Spring Data jpa	数据持久层
+- Thymeleaf		模板引擎（类似 jsp，前后分离可另选型）
+- log4j			日志框架
+
+### 运行依赖
+#### 必须：
+- 依赖的JS css 等在src/main/resources/static.rar，需要解压到项目内src/main/resources
+- 数据库表结构在 msg_collect.sql，不包含表数据，需要导入数据库中，并修改 src/main/resources/application.yml，将数据库密码等连接参数改为实际数据库
+#### 可选：
+- msg_collect_files.rar 包含基本的头像，需要解压至任意路径，并修改  src/main/java/com/msgc/config/WebMvcConfig.java 的 FILE_DIR 变量，若无此目录会自动创建
+- 日志文件保存目录为 log4j.properties 中的目录，若无此目录会自动创建
+
 
 ## 需要修改
 - 项目的静态路径 WebMvcConfig.java(com/msgc/config)
