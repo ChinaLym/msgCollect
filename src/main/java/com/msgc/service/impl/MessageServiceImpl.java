@@ -109,9 +109,15 @@ public class MessageServiceImpl implements IMessageService{
         }else if(messageType == MessageTypeEnum.REPLY){
             message.setType(messageType.getCode());
             message.setContent(user.getNickname() + " 回复了您  " + table.getName());
-        }else if(messageType == MessageTypeEnum.SYSTEM){
+        }else if(messageType == MessageTypeEnum.TABLE_FILLED){
             message.setType(MessageTypeEnum.SYSTEM.getCode());
             message.setContent(user.getNickname() + " 参与了您的收集表  " + table.getName());
+        }else if(messageType == MessageTypeEnum.TABLE_END){
+            message.setType(MessageTypeEnum.SYSTEM.getCode());
+            message.setContent("您的收集表 " + table.getName() + " 到达截至时间，已停止收集");
+        }else {
+            // TODO 更多类型的消息
+            throw new RuntimeException("还没添加这个类型的解析，快来完善");
         }
         message.setReceiver(table.getOwner());
         message.setHref("/collect/data/" + table.getId());

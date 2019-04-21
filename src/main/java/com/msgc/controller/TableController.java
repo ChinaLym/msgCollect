@@ -458,7 +458,7 @@ public class TableController {
                 tableService.increaseFilledNum(table.getId());
             }
             //向表主人发送消息，有人填写
-            messageService.sendMessage(MessageTypeEnum.SYSTEM, table);
+            messageService.sendMessage(MessageTypeEnum.TABLE_FILLED, table);
             //返回前端
             model.addAttribute("resultMessage","感谢您的参与！");
             return "/displayMessage";

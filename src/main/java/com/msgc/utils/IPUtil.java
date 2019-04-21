@@ -36,6 +36,10 @@ public class IPUtil {
 	 * 创建人：LYM
 	 */
 	public static int ipv4StrToInt(String ip){
+		if(ip.contains(":")){
+			//TODO ipv6,不支持，设置为默认 127.0.0.1，压制bug，这里需要判断，抛出异常
+			ip="127.0.0.1";
+		}
 		String[] ips = ip.split("\\.");
 		int ipFour = 0;
 		//因为每个位置最大255，刚好在2进制里表示8位
