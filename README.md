@@ -1,36 +1,36 @@
-# ²¿Êğ
-## »ù´¡»·¾³
-### ±ØĞë£º
+# éƒ¨ç½²
+## åŸºç¡€ç¯å¢ƒ
+### å¿…é¡»ï¼š
 - java 8+						
-- maven 3.5.4+	[¹ÙÍø×îĞÂµØÖ·](http://maven.apache.org/download.cgi)
-- mysql 5.5	£¨Êı¾İ¿â°æ±¾¹ı¸ßÊ±ĞèÒª´¦Àí ssh£©[¹ÙÍø5.5µØÖ·](https://dev.mysql.com/downloads/mysql/5.5.html)
+- maven 3.5.4+	[å®˜ç½‘æœ€æ–°åœ°å€](http://maven.apache.org/download.cgi)
+- mysql 5.5	ï¼ˆæ•°æ®åº“ç‰ˆæœ¬è¿‡é«˜æ—¶éœ€è¦å¤„ç† sshï¼‰[å®˜ç½‘5.5åœ°å€](https://dev.mysql.com/downloads/mysql/5.5.html)
 ----
-### ¿ª·¢¿ÉÑ¡£º
+### å¼€å‘å¯é€‰ï¼š
 - IDEA	
 - git		 
 
-×ÔĞĞ½â¾öÈçºÎÏÂÔØ¡¢°²×°¡¢Ê¹ÓÃ
+è‡ªè¡Œè§£å†³å¦‚ä½•ä¸‹è½½ã€å®‰è£…ã€ä½¿ç”¨
 
-## ÒÀÀµ
-### ÒÀÀµ¿ò¼Ü
-- Spring Boot   ÕûºÏ
-- Spring 		ËÉñîºÏ
-- Spring MVC	web ÇëÇóÁ÷³Ì
-- Spring Data jpa	Êı¾İ³Ö¾Ã²ã
-- Thymeleaf		Ä£°åÒıÇæ£¨ÀàËÆ jsp£¬Ç°ºó·ÖÀë¿ÉÁíÑ¡ĞÍ£©
-- log4j			ÈÕÖ¾¿ò¼Ü
+## ä¾èµ–
+### ä¾èµ–æ¡†æ¶
+- Spring Boot   æ•´åˆ
+- Spring 		æ¾è€¦åˆ
+- Spring MVC	web è¯·æ±‚æµç¨‹
+- Spring Data jpa	æ•°æ®æŒä¹…å±‚
+- Thymeleaf		æ¨¡æ¿å¼•æ“ï¼ˆç±»ä¼¼ jspï¼Œå‰ååˆ†ç¦»å¯å¦é€‰å‹ï¼‰
+- log4j			æ—¥å¿—æ¡†æ¶
 
-### ÔËĞĞÒÀÀµ
-#### ±ØĞë£º
-- ÒÀÀµµÄJS css µÈÔÚsrc/main/resources/static.rar£¬ĞèÒª½âÑ¹µ½ÏîÄ¿ÄÚsrc/main/resources
-- Êı¾İ¿â±í½á¹¹ÔÚ msg_collect.sql£¬²»°üº¬±íÊı¾İ£¬ĞèÒªµ¼ÈëÊı¾İ¿âÖĞ£¬²¢ĞŞ¸Ä src/main/resources/application.yml£¬½«Êı¾İ¿âÃÜÂëµÈÁ¬½Ó²ÎÊı¸ÄÎªÊµ¼ÊÊı¾İ¿â
-#### ¿ÉÑ¡£º
-- msg_collect_files.rar °üº¬»ù±¾µÄÍ·Ïñ£¬ĞèÒª½âÑ¹ÖÁÈÎÒâÂ·¾¶£¬²¢ĞŞ¸Ä  src/main/java/com/msgc/config/WebMvcConfig.java µÄ FILE_DIR ±äÁ¿£¬ÈôÎŞ´ËÄ¿Â¼»á×Ô¶¯´´½¨
-- ÈÕÖ¾ÎÄ¼ş±£´æÄ¿Â¼Îª log4j.properties ÖĞµÄÄ¿Â¼£¬ÈôÎŞ´ËÄ¿Â¼»á×Ô¶¯´´½¨
+### è¿è¡Œä¾èµ–
+#### å¿…é¡»ï¼š
+- ä¾èµ–çš„JS css ç­‰åœ¨src/main/resources/static.rarï¼Œéœ€è¦è§£å‹åˆ°é¡¹ç›®å†…src/main/resources
+- æ•°æ®åº“è¡¨ç»“æ„åœ¨ msg_collect.sqlï¼Œä¸åŒ…å«è¡¨æ•°æ®ï¼Œéœ€è¦å¯¼å…¥æ•°æ®åº“ä¸­ï¼Œå¹¶ä¿®æ”¹ src/main/resources/application.ymlï¼Œå°†æ•°æ®åº“å¯†ç ç­‰è¿æ¥å‚æ•°æ”¹ä¸ºå®é™…æ•°æ®åº“
+#### å¯é€‰ï¼š
+- msg_collect_files.rar åŒ…å«åŸºæœ¬çš„å¤´åƒï¼Œéœ€è¦è§£å‹è‡³ä»»æ„è·¯å¾„ï¼Œå¹¶ä¿®æ”¹  src/main/java/com/msgc/config/WebMvcConfig.java çš„ FILE_DIR å˜é‡ï¼Œè‹¥æ— æ­¤ç›®å½•ä¼šè‡ªåŠ¨åˆ›å»º
+- æ—¥å¿—æ–‡ä»¶ä¿å­˜ç›®å½•ä¸º log4j.properties ä¸­çš„ç›®å½•ï¼Œè‹¥æ— æ­¤ç›®å½•ä¼šè‡ªåŠ¨åˆ›å»º
 
-## ÔËĞĞÊ±ĞèÒªÏÈ×¢²á£¬ÎŞÄÚÖÃÕËºÅ
+## è¿è¡Œæ—¶éœ€è¦å…ˆæ³¨å†Œï¼Œæ— å†…ç½®è´¦å·
 
-## ĞèÒªĞŞ¸Ä
-- ÏîÄ¿µÄ¾²Ì¬Â·¾¶ WebMvcConfig.java(com/msgc/config)
-- Êı¾İ¿âÁ¬½Ó	application.yml
-- ÈÕÖ¾Êä³öÂ·¾¶ log4j.properties
+## éœ€è¦ä¿®æ”¹
+- é¡¹ç›®çš„é™æ€è·¯å¾„ WebMvcConfig.java(com/msgc/config)
+- æ•°æ®åº“è¿æ¥	application.yml
+- æ—¥å¿—è¾“å‡ºè·¯å¾„ log4j.properties
