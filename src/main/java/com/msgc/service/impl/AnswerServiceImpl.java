@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
-import java.util.Optional;
 /**
 * Type: AnswerServiceImpl
 * Description: serviceImp
@@ -21,41 +20,20 @@ public class AnswerServiceImpl implements IAnswerService{
     private IAnswerRepository answerRepository;
     
     @Autowired
-    public void setAnswerRepositry(IAnswerRepository answerRepositry) {
-        this.answerRepository = answerRepositry;
+    public void setAnswerRepository(IAnswerRepository answerRepository) {
+        this.answerRepository = answerRepository;
     }
-    
-    
-    @Override
-    public Answer save(Answer answer) {
-        return answerRepository.save(answer);
-    }
-    
+
+    // 根据 id 查找，只返回一个，一般用于文件下载，查询文件所在路径
     @Override
     public Answer findById(Integer id) {
-        Optional<Answer> answer = answerRepository.findById(id);
-        return answer.isPresent() ? answer.get() : null;
-    }
-    
-    @Override
-    public List<Answer> findAllById(List<Integer> ids) {
-        return answerRepository.findAllById(ids);
-    }
-    
-    @Override
-    public List<Answer> findAll() {
-        return answerRepository.findAll();
+        return answerRepository.findById(id).orElse(null);
     }
 
     @Override
     public List<Answer> findAll(Answer example) {
         return answerRepository.findAll(Example.of(example));
     }
-
-    @Override
-	public void deleteById(Integer id) {
-		answerRepository.deleteById(id);
-	}
 
     @Override
     public List<Answer> save(List<Answer> answersList) {
@@ -78,6 +56,11 @@ public class AnswerServiceImpl implements IAnswerService{
         answerRepository.deleteAllByRecordId(answerRecordId);
     }
 
+    /**
+     * 根据 表字段id ，查出所有填写数据
+     * @param fieldIdList 表字段id
+     * @return 填写数据列表列表
+     */
     @Override
     public List<Answer> findAllByFieldIds(List<Integer> fieldIdList){
         return answerRepository.findByFieldIdIn(fieldIdList);

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -136,6 +137,7 @@ public class BaseController {
                 recentCollectList.add(table);
             }
         });
+        recentCollectList.sort(Comparator.comparing(Table::getEndTime));
         if (endTableList.size() > 0){
             //回写数据库，保存已截止状态
             tableService.save(endTableList);

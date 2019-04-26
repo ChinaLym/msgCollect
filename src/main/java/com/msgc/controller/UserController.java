@@ -95,10 +95,6 @@ public class UserController {
 	 */
 	@PostMapping(value = "/register.action")
 	public String register(@ModelAttribute User user, Model model) {
-		user.setHeadImage(RandomHeadImageUtil.next());
-		user.setNickname("用户" + UUID.randomUUID().toString().substring(0, 10));
-		user.setCreateTime(new Date());
-		user.setUpdateTime(new Date());
 		User registerUser = userService.register(user);
 		if(registerUser == null) {
 			// 注册失败

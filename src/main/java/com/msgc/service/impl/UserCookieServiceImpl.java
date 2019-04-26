@@ -28,7 +28,7 @@ public class UserCookieServiceImpl implements IUserCookieService{
     @Override
     public UserCookie findById(Integer id) {
         Optional<UserCookie> userCookie = userCookieRepository.findById(id);
-        return userCookie.isPresent() ? userCookie.get() : null;
+        return userCookie.orElse(null);
     }
     
     @Override

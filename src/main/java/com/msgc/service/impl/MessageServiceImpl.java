@@ -42,50 +42,54 @@ public class MessageServiceImpl implements IMessageService{
         return messageRepository.findById(id).orElse(null);
     }
 
-    @Override
-    public List<Message> findAllById(List<String> idList) {
-        return messageRepository.findAllById(idList);
-    }
-    
+
     @Override
     public List<Message> findAll(Message messageExample) {
         return messageRepository.findAll(Example.of(messageExample));
     }
     
-    @Override
-    public List<Message> findAll() {
-        return messageRepository.findAll();
-    }
-
-    //假删除，需要用户 id == receiver
+    //通过消息Id，假删除，需要用户 id == receiver
     @Override
 	public void deleteById(String id) {
         Integer userId = ((User)WebUtil.getSessionKey(SessionKey.USER)).getId();
 		messageRepository.setDeleteStateById(id, userId);
 	}
 
+    /**
+     * 删除用户所有某个类型的消息
+     * @param typeCode 消息类型
+     */
     @Override
     public void deleteAllByType(Integer typeCode) {
         Integer userId = ((User)WebUtil.getSessionKey(SessionKey.USER)).getId();
         messageRepository.setDeleteStateByType(typeCode, userId);
     }
 
+    /**
+     * 查询 limitNum 条当前用户未读的消息
+     * @param receiver 某个用户
+     * @param limitNum 查询条数
+     * @return 消息列表
+     */
     @Override
     public List<Message> findUnreadByReceiverAndLimit(Integer receiver, int limitNum) {
         return messageRepository.findUnreadByReceiverAndLimit(receiver, limitNum);
     }
 
-    @Override
-    public List<Message> save(List<Message> messageList) {
-        return messageRepository.saveAll(messageList);
-    }
-
+    /**
+     * 将某条消息标记为已读，未来该操作可以改为通过消息队列异步操作
+     * @param messageId 消息 Id
+     */
     @Override
     public void read(String messageId) {
         Integer userId = ((User)WebUtil.getSessionKey(SessionKey.USER)).getId();
         messageRepository.setReadStateById(messageId, userId);
     }
 
+    /**
+     * 将特定类型的消息全部置为已读
+     * @param messageType 消息类型
+     */
     @Override
     public void readAll(Integer messageType) {
         Integer userId = ((User)WebUtil.getSessionKey(SessionKey.USER)).getId();

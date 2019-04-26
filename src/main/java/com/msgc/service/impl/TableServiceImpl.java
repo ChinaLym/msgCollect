@@ -8,7 +8,6 @@ import com.msgc.entity.*;
 import com.msgc.entity.bo.AnswerRecordBO;
 import com.msgc.entity.dto.CommentDTO;
 import com.msgc.entity.dto.TableDTO;
-import com.msgc.repository.ICommentRepository;
 import com.msgc.repository.ITableRepository;
 import com.msgc.repository.IUnfilledRecordRepository;
 import com.msgc.service.*;
@@ -19,6 +18,8 @@ import com.msgc.utils.WebUtil;
 import com.msgc.utils.excel.ExcelUtilAdapter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 * @author LYM
  */
 @Service
+@CacheConfig(cacheNames = "tableCache")
 public class TableServiceImpl implements ITableService{
 
     private final ITableRepository tableRepository;
@@ -45,17 +47,17 @@ public class TableServiceImpl implements ITableService{
     private final IAnswerRecordService answerRecordService;
     private final IAnswerService answerService;
     private final IUserService userService;
-    private final ICommentRepository commentRepository;
+    private final ICommentService commentService;
     private final IUnfilledRecordRepository unfilledTableRepository;
 
     @Autowired
-    public TableServiceImpl(IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, ITableRepository tableRepositry, IUserService userService, ICommentRepository commentRepository, IUnfilledRecordRepository unfilledTableRepository) {
+    public TableServiceImpl(IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, ITableRepository tableRepositry, IUserService userService, ICommentService commentService, IUnfilledRecordRepository unfilledTableRepository) {
         this.fieldService = fieldService;
         this.answerRecordService = answerRecordService;
         this.answerService = answerService;
         this.tableRepository = tableRepositry;
         this.userService = userService;
-        this.commentRepository = commentRepository;
+        this.commentService = commentService;
         this.unfilledTableRepository = unfilledTableRepository;
     }
 
@@ -80,6 +82,7 @@ public class TableServiceImpl implements ITableService{
     }
 
     @Override
+    @Cacheable(sync = true)
     public List<Table> findAllActiveTable(Integer owner) {
         return tableRepository.findAllByOwnerAndStateNot(owner, TableStatusEnum.DELETE.getValue());
     }
@@ -205,7 +208,7 @@ public class TableServiceImpl implements ITableService{
         }
 
         // 6. 查询所有评论
-        List<Comment> commentList = commentRepository.findAllByTableIdAndEffective(tableId, true);
+        List<Comment> commentList = commentService.findAllEffectiveByTableId(tableId);
         Map<Integer, List<Comment>> replyCommentMap = new HashMap<>(commentList.size());
         List<CommentDTO> commentDTOList = new LinkedList<>();
         List<Integer> userIdList = new ArrayList<>(commentList.size());

@@ -15,16 +15,10 @@ public interface IMessageService {
 
     Message findById(String id);
     
-    List<Message> findAllById(List<String> idList);
-    
     List<Message> findAll(Message messageExample);
-    
-    List<Message> findAll();
     
     void deleteById(String id);
     
-    List<Message> save(List<Message> messageList);
-
     void read(String messageId);
 
     /**

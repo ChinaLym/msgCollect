@@ -17,16 +17,16 @@ import java.util.List;
 @Service
 public class FieldTypeServiceImpl implements IFieldTypeService{
 
-    private IFieldTypeRepository fieldtypeRepository;
+    private IFieldTypeRepository fieldTypeRepository;
     
     @Autowired
     public void setFieldTypeRepositry(IFieldTypeRepository fieldtypeRepositry) {
-        this.fieldtypeRepository = fieldtypeRepositry;
+        this.fieldTypeRepository = fieldtypeRepositry;
     }
 
 
     @Override
     public List<FieldType> findAll() {
-        return fieldtypeRepository.findAll();
+        return fieldTypeRepository.findAll();
     }
 }
