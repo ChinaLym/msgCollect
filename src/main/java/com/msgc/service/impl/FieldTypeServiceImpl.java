@@ -20,8 +20,8 @@ public class FieldTypeServiceImpl implements IFieldTypeService{
     private IFieldTypeRepository fieldTypeRepository;
     
     @Autowired
-    public void setFieldTypeRepositry(IFieldTypeRepository fieldtypeRepositry) {
-        this.fieldTypeRepository = fieldtypeRepositry;
+    public void setFieldTypeRepository(IFieldTypeRepository fieldTypeRepository) {
+        this.fieldTypeRepository = fieldTypeRepository;
     }
 
 

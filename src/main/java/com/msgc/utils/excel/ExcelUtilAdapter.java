@@ -22,10 +22,10 @@ public class ExcelUtilAdapter {
      * @param table                 根据table.name导出的excel名称
      * @param fieldList             表的列
      * @param answerRecordBOList    收集到的数据
-     * @return
+     * @return  写好的文件的路径
      * @throws IOException
      */
-    public static String write(Table table,
+    public static File write(Table table,
                                List<Field> fieldList,
                                List<AnswerRecordBO> answerRecordBOList) throws IOException {
 
@@ -71,8 +71,7 @@ public class ExcelUtilAdapter {
             row.add(sdFormatter.format(answerRecordBO.getUpdate_time()));
             data.add(row);
         }
-        ExcelUtil.write(fileName, table.getName(), headers, data);
-        return fileName;
+        return ExcelUtil.write(fileName, table.getName(), headers, data);
     }
 
     /**

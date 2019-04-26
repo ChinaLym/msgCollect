@@ -8,11 +8,10 @@ public interface IFieldService {
 
     List<Field> save(List<Field> fieldList);
 
-    List<Field> findAll(Field example);
+    List<Field> findAllByTableId(Integer tableId);
 
-    Field findById(int fieldId);
+    Field findById(Integer fieldId);
 
-    Boolean deleteByTableId(int tableId);
+    Boolean deleteByTableId(Integer tableId);
 
-    List<Field> findByTableId(int tableId);
 }

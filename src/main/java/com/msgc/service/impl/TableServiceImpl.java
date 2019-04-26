@@ -9,7 +9,6 @@ import com.msgc.entity.bo.AnswerRecordBO;
 import com.msgc.entity.dto.CommentDTO;
 import com.msgc.entity.dto.TableDTO;
 import com.msgc.repository.ITableRepository;
-import com.msgc.repository.IUnfilledRecordRepository;
 import com.msgc.service.*;
 import com.msgc.utils.FileTransportUtil;
 import com.msgc.utils.FileUtil;
@@ -48,17 +47,17 @@ public class TableServiceImpl implements ITableService{
     private final IAnswerService answerService;
     private final IUserService userService;
     private final ICommentService commentService;
-    private final IUnfilledRecordRepository unfilledTableRepository;
+    private final IUnfilledRecordService unfilledTableService;
 
     @Autowired
-    public TableServiceImpl(IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, ITableRepository tableRepositry, IUserService userService, ICommentService commentService, IUnfilledRecordRepository unfilledTableRepository) {
+    public TableServiceImpl(IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, ITableRepository tableRepositry, IUserService userService, ICommentService commentService, IUnfilledRecordService unfilledTableService) {
         this.fieldService = fieldService;
         this.answerRecordService = answerRecordService;
         this.answerService = answerService;
         this.tableRepository = tableRepositry;
         this.userService = userService;
         this.commentService = commentService;
-        this.unfilledTableRepository = unfilledTableRepository;
+        this.unfilledTableService = unfilledTableService;
     }
 
     @Override
@@ -103,7 +102,7 @@ public class TableServiceImpl implements ITableService{
     }
 
     /**
-     * 表数据导出功能
+     * 全部表数据导出功能
      * @return 导出结果
      */
     @Override
@@ -115,9 +114,7 @@ public class TableServiceImpl implements ITableService{
             int tid = Integer.parseInt(request.getParameter("t"));
             Table table = this.findById(tid);
             if(table != null && table.getOwner().equals(user.getId())){
-                Field field = new Field();
-                field.setTableId(tid);
-                List<Field> fieldList = fieldService.findAll(field);
+                List<Field> fieldList = fieldService.findAllByTableId(tid);
                 AnswerRecord answerRecord = new AnswerRecord();
                 answerRecord.setTableId(tid);
                 List<AnswerRecord> answerRecordList = answerRecordService.findAll(answerRecord);
@@ -131,11 +128,16 @@ public class TableServiceImpl implements ITableService{
                     answerRecordBOList.add(answerRecordBO);
                 }
                 try{
-                    String filePath = ExcelUtilAdapter.write(table, fieldList, answerRecordBOList);
-                    File file = new File(filePath);
+                    if(TableStatusEnum.END.equal(table.getState())){
+                        // 若表已经截至 则查看是否已有缓存 且 是在截止后导出的
+                        File cacheFile = new File(FilePath.getTableProcessedPath(table.getId()) + FilePath.getTableProcessedPath(table.getId()));
+                        if(cacheFile.exists() && cacheFile.lastModified() > table.getEndTime().getTime())
+                            FileTransportUtil.downloadFile(cacheFile, table.getName() + ".xlsx");
+                        return null;
+                    }
+                    File file = ExcelUtilAdapter.write(table, fieldList, answerRecordBOList);
                     FileTransportUtil.downloadFile(file, table.getName() + ".xlsx");
-                    //应该缓存，而不是删除********************
-                    file.delete();
+                    //导出的文件会一直存在，不会主动删除
                     return null;
                 }catch (IOException e){
                     e.printStackTrace();
@@ -156,12 +158,11 @@ public class TableServiceImpl implements ITableService{
                                   Model model){
 //TODO 增加缓存，组装回复和评论部分待优化。
         // 1. 根据 tableId 找出全部 Field 组成表头
-        Field field = new Field();
-        field.setTableId(tableId);
         //不是表主人则只能查看可见数据
-        if(!isOwner)
-            field.setVisibility(true);
-        List<Field> fieldList = fieldService.findAll(field);
+        List<Field> fieldList = fieldService.findAllByTableId(tableId);
+        if(!isOwner) {
+            fieldList = fieldList.stream().filter(Field::getVisibility).collect(Collectors.toList());
+        }
         if(CollectionUtils.isEmpty(fieldList))
             throw new RuntimeException("没有可见的数据");
         fieldList.sort(Comparator.comparing(Field::getNum));
@@ -237,7 +238,7 @@ public class TableServiceImpl implements ITableService{
         for (CommentDTO commentDTO : commentDTOList) {
             commentDTO.setUserName(userMap.get(commentDTO.getUserId()).getNickname());
             commentDTO.setUserHeadImage(userMap.get(commentDTO.getUserId()).getHeadImage());
-            //TODO 未对回复进行排序
+            // 未对回复进行排序
             //组装评论
             if(replyCommentMap.get(commentDTO.getId()) != null){
                 commentDTO.setReplyList(replyCommentMap.get(commentDTO.getId()).stream()
@@ -260,11 +261,11 @@ public class TableServiceImpl implements ITableService{
      * 搜索功能
      * @param tableName 表名
      * @param state 表状态
-     * @return
+     * @return 模糊搜索表名
      */
     @Override
     public List<Table> searchByNameAndState(String tableName, TableStatusEnum state){
-        //TODO 需要限制查询结果个数
+        // 需要限制查询结果个数
         return tableRepository.findAllByStateAndNameContaining(state.getValue(), tableName);
     }
 
@@ -293,10 +294,13 @@ public class TableServiceImpl implements ITableService{
         return tableDTOList;
     }
 
+    /**
+     * 添加待填写表
+     * @param tableId 要收藏表的 id
+     */
     @Override
     public void addLikeTable(Integer tableId) {
-        HttpServletRequest request = WebUtil.getRequest();
-        HttpSession session = request.getSession();
+        HttpSession session = WebUtil.getSession();
         User user =(User)session.getAttribute(SessionKey.USER);
         UnfilledRecord record = new UnfilledRecord();
         record.setTableId(tableId);
@@ -304,17 +308,16 @@ public class TableServiceImpl implements ITableService{
         record.setDelete(false);
         record.setFilled(false);
         record.setCreateTime(new Date());
-        synchronized (session){
-            UnfilledRecord dbRecord = unfilledTableRepository.findByUserIdAndTableId(user.getId(), tableId);
-            if(dbRecord == null){
-                unfilledTableRepository.save(record);
-            }else if(dbRecord.getDelete()){
-                dbRecord.setDelete(false);
-                unfilledTableRepository.save(dbRecord);
-            }
+        UnfilledRecord dbRecord = unfilledTableService.findByUserIdAndTableId(user.getId(), tableId);
+        //如果之前删除了，则重新置为未删除
+        if(dbRecord != null && dbRecord.getDelete()){
+            dbRecord.setDelete(false);
+            record = dbRecord;
         }
+        unfilledTableService.save(record);
     }
 
+    // 批量更新表，如更新表的截止状态
     @Override
     public void save(List<Table> endTableList) {
         tableRepository.saveAll(endTableList);

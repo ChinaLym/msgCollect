@@ -140,8 +140,8 @@ public class BaseController {
         recentCollectList.sort(Comparator.comparing(Table::getEndTime));
         if (endTableList.size() > 0){
             //回写数据库，保存已截止状态
-            tableService.save(endTableList);
         }
+        tableService.save(endTableList);
         session.setAttribute(SessionKey.UNREAD_MESSAGE, unReadMessageList);
         session.setAttribute(SessionKey.RECENT_COLLECT, recentCollectList);
         model.addAttribute("tableList", unfilledTableDTOList);

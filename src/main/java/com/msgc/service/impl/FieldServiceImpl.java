@@ -3,9 +3,7 @@ package com.msgc.service.impl;
 import com.msgc.entity.Field;
 import com.msgc.repository.IFieldRepository;
 import com.msgc.service.IFieldService;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,31 +26,22 @@ public class FieldServiceImpl implements IFieldService{
 
     @Override
     public List<Field> save(List<Field> fieldList) {
-        if(CollectionUtils.isNotEmpty(fieldList))
             return fieldRepository.saveAll(fieldList);
-        else throw new NullPointerException();
     }
 
     @Override
-    public List<Field> findAll(Field example) {
-        return fieldRepository.findAll(Example.of(example));
-    }
-
-    @Override
-    public Field findById(int fieldId) {
+    public Field findById(Integer fieldId) {
         return fieldRepository.findById(fieldId).orElse(null);
     }
 
     @Override
-    public Boolean deleteByTableId(int tableId) {
+    public Boolean deleteByTableId(Integer tableId) {
         return fieldRepository.deleteByTableId(tableId) > 0;
     }
 
     @Override
-    public List<Field> findByTableId(int tableId) {
-        Field field = new Field();
-        field.setTableId(tableId);
-        return fieldRepository.findAll(field);
+    public List<Field> findAllByTableId(Integer tableId) {
+        return fieldRepository.findByTableId(tableId);
     }
 
 }

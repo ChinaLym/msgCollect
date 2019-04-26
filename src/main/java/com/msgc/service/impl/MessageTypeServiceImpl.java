@@ -32,7 +32,7 @@ public class MessageTypeServiceImpl implements IMessageTypeService{
     @Override
     public MessageType findById(Integer id) {
         Optional<MessageType> messageType = messageTypeRepository.findById(id);
-        return messageType.isPresent() ? messageType.get() : null;
+        return messageType.orElse(null);
     }
     
     @Override

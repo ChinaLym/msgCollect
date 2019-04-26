@@ -16,7 +16,7 @@ public class ExcelUtil {
     单行表头
     数据在第一个sheet
      */
-    public static void write(String excelName, String sheetName, List<List<String>> headers, List<List<String>> data) throws IOException {
+    public static File write(String excelName, String sheetName, List<List<String>> headers, List<List<String>> data) throws IOException {
         File exportExcel = new File(excelName);
         if(!exportExcel.exists())
             exportExcel.createNewFile();
@@ -29,6 +29,7 @@ public class ExcelUtil {
             writer.write0(data, sheet1, table);
             writer.finish();
         }
+        return exportExcel;
     }
 
     //从excel中读取

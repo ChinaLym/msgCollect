@@ -18,6 +18,7 @@ import com.msgc.utils.excel.ExcelUtilAdapter;
 import com.msgc.utils.qrCode.QrCodeUtilAdapter;
 import com.msgc.utils.zip.ZipUtil;
 import eu.bitwalker.useragentutils.UserAgent;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ import java.util.stream.Stream;
 * Description: 收集表相关
 * @author LMM
  */
+@Slf4j
 @Controller
 @RequestMapping("/collect")
 public class TableController {
@@ -101,9 +103,7 @@ public class TableController {
             if(table != null && table.getOwner().equals(user.getId())){
                 model.addAttribute("table", table);
                 if(TableStatusEnum.EDIT.equal(table.getState())){
-                    Field field = new Field();
-                    field.setTableId(table.getId());
-                    List<Field> fieldList = fieldService.findAll(field);
+                    List<Field> fieldList = fieldService.findAllByTableId(table.getId());
                     model.addAttribute("fieldList", fieldList);
                     return "collect/buildCollect";
                 }else if(TableStatusEnum.COLLECTING.equal(table.getState())){
@@ -123,9 +123,7 @@ public class TableController {
             int tid = Integer.parseInt(request.getParameter("t"));
             Table table = tableService.findById(tid);
             if(table != null && table.getOwner().equals(user.getId())){
-                Field field = new Field();
-                field.setTableId(table.getId());
-                List<Field> fieldList = fieldService.findAll(field);
+                List<Field> fieldList = fieldService.findAllByTableId(table.getId());
                 //初始化新表的数值
                 table.setId(null);
                 table.setState(TableStatusEnum.EDIT.getValue());
@@ -221,7 +219,6 @@ public class TableController {
             }
             //合法修改表，删掉这个表之前所有的 fields
             fieldService.deleteByTableId(table.getId());
-            //TODO 删掉这个表之前所有的 填写记录，和具体答案
         }
         //该表是新增而不是修改，设定某些初始值
         else{
@@ -320,11 +317,9 @@ public class TableController {
 
 	// /share/start /share/checkKey.action 公共部分，返回填写收集表页面
 	private String inputPage(Table table, Model model, User user){
-		Field example = new Field();
-		example.setTableId(table.getId());
-		List<Field> fields = fieldService.findAll(example);
+        List<Field> fieldList = fieldService.findAllByTableId(table.getId());
 		List<FieldDTO> fieldDTOList = new ArrayList<>();
-		for(Field field : fields){
+		for(Field field : fieldList){
 			fieldDTOList.add(new FieldDTO(field, FieldTypeFlyweightFactory.getInstance().getFlyweight(field.getType())));
 		}
 		if(user != null){
@@ -400,9 +395,7 @@ public class TableController {
         record = answerRecordService.save(record);
         int recordId = record.getId();
         //找出该收集表的全部字段
-        Field fieldExample = new Field();
-        fieldExample.setTableId(tid);
-        List<Field> fields = fieldService.findAll(fieldExample);
+        List<Field> fieldList = fieldService.findAllByTableId(table.getId());
         //fields.sort(Comparator.comparing(Field::getNum));
         //最好是更新原有的answer，这里采用删除原有的，然后添加新的****************
         if(isReFill){
@@ -410,8 +403,8 @@ public class TableController {
         }
         //文件数组下标
         int fileIndex = 0;
-        List<Answer> answersList = new ArrayList<>(fields.size());
-        for (Field field: fields) {
+        List<Answer> answersList = new ArrayList<>(fieldList.size());
+        for (Field field: fieldList) {
             Answer answer = new Answer();
             answer.setFieldId(field.getId());
             answer.setType(field.getType());
@@ -516,7 +509,7 @@ public class TableController {
     }
 
     /**
-     * 收集表下载
+     * 整个收集表下载
      * @return null:校验通过，进入下载，其他：下载失败，返回提示信息
      */
     @ResponseBody
@@ -616,9 +609,11 @@ public class TableController {
                         e.printStackTrace();
                     }
                 }else {
-                    //判断是下载所有，或者是下载特定字段
+                    // 若url参数 fieldId 非空则下载 fieldId 字段所有文件，否则压缩整个表的文件，并下载
                     String fieldIdStr = request.getParameter("fieldId");
+                    // 希望被压缩的文件或目录
                     String wantedFilesPath;
+                    // 压缩后的文件
                     String zipPath;
                     if(StringUtils.isNotEmpty(fieldIdStr)){
                         //下载某个字段的所有文件
@@ -633,15 +628,25 @@ public class TableController {
                     }
                     //下载目标文件
                     try {
+                        //这里是路径
                         File zipFile = new File(zipPath);
-                        //这里使用的删掉*************最好改成缓存
                         //创建文件
-                        zipFile.mkdirs();
+                        if(!zipFile.getParentFile().exists()) {
+                            //如果目标文件所在的目录不存在，则创建父目录
+                            if(!zipFile.getParentFile().mkdirs()) {
+                                throw new RuntimeException("创建目录失败！");
+                            }
+                        }
+                        if (!zipFile.createNewFile()) {
+                            throw new RuntimeException("创建压缩文件失败！");
+                        }
                         //写到磁盘
                         ZipUtil.zip(wantedFilesPath, new FileOutputStream(zipFile));
                         //从磁盘读到网络（发给浏览器）
                         FileTransportUtil.downloadFile(zipFile, table.getName() + ".zip");
-                        zipFile.delete();
+                        if(!zipFile.delete()){
+                            log.info(zipFile.getAbsolutePath() + " 未删除！");
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -682,9 +687,7 @@ public class TableController {
             int tid = Integer.parseInt(request.getParameter("t"));
             Table table = tableService.findById(tid);
             if(table != null && table.getOwner().equals(user.getId())){
-                Field field = new Field();
-                field.setTableId(table.getId());
-                List<Field> fieldList = fieldService.findAll(field);
+                List<Field> fieldList = fieldService.findAllByTableId(table.getId());
                 table.setState(TableStatusEnum.getNameBy(table.getState()));
                 model.addAttribute("table", table);
                 model.addAttribute("fieldList", fieldList);

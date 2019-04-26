@@ -4,7 +4,7 @@ spring:
       #enabled: true
   datasource:
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/msg_collect?characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/msg_collect?characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false
     username: root
     password: root
     tomcat-jdbc: com.alibaba.datasource.pool.DruidDataSource
@@ -14,7 +14,7 @@ spring:
     maxWait: 60000                                 #获取连接时最大等待时间，单位毫秒
     timeBetweenEvictionRunsMillis: 60000           #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
     minEvictableIdleTimeMillis: 300000             #配置一个连接在池中最小生存的时间，单位是毫秒
-    validationQuery: SELECT 1 FROM tb_role         #测试连接
+    validationQuery: SELECT 1                      #测试连接
     testWhileIdle: true                            #申请连接的时候检测，建议配置为true，不影响性能，并且保证安全性
     testOnBorrow: false                            #获取连接时执行检测，建议关闭，影响性能
     testOnReturn: false                            #归还连接时执行检测，建议关闭，影响性能

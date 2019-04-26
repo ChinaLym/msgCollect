@@ -35,7 +35,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     // 保存上传文件的目录
-    public final static String FILE_DIR = "F:/msg_collect_files/";
+    public final static String FILE_DIR = "E:/files/msg_collect_files/";
     
     //虚拟路径, 即访问 /appName/collect_data/xxx 会访问到  F:/msg_collect_files/xxx
     public final static String VIRTUL_DIR = "/collect_data/";
@@ -44,7 +44,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private final static String VIRTUL_DIR_Handle = VIRTUL_DIR + "**";
     
     /**
-     * 配置静态资源的web访问路径，例如上传的文件 abc.png 保存在 F:/msg_collect_files/ 下
+     * 配置静态资源的web访问路径，例如上传的文件 abc.png 保存在 E:/files/msg_collect_files 下
      * 那么在浏览器中访问的路径为：http://localhost:8080/collect_data/upload/abc.png
      */
     @Override

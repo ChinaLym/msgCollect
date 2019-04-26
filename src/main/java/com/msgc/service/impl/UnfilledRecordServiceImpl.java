@@ -32,7 +32,7 @@ public class UnfilledRecordServiceImpl implements IUnfilledRecordService {
     @Override
     public UnfilledRecord findById(Integer id) {
         Optional<UnfilledRecord> unfilledTable = unfilledTableRepository.findById(id);
-        return unfilledTable.isPresent() ? unfilledTable.get() : null;
+        return unfilledTable.orElse(null);
     }
     
     @Override
@@ -68,5 +68,10 @@ public class UnfilledRecordServiceImpl implements IUnfilledRecordService {
     @Override
     public void deleteByTableIds(List<Integer> tableIdList) {
         unfilledTableRepository.deleteAllByTableId(tableIdList);
+    }
+
+    @Override
+    public UnfilledRecord findByUserIdAndTableId(Integer userId, Integer tableId) {
+        return unfilledTableRepository.findByUserIdAndTableId(userId, tableId);
     }
 }

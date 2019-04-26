@@ -32,4 +32,6 @@ public interface IFieldRepository extends JpaRepository<Field, Integer> {
     Integer deleteByTableId(int tableId);
 
     List<Field> findAll(Field field);
+
+    List<Field> findByTableId(Integer tableId);
 }

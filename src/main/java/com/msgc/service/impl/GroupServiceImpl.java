@@ -32,7 +32,7 @@ public class GroupServiceImpl implements IGroupService{
     @Override
     public Group findById(Integer id) {
         Optional<Group> group = groupRepository.findById(id);
-        return group.isPresent() ? group.get() : null;
+        return group.orElse(null);
     }
     
     @Override

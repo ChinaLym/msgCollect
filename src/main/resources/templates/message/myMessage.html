@@ -54,7 +54,7 @@
                         <span th:text="${message.title}">标题</span>
                       </td>-->
                       <td width="50%" class="mailbox-name">
-                          <a th:href="${message.href}" th:text="${#strings.abbreviate(message.content,20)}">内容</a>
+                          <a th:href="${message.href}" th:text="${#strings.abbreviate(message.content,30)}">内容</a>
                       </td>
                       <td width="15%"class="mailbox-date" th:text="${#dates.format(message.createTime,'MM-dd HH:mm')}">5 mins ago</td>
                       <td width="3%">

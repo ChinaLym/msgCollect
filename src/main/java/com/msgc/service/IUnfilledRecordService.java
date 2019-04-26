@@ -27,4 +27,6 @@ public interface IUnfilledRecordService {
     List<UnfilledRecord> findAllByUserId(Integer userId);
 
     void deleteByTableIds(List<Integer> tableIdList);
+
+    UnfilledRecord findByUserIdAndTableId(Integer userId, Integer tableId);
 }
