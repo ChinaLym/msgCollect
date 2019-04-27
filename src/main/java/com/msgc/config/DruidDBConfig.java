@@ -1,17 +1,14 @@
 package com.msgc.config;
 
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
+import com.alibaba.druid.pool.DruidDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import com.alibaba.druid.pool.DruidDataSource;
+import javax.sql.DataSource;
+import java.sql.SQLException;
 /**
 * Type: DruidDBConfig
 * Description: 采用阿里的Druid连接池，提高数据库连接的性能
@@ -19,7 +16,8 @@ import com.alibaba.druid.pool.DruidDataSource;
 * @author LYM
 * @date Dec 16, 2018
  */
-@Configuration
+//@Configuration
+// 使用配置文件，不用该配置类了
 public class DruidDBConfig {
 	private Logger logger = LoggerFactory.getLogger(DruidDBConfig.class);
 	

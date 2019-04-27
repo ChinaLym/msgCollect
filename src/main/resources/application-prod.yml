@@ -1,0 +1,15 @@
+variable:
+  introduce: '这是生成时候的配置 yml'
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/msg_collect?characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false
+    username: root
+    password: root
+    # Druid WebStatFilter配置
+    druid:
+      web-stat-filter:
+        enabled: false
+  jpa:
+    show-sql: false    #生产环境时关闭sql显示
+  thymeleaf:
+    cache: true      #生产环境 开启缓存
