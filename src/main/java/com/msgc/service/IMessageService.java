@@ -15,8 +15,8 @@ public interface IMessageService {
 
     Message findById(String id);
     
-    List<Message> findAll(Message messageExample);
-    
+    List<Message> findAllByReceiverAndType(Integer receiverId, Integer type);
+
     void deleteById(String id);
     
     void read(String messageId);

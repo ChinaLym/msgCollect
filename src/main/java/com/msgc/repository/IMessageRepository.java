@@ -48,4 +48,6 @@ public interface IMessageRepository extends JpaRepository<Message, String> {
 
     @Query(value = "select * from tb_message where receiver=?1 and is_read=false limit ?2", nativeQuery = true)
     List<Message> findUnreadByReceiverAndLimit(Integer receiver, int limitNum);
+
+    List<Message> findAllByReceiverAndTypeAndDelete(Integer receiverId, Integer type, boolean b);
 }

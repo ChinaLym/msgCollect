@@ -158,9 +158,7 @@ public class TableController {
 	public String filledCollectPage(HttpSession session, Model model) {
         User user = (User)session.getAttribute(SessionKey.USER);
         if(user != null){
-            AnswerRecord example = new AnswerRecord();
-            example.setUserId(user.getId());
-            List<AnswerRecord> answerRecordList = answerRecordService.findAll(example);
+            List<AnswerRecord> answerRecordList = answerRecordService.findAllByUserId(user.getId());
             //将 answerRecordList 中的 record 提取出所有的 id 并以 List 的形式返回
             List<Integer> tableIdList = answerRecordList.stream().map(AnswerRecord::getTableId).collect(Collectors.toList());
             List<Table> tableList = tableService.findAllById(tableIdList);
@@ -218,7 +216,9 @@ public class TableController {
                 throw new ResourceNotFoundException();
             }
             //合法修改表，删掉这个表之前所有的 fields
-            fieldService.deleteByTableId(table.getId());
+            if(!fieldService.deleteByTableId(table.getId())){
+                log.info("删除无效表字段失败！tableId - " + table.getId());
+            }
         }
         //该表是新增而不是修改，设定某些初始值
         else{
@@ -323,13 +323,10 @@ public class TableController {
 			fieldDTOList.add(new FieldDTO(field, FieldTypeFlyweightFactory.getInstance().getFlyweight(field.getType())));
 		}
 		if(user != null){
-            AnswerRecord answerRecord = new AnswerRecord();
-            answerRecord.setTableId(table.getId());
-            answerRecord.setUserId(user.getId());
-            List<AnswerRecord> answerRecords = answerRecordService.findAll(answerRecord);
+            List<AnswerRecord> answerRecords = answerRecordService.findAllByTableIdAndUserId(table.getId(), user.getId());
             //如果已经填写过该表
             if(answerRecords != null && answerRecords.size() != 0){
-                answerRecord = answerRecords.get(0);
+                AnswerRecord answerRecord = answerRecords.get(0);
                 Answer answer = new Answer();
                 answer.setAnswerRecordId(answerRecord.getId());
                 List<Answer> answerList = answerService.findAll(answer);
@@ -373,10 +370,7 @@ public class TableController {
            //允许未登录填写未登录
             //     record.setUserRealName(request.getParameter("user-real-name"));
         } else{
-            AnswerRecord example = new AnswerRecord();
-            example.setTableId(table.getId());
-            example.setUserId(user.getId());
-            record = answerRecordService.findAll(example).get(0);
+            record = answerRecordService.findAllByTableIdAndUserId(table.getId(), user.getId()).get(0);
         }
         record.setIp(IPUtil.ipv4StrToInt(IPUtil.getIpAddr(request)));
         record.setUpdate_time(new Date());

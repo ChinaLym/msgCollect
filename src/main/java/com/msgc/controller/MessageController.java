@@ -32,11 +32,6 @@ public class MessageController {
 		this.messageService = messageService;
 	}
 
-	@GetMapping("/detail/{messageId}")
-	public String MessageDetailPage(@PathVariable("messageId") String messageId) {
-		messageService.findById(messageId);
-		return "message/detail";
-	}
 
 	/**
 	 * 删除自己的消息
@@ -62,16 +57,17 @@ public class MessageController {
 		return JsonUtil.toJson(ResponseWrapper.success("删除成功"));
 	}
 
+	/**
+	 * 消息界面
+	 * @param typeCode 消息类型
+	 * @return 对应类型的消息界面
+	 */
 	@GetMapping("/{typeCode}")
 	public String messagePage(@PathVariable Integer typeCode, Model model) {
 		HttpSession session = WebUtil.getRequest().getSession();
 		session.setAttribute(SessionKey.NEW_MESSAGES_FLAG, false);
 		User user = (User)session.getAttribute(SessionKey.USER);
-		Message messageExample = new Message();
-		messageExample.setType(typeCode);
-		messageExample.setReceiver(user.getId());
-		messageExample.setDelete(false);
-		List<Message> messageList = messageService.findAll(messageExample);
+		List<Message> messageList = messageService.findAllByReceiverAndType(user.getId(), typeCode);
 		model.addAttribute("messageType", MessageTypeEnum.getNameBy(typeCode));
 		model.addAttribute("messageList", messageList);
 		return "message/myMessage";

@@ -33,7 +33,7 @@ public interface ITableRepository extends JpaRepository<Table, Integer> {
 
     @Modifying
     @Query("update Table set filledNum = filledNum+1 where id=?1")
-    Integer increaseFilledNum(Integer tableId);
+    void increaseFilledNum(Integer tableId);
 
     @Transactional
     @Modifying

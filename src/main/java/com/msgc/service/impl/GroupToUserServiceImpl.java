@@ -25,7 +25,12 @@ public class GroupToUserServiceImpl implements IGroupToUserService{
         this.groupToUserRepository = grouptouserRepositry;
     }
 
-
+    /**
+     *  添加 组 —— 用户 对应关系（用户加入组）
+     * @param user  关联的用户
+     * @param group 关联的组
+     * @return  添加后的关系实体
+     */
     @Override
     public GroupToUser newRelationShip(User user, Group group) {
         GroupToUser relationship = new GroupToUser();

@@ -14,15 +14,15 @@ public interface ITableService {
 
     Table findById(Integer id);
 
-    boolean deleteById(Integer owner, Integer tableId);
+    boolean deleteById(Integer operatorId, Integer tableId);
 
     List<Table> findAllByExample(Table tableExample);
 
     List<Table> findAllById(List<Integer> tableIdList);
 
-    boolean increaseFilledNum(Integer tableId);
+    void increaseFilledNum(Integer tableId);
 
-    boolean stopById(Integer opreateUid, Integer tableId);
+    boolean stopById(Integer operatorId, Integer tableId);
 
     List<Table> findAllActiveTable(Integer owner);
 

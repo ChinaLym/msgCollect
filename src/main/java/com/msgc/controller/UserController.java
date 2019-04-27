@@ -43,16 +43,11 @@ public class UserController {
 		this.userService = userService;
 	}
 
-	// 自动登录有效时间，毫秒表示 2周
-	private final long maxEffective = 1000 * 60 * 60 * 24 * 14;
-
-	private final int maxEffectiveSecond = 60 * 60 * 24 * 14;
-
 	/**
 	 * 登录
 	 * @param userParam 接收传来的 user
      * @param model 设置提示信息
-	 * @return
+	 * @return 重定向至首页
 	 */
     @PostMapping(value = "/login.action")
     public String login(@ModelAttribute User userParam, Model model) {
@@ -69,9 +64,13 @@ public class UserController {
 					UserCookie mapping = new UserCookie();
 					mapping.setCookie(UUID.randomUUID().toString().replace("-", ""));
 					mapping.setUserId(user.getId());
-					mapping.setExpirationDate(new Date(System.currentTimeMillis() + maxEffective));
+					// 保存至数据库
+					long twoWeeks_milli = 1000 * 60 * 60 * 24 * 14;
+					mapping.setExpirationDate(new Date(System.currentTimeMillis() + twoWeeks_milli));
 					userCookieService.save(mapping);
-					WebUtil.setCookie("auto-login", mapping.getCookie(), maxEffectiveSecond);
+					// 将凭据保存至浏览器 cookie
+					int twoWeeks_second = 60 * 60 * 24 * 14;
+					WebUtil.setCookie("auto-login", mapping.getCookie(), twoWeeks_second);
 				}catch (Exception e){
 					e.printStackTrace();
 					//写数据库 cookieUserMapping 失败

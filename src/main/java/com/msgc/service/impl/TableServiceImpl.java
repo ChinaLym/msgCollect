@@ -47,17 +47,17 @@ public class TableServiceImpl implements ITableService{
     private final IAnswerService answerService;
     private final IUserService userService;
     private final ICommentService commentService;
-    private final IUnfilledRecordService unfilledTableService;
+    private final IUnfilledRecordService unfilledRecordService;
 
     @Autowired
-    public TableServiceImpl(IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, ITableRepository tableRepositry, IUserService userService, ICommentService commentService, IUnfilledRecordService unfilledTableService) {
+    public TableServiceImpl(IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, ITableRepository tableRepositry, IUserService userService, ICommentService commentService, IUnfilledRecordService unfilledRecordService) {
         this.fieldService = fieldService;
         this.answerRecordService = answerRecordService;
         this.answerService = answerService;
         this.tableRepository = tableRepositry;
         this.userService = userService;
         this.commentService = commentService;
-        this.unfilledTableService = unfilledTableService;
+        this.unfilledRecordService = unfilledRecordService;
     }
 
     @Override
@@ -70,16 +70,19 @@ public class TableServiceImpl implements ITableService{
         return tableRepository.findById(id).orElse(null);
     }
 
+    // 删除表
     @Override
-    public boolean deleteById(Integer owner, Integer tableId) {
-        return tableRepository.deleteByIdAndOwner(tableId, owner) > 0;
+    public boolean deleteById(Integer operatorId, Integer tableId) {
+        return tableRepository.deleteByIdAndOwner(tableId, operatorId) > 0;
     }
 
+    // 停止收集
     @Override
-    public boolean stopById(Integer owner, Integer tableId) {
-        return tableRepository.stopByIdAndOwner(tableId, owner) > 0;
+    public boolean stopById(Integer operatorId, Integer tableId) {
+        return tableRepository.stopByIdAndOwner(tableId, operatorId) > 0;
     }
 
+    // 查询该拥有者 未删除的所有收集表
     @Override
     @Cacheable(sync = true)
     public List<Table> findAllActiveTable(Integer owner) {
@@ -91,14 +94,16 @@ public class TableServiceImpl implements ITableService{
         return tableRepository.findAll(Example.of(tableExample));
     }
 
+    // 根据收集表 id 查询
     @Override
     public List<Table> findAllById(List<Integer> tableIdList) {
         return tableRepository.findAllById(tableIdList);
     }
 
+    // 增加一次填写数目
     @Override
-    public boolean increaseFilledNum(Integer tableId) {
-        return tableRepository.increaseFilledNum(tableId) > 0;
+    public void increaseFilledNum(Integer tableId) {
+        tableRepository.increaseFilledNum(tableId);
     }
 
     /**
@@ -114,10 +119,8 @@ public class TableServiceImpl implements ITableService{
             int tid = Integer.parseInt(request.getParameter("t"));
             Table table = this.findById(tid);
             if(table != null && table.getOwner().equals(user.getId())){
-                List<Field> fieldList = fieldService.findAllByTableId(tid);
-                AnswerRecord answerRecord = new AnswerRecord();
-                answerRecord.setTableId(tid);
-                List<AnswerRecord> answerRecordList = answerRecordService.findAll(answerRecord);
+                List<Field> fieldList = fieldService.findAllByTableId(table.getId());
+                List<AnswerRecord> answerRecordList = answerRecordService.findAllByTableId(table.getId());
                 List<AnswerRecordBO> answerRecordBOList = new ArrayList<>();
                 Answer answer = new Answer();
                 for(AnswerRecord record : answerRecordList){
@@ -168,9 +171,7 @@ public class TableServiceImpl implements ITableService{
         fieldList.sort(Comparator.comparing(Field::getNum));
 
         // 2. 根据 tableId 找出全部 AnswerRecord 即每一行记录
-        AnswerRecord answerRecord = new AnswerRecord();
-        answerRecord.setTableId(tableId);
-        List<AnswerRecord> answerRecordList = answerRecordService.findAll(answerRecord);
+        List<AnswerRecord> answerRecordList = answerRecordService.findAllByTableId(tableId);
         //表头
         List<String> fieldNameList = new ArrayList<>(fieldList.size());
         List<Integer> fieldIdList = new ArrayList<>(fieldList.size());
@@ -269,18 +270,24 @@ public class TableServiceImpl implements ITableService{
         return tableRepository.findAllByStateAndNameContaining(state.getValue(), tableName);
     }
 
+    /**
+     * 分页查询
+     * @param pageNumber 第几页
+     * @param pageSize  每页多少数目
+     * @return  该页
+     */
     @Override
     public Page<Table> getPageTable(int pageNumber, int pageSize){
         PageRequest request = this.buildPageRequest(pageNumber,pageSize);
         return tableRepository.findAll(request);
     }
 
-    //构建PageRequest
+    // 构建PageRequest
     private PageRequest buildPageRequest(int pageNumber, int pageSize) {
         return PageRequest.of(pageNumber - 1, pageSize);
     }
 
-    //组装tableDTO
+    // 组装tableDTO
     public List<TableDTO> constructTableDTO(List<Table> tableList){
         List<Integer> ownerIdList = tableList.stream().map(Table::getOwner).collect(Collectors.toList());
         List<User> userList = userService.findListByIds(ownerIdList);
@@ -308,13 +315,13 @@ public class TableServiceImpl implements ITableService{
         record.setDelete(false);
         record.setFilled(false);
         record.setCreateTime(new Date());
-        UnfilledRecord dbRecord = unfilledTableService.findByUserIdAndTableId(user.getId(), tableId);
+        UnfilledRecord dbRecord = unfilledRecordService.findByUserIdAndTableId(user.getId(), tableId);
         //如果之前删除了，则重新置为未删除
         if(dbRecord != null && dbRecord.getDelete()){
             dbRecord.setDelete(false);
             record = dbRecord;
         }
-        unfilledTableService.save(record);
+        unfilledRecordService.save(record);
     }
 
     // 批量更新表，如更新表的截止状态

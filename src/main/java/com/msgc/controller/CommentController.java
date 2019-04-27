@@ -63,7 +63,6 @@ public class CommentController {
 	@ResponseBody
 	public String deleteComment(@PathVariable("commentId") Integer commentId){
         commentService.deleteById(commentId);
-        //TODO 判断是否删除成功
 		return JsonUtil.toJson(ResponseWrapper.success("删除成功"));
 	}
 

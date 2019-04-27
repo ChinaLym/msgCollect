@@ -27,9 +27,7 @@ public interface IUnfilledRecordRepository extends JpaRepository<UnfilledRecord,
 
     UnfilledRecord findByUserIdAndTableId(Integer id, Integer tableId);
 
-    List<UnfilledRecord> findAllByUserId(Integer userId);
-
-    List<UnfilledRecord> findAllByUserIdAndFilled(Integer userId, boolean b);
-
     void deleteAllByTableId(List<Integer> tableIdList);
+
+    List<UnfilledRecord> findAllByUserIdAndFilledAndDelete(Integer userId, boolean b, boolean b1);
 }

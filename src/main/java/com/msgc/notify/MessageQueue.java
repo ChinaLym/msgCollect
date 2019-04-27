@@ -9,7 +9,7 @@ public class MessageQueue {
     // 设置队列大小为 1000 个
     private static final int MAX_QUEUE_SIZE = 1000;
 
-    public static volatile BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>(MAX_QUEUE_SIZE);
+    private static volatile BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>(MAX_QUEUE_SIZE);
 
     //放不进去拉倒
     public static void offer(Message message){

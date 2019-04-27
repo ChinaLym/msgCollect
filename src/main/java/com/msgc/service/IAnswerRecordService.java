@@ -8,11 +8,11 @@ public interface IAnswerRecordService {
 
     AnswerRecord save(AnswerRecord answerrecord);
 
-    AnswerRecord findById(Integer id);
-    
-    List<AnswerRecord> findAllById(List<Integer> ids);
-    
-    List<AnswerRecord> findAll(AnswerRecord example);
-    
+    List<AnswerRecord> findAllByTableId(Integer tableId);
+
+    List<AnswerRecord> findAllByUserId(Integer userId);
+
+    List<AnswerRecord> findAllByTableIdAndUserId(Integer userId, Integer tableId);
+
     void deleteById(Integer id);
 }

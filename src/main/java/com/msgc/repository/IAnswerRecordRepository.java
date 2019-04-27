@@ -3,6 +3,9 @@ package com.msgc.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.msgc.entity.AnswerRecord;
+
+import java.util.List;
+
 /**
 * Description: DAO. 
 *   Deal directly with the database, 
@@ -22,4 +25,9 @@ import com.msgc.entity.AnswerRecord;
 public interface IAnswerRecordRepository extends JpaRepository<AnswerRecord, Integer> {
 
 
+    List<AnswerRecord> findAllByTableId(Integer tableId);
+
+    List<AnswerRecord> findAllByUserId(Integer userId);
+
+    List<AnswerRecord> findAllByTableIdAndUserId(Integer tableId, Integer userId);
 }

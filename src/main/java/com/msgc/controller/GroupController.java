@@ -27,7 +27,7 @@ import java.util.List;
 
 /**
 *Type: GroupController
-* Description: 组相关
+* Description: 组相关，该模块几乎未开发，需要完善
 * @author LMM
  */
 @Controller
@@ -45,6 +45,11 @@ public class GroupController {
 		this.userService = userService;
 	}
 
+	/**
+	 * 返回我的组
+	 * @param model 模型
+	 * @return 我的组
+	 */
 	@GetMapping(value = {"", "/my"})
     public String myGroupPage(Model model){
 		HttpSession session = WebUtil.getRequest().getSession();
@@ -54,6 +59,11 @@ public class GroupController {
     	return "group/myGroup";
 	}
 
+	/**
+	 * 组详情页面
+	 * @param groupId 组 id
+	 * @return 组详情页面
+	 */
 	@GetMapping(value = {"/detail/{groupId}"})
     public String myGroupPage(@PathVariable("groupId") Integer groupId, Model model){
 		Group group = groupService.findById(groupId);
@@ -64,6 +74,10 @@ public class GroupController {
     	return "group/groupDetail";
 	}
 
+	/**
+	 * 创建组
+	 * @return 返回组详情页面
+	 */
 	@Transactional
 	@PostMapping(value = {"/new.action"})
     public String createNewGroup(Model model){
@@ -81,6 +95,11 @@ public class GroupController {
 		return "group/groupDetail";
 	}
 
+	/**
+	 * 申请加入，未开发完毕
+	 * @param groupId 申请的组id
+	 * @return 是否发出申请
+	 */
 	@PostMapping(value = {"/join.action/{groupId}"})
 	public String joinGroup(@PathVariable Integer groupId){
 		Group group = groupService.findById(groupId);
@@ -88,7 +107,7 @@ public class GroupController {
 		HttpSession session = request.getSession();
 		User user = (User)session.getAttribute(SessionKey.USER);
 		groupToUserService.newRelationShip(user, group);
-		//TODO 改为管理员同意
+		//TODO 需要管理员同意（如将申请放入申请表，组管理员同意。。。。）
 		return JsonUtil.toJson(ResponseWrapper.success("加入成功！"));
 	}
 

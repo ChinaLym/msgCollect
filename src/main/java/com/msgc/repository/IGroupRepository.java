@@ -26,17 +26,18 @@ import java.util.List;
 */
 public interface IGroupRepository extends JpaRepository<Group, Integer> {
 
+    //上限，每个人创建10个组
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO tb_group ( " +
             "  name, " +
             "  master_id, " +
-            "  icon_uri, " +
+            "  icon, " +
             "  member_number, " +
             "  create_time " +
             ")  " +
             "SELECT  " +
-            "  #{newGroup.name}, #{newGroup.masterId}, #{newGroup.iconUri}, #{newGroup.memberNumber}, #{newGroup.createTime}" +
+            "  #{newGroup.name}, #{newGroup.masterId}, #{newGroup.icon}, #{newGroup.memberNumber}, #{newGroup.createTime}" +
             " FROM DUAL WHERE NOT EXISTS  " +
             "  (SELECT  " +
             "    1 " +

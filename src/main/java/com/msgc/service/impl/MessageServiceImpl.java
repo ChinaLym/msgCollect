@@ -10,7 +10,6 @@ import com.msgc.repository.IMessageRepository;
 import com.msgc.service.IMessageService;
 import com.msgc.utils.WebUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -42,10 +41,15 @@ public class MessageServiceImpl implements IMessageService{
         return messageRepository.findById(id).orElse(null);
     }
 
-
+    /**
+     * 查询接收者id为 receiverId ，消息类型为 type 且未被删除的消息
+     * @param receiverId 接收者 id
+     * @param type  消息类型
+     * @return  消息列表
+     */
     @Override
-    public List<Message> findAll(Message messageExample) {
-        return messageRepository.findAll(Example.of(messageExample));
+    public List<Message> findAllByReceiverAndType(Integer receiverId, Integer type) {
+        return messageRepository.findAllByReceiverAndTypeAndDelete(receiverId, type, false);
     }
     
     //通过消息Id，假删除，需要用户 id == receiver

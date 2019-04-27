@@ -60,7 +60,7 @@ public class GroupServiceImpl implements IGroupService{
         return groupRepository.saveAll(groupList);
     }
 
-    //上限，每个人创建10个组
+    // 有上限，每个人创建10个组
     @Override
     public Group createNewGroup(Group group){
         return groupRepository.createNewGroup(group);
