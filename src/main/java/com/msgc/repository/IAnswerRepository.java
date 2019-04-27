@@ -30,7 +30,7 @@ public interface IAnswerRepository extends JpaRepository<Answer, Integer> {
     @Query("delete from Answer where answerRecordId=?1")
     void deleteAllByRecordId(int answerRecordId);
 
-    List<Answer> findByFieldId(int fieldId);
-
     List<Answer> findByFieldIdIn(List<Integer> fieldIdList);
+
+    List<Answer> findAllByAnswerRecordId(Integer recordId);
 }

@@ -12,7 +12,5 @@ public interface IAnswerRecordService {
 
     List<AnswerRecord> findAllByUserId(Integer userId);
 
-    List<AnswerRecord> findAllByTableIdAndUserId(Integer userId, Integer tableId);
-
-    void deleteById(Integer id);
+    AnswerRecord findByTableIdAndUserId(Integer userId, Integer tableId);
 }

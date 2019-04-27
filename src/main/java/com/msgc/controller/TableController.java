@@ -323,13 +323,10 @@ public class TableController {
 			fieldDTOList.add(new FieldDTO(field, FieldTypeFlyweightFactory.getInstance().getFlyweight(field.getType())));
 		}
 		if(user != null){
-            List<AnswerRecord> answerRecords = answerRecordService.findAllByTableIdAndUserId(table.getId(), user.getId());
+            AnswerRecord answerRecord = answerRecordService.findByTableIdAndUserId(table.getId(), user.getId());
             //如果已经填写过该表
-            if(answerRecords != null && answerRecords.size() != 0){
-                AnswerRecord answerRecord = answerRecords.get(0);
-                Answer answer = new Answer();
-                answer.setAnswerRecordId(answerRecord.getId());
-                List<Answer> answerList = answerService.findAll(answer);
+            if(answerRecord != null){
+                List<Answer> answerList = answerService.findAllByRecordId(answerRecord.getId());
                 List<String> myAnswerContentList = answerList.stream()
                         .map(Answer::getContent)
                         .collect(Collectors.toList());
@@ -362,6 +359,7 @@ public class TableController {
         }
         //创建一条 AnswerRecord
         AnswerRecord record;
+        //是否曾经填写过该表
         if(!isReFill){
             record = new AnswerRecord();
             record.setTableId(tid);
@@ -370,7 +368,7 @@ public class TableController {
            //允许未登录填写未登录
             //     record.setUserRealName(request.getParameter("user-real-name"));
         } else{
-            record = answerRecordService.findAllByTableIdAndUserId(table.getId(), user.getId()).get(0);
+            record = answerRecordService.findByTableIdAndUserId(table.getId(), user.getId());
         }
         record.setIp(IPUtil.ipv4StrToInt(IPUtil.getIpAddr(request)));
         record.setUpdate_time(new Date());

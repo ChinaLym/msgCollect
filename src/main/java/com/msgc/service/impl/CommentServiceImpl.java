@@ -8,6 +8,7 @@ import com.msgc.service.ICommentService;
 import com.msgc.utils.WebUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.List;
 * @author LYM
  */
 @Service
+@CacheConfig(cacheNames = "commentCache")//缓存key: tableId value: List<comment>
 public class CommentServiceImpl implements ICommentService{
 
     //评论表时 parentId 为 -1
@@ -80,7 +82,7 @@ public class CommentServiceImpl implements ICommentService{
      * @return 该表所有的未删除的评论
      */
     @Override
-    @Cacheable(value = "commentCache", sync = true)
+    @Cacheable(sync = true)
     public List<Comment> findAllEffectiveByTableId(Integer tableId) {
         return commentRepository.findAllByTableIdAndEffective(tableId, true);
     }

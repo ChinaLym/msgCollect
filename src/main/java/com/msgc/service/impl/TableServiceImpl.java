@@ -18,6 +18,7 @@ import com.msgc.utils.excel.ExcelUtilAdapter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -65,18 +66,21 @@ public class TableServiceImpl implements ITableService{
         return tableRepository.save(table);
     }
 
+    @Cacheable(key = "'t' + #id")
     @Override
     public Table findById(Integer id) {
         return tableRepository.findById(id).orElse(null);
     }
 
     // 删除表
+    @CacheEvict()
     @Override
     public boolean deleteById(Integer operatorId, Integer tableId) {
         return tableRepository.deleteByIdAndOwner(tableId, operatorId) > 0;
     }
 
     // 停止收集
+    @CacheEvict(key="'t' + #tableId")
     @Override
     public boolean stopById(Integer operatorId, Integer tableId) {
         return tableRepository.stopByIdAndOwner(tableId, operatorId) > 0;
@@ -84,7 +88,7 @@ public class TableServiceImpl implements ITableService{
 
     // 查询该拥有者 未删除的所有收集表
     @Override
-    @Cacheable(sync = true)
+    @Cacheable(key="'Lo' + #owner")
     public List<Table> findAllActiveTable(Integer owner) {
         return tableRepository.findAllByOwnerAndStateNot(owner, TableStatusEnum.DELETE.getValue());
     }
@@ -95,6 +99,7 @@ public class TableServiceImpl implements ITableService{
     }
 
     // 根据收集表 id 查询
+    @Cacheable()
     @Override
     public List<Table> findAllById(List<Integer> tableIdList) {
         return tableRepository.findAllById(tableIdList);
@@ -122,10 +127,8 @@ public class TableServiceImpl implements ITableService{
                 List<Field> fieldList = fieldService.findAllByTableId(table.getId());
                 List<AnswerRecord> answerRecordList = answerRecordService.findAllByTableId(table.getId());
                 List<AnswerRecordBO> answerRecordBOList = new ArrayList<>();
-                Answer answer = new Answer();
                 for(AnswerRecord record : answerRecordList){
-                    answer.setAnswerRecordId(record.getId());
-                    List<Answer> answerList = answerService.findAll(answer);
+                    List<Answer> answerList = answerService.findAllByRecordId(record.getId());
                     answerList.sort(Comparator.comparing(Answer::getFieldId));
                     AnswerRecordBO answerRecordBO = new AnswerRecordBO(record, answerList);
                     answerRecordBOList.add(answerRecordBO);
@@ -159,7 +162,7 @@ public class TableServiceImpl implements ITableService{
      */
     public void processTableData(Integer tableId, boolean isOwner,
                                   Model model){
-//TODO 增加缓存，组装回复和评论部分待优化。
+    //TODO 需要解耦，每一步解耦成一个方法，便于缓存 cpu 计算过的内容
         // 1. 根据 tableId 找出全部 Field 组成表头
         //不是表主人则只能查看可见数据
         List<Field> fieldList = fieldService.findAllByTableId(tableId);
@@ -264,6 +267,7 @@ public class TableServiceImpl implements ITableService{
      * @param state 表状态
      * @return 模糊搜索表名
      */
+    @Cacheable(key = "'tn' + #tableName")
     @Override
     public List<Table> searchByNameAndState(String tableName, TableStatusEnum state){
         // 需要限制查询结果个数

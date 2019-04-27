@@ -8,11 +8,11 @@ public interface IAnswerService {
 
     Answer findById(Integer id);
     
-    List<Answer> findAll(Answer example);
+    List<Answer> findAllByRecordId(Integer recordId);
     
     List<Answer> save(List<Answer> answersList);
 
-    void deleteAllByRecordId(int answerRecordId);
+    void deleteAllByRecordId(Integer answerRecordId);
 
     List<Answer> findAllByFieldIds(List<Integer> fieldIdList);
 }

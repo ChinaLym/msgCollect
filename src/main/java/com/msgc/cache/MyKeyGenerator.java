@@ -25,7 +25,7 @@ public class MyKeyGenerator implements KeyGenerator {
         private final int hashCode;
 
         /**
-         * Initialize a key.
+         * Initialize a key via hash.
          *
          * @param clazz the receiver class
          * @param methodName the method name

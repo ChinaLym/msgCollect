@@ -19,11 +19,16 @@ public class CaffeineConfig {
     private static final int DEFAULT_TTL = 600;
 
     public enum Caches{
-        tableCache,         //收集表
-        userCache,          //用户缓存
-        commentCache,       //表评论缓存
-        fieldCache,         //表字段缓存
+        tableCache,             //收集表
+        fieldCache,             //表字段缓存
+        commentCache(100),      //表评论缓存
+        answerRecordCache,      //用户-表 填写记录缓存
+        answerCache,            //表填写内容缓存
         ;
+        Caches(){}
+        Caches(int ttl){
+            this.ttl = ttl;
+        }
         private int maxSize = DEFAULT_MAXSIZE;      //最大數量
         private int ttl     = DEFAULT_TTL;          //过期时间（秒）
 
