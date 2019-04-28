@@ -157,7 +157,7 @@ public class BaseController {
                                    @PathVariable("fieldIdAndName") String fieldIdAndName,
                                    @PathVariable("fileName") String fileName){
         //TODO 验证表存在
-        //验证身份是否是表的拥有者 先 session 后 cookie ，都不通过则需要登录
+        //验证身份是否是表的拥有者 先 session 后 cookie ，都不通过则需要登录，必须为表主任才可以下载
         return "forward:" + WebMvcConfig.VIRTUL_DIR +
                 "upload/" + tableId + "/" + fieldIdAndName + "/" + fileName;
         //返回 permission deny
