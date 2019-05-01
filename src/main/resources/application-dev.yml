@@ -1,5 +1,4 @@
-variable:
-  introduce: '这是开发时候的配置 yml'
+#这是开发环境 配置 yml
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/msg_collect?characterEncoding=UTF-8&useSSL=false&autoReconnect=true&failOverReadOnly=false
@@ -18,7 +17,7 @@ spring:
       stat-view-servlet:
         enabled: true
         # IP白名单(没有配置或者为空，则允许所有访问)
-        allow: 127.0.0.1,192.168.43.145
+        allow: 127.0.0.1
         url-pattern: "/druid/*"
         reset-enable: true  #HTML页面上的“Reset All”功能
         login-username: admin
@@ -39,9 +38,7 @@ management:
       base-path: '/springManage'     # url 前缀
       exposure:
         include: '*'    # 开放所有 端点
-    beans:
-      cache:
-        time-to-live:10s
+
   info:
     git:
       mode:
@@ -53,3 +50,5 @@ info:
     encoding:UTF-8
     java.source:1.8
     java.traget:1.8
+
+debug: true

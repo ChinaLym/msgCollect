@@ -1,16 +1,12 @@
 package com.msgc.aop;
 
-import java.util.Arrays;
-
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 /**
 * Type: ServiceLoggerAspectJConfig
@@ -33,15 +29,14 @@ public class ServiceLoggerAspectJConfig {
     /**
      * Title: beforeServiceLog
      * Description: 进入方法前要做的事情：记录方法名和入参
-     * @param joinPoint
+     * @param joinPoint 日志切点
      */
     @Before("log()")
     public void beforeServiceLog(JoinPoint joinPoint) {
-    	Object[] args = joinPoint.getArgs();    	
-    	StringBuilder sb = new StringBuilder(joinPoint.getSignature().toShortString());
-	    sb.append("--entry args : ");
-	    sb.append(Arrays.toString(args));
-	    LOGGER.info(sb.toString());
+    	Object[] args = joinPoint.getArgs();
+		String sb = joinPoint.getSignature().toShortString() + "--entry args : " +
+				Arrays.toString(args);
+		LOGGER.info(sb);
     }
 
     /**
@@ -69,7 +64,7 @@ public class ServiceLoggerAspectJConfig {
      * @param exception	异常
      */
     @AfterThrowing(value = "log()", throwing = "exception")
-	public void handlerExcetionLog(JoinPoint joinPoint, Exception exception) {
+	public void handlerExceptionLog(JoinPoint joinPoint, Exception exception) {
 		// 获得类名和方法名称
 	    StringBuilder sb = new StringBuilder(joinPoint.getSignature().toShortString());
 	    sb.append("--exception! : ");
