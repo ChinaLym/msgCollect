@@ -38,10 +38,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public final static String FILE_DIR = "E:/files/msg_collect_files/";
     
     //虚拟路径, 即访问 /appName/collect_data/xxx 会访问到  F:/msg_collect_files/xxx
-    public final static String VIRTUL_DIR = "/collect_data/";
+    public final static String VIRTUAL_DIR = "/collect_data/";
     
     //拦截虚拟路径所有请求
-    private final static String VIRTUL_DIR_Handle = VIRTUL_DIR + "**";
+    private final static String VIRTUAL_DIR_Handle = VIRTUAL_DIR + "**";
     
     /**
      * 配置静态资源的web访问路径，例如上传的文件 abc.png 保存在 E:/files/msg_collect_files 下
@@ -49,7 +49,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler(VIRTUL_DIR_Handle).addResourceLocations(
+        registry.addResourceHandler(VIRTUAL_DIR_Handle).addResourceLocations(
                 "file:///" + WebMvcConfig.FILE_DIR);
     }
     

@@ -1,5 +1,6 @@
 package com.msgc.constant;
 
+import com.msgc.config.WebMvcConfig;
 import com.msgc.entity.Field;
 import com.msgc.utils.WebUtil;
 
@@ -16,19 +17,17 @@ import com.msgc.utils.WebUtil;
 public class FilePath {
 
     public static final String FILE_SEPARATOR = java.io.File.separator;
-    private static final String PROJECT_FILES_DIR_ROOT = "F:";
-    private static final String PROJECT_FILES_NAME = "msg_collect_files";
 
-    private static final String BASE_DIR = PROJECT_FILES_DIR_ROOT + FILE_SEPARATOR + PROJECT_FILES_NAME + FILE_SEPARATOR;
+    private static final String BASE_DIR =WebMvcConfig.FILE_DIR;
 
     public static final String DEFAULT_EXCEL_UPLOAD_DIR = BASE_DIR + "upload" + FILE_SEPARATOR;
-    public static final String DEFAULT_PROCESSED_DIR = BASE_DIR + "processed" + FILE_SEPARATOR;
+    private static final String DEFAULT_PROCESSED_DIR = BASE_DIR + "processed" + FILE_SEPARATOR;
 
     private static final String FILE_NAME_CONNECT = "_";
 
     public static final String FILE_NAME_ALL_FIELDS_ZIP = "all.zip";
     public static final String FILE_NAME_ALL_FIELDS_EXCEL = "all.xlsx";
-    public static final String FILE_NAME_TABLE_QRCODE_JPEG= "QrCode.jpeg";
+    public static final String FILE_NAME_TABLE_QrCODE_JPEG= "QrCode.jpeg";
 
 
     /**
