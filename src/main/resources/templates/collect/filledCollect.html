@@ -67,9 +67,14 @@
                   <td th:text="${recordList[iterator.index].browser}">192.168.1.1</td>
                   <td th:text="${table.filledNum}">10</td>
                   <th>
-                      <a th:href="'/collect/share/start?t=' + ${table.id}">
+                      <a th:if="${table.state ne 'END'}" th:href="'/collect/share/start?t=' + ${table.id}">
                           <button type="submit" class="btn btn-block btn-info" >
                               <i class="glyphicon glyphicon-edit"> </i> 修改重填
+                          </button>
+                      </a>
+                      <a th:if="${table.state eq 'END'}" th:href="'/collect/data/' + ${table.id}">
+                          <button type="button" class="btn btn-block btn-success" >
+                              <i class="fa fa-eye"> </i> 查看详情
                           </button>
                       </a>
                   </th>

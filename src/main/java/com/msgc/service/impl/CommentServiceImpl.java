@@ -9,6 +9,7 @@ import com.msgc.utils.WebUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,7 @@ public class CommentServiceImpl implements ICommentService{
      *  删除一条评论
      * @param id 要删除的评论的 ID
      */
+    @CacheEvict(allEntries = true)
     @Override
 	public void deleteById(Integer id) {
 		commentRepository.setDeleteStateById(id);
@@ -49,6 +51,7 @@ public class CommentServiceImpl implements ICommentService{
      * @param tableId 目标表
      * @throws RuntimeException 格式不正确等
      */
+    @CacheEvict(key = "'t' + #tableId")
     @Override
     public Comment addComment(Integer tableId) throws RuntimeException{
         HttpServletRequest request = WebUtil.getRequest();
@@ -82,7 +85,7 @@ public class CommentServiceImpl implements ICommentService{
      * @return 该表所有的未删除的评论
      */
     @Override
-    @Cacheable(sync = true)
+    @Cacheable(key = "'t' + #tableId")
     public List<Comment> findAllEffectiveByTableId(Integer tableId) {
         return commentRepository.findAllByTableIdAndEffective(tableId, true);
     }

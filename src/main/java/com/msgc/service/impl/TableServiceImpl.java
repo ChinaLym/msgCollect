@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
 
 /**
 * Type: TableServiceImpl
-* Description: serviceImpl
+* Description: serviceImpl，缓存存在短暂的不一致性，因为可能数据库已修改，但缓存未删除情况
 * @author LYM
  */
 @Service
@@ -61,6 +62,11 @@ public class TableServiceImpl implements ITableService{
         this.unfilledRecordService = unfilledRecordService;
     }
 
+    @Caching(evict={
+            @CacheEvict(key = "'t' + #table.id"),
+            @CacheEvict(key = "'Lo' + #table.owner"),
+            @CacheEvict(key = "'tn' + #table.name")
+    })
     @Override
     public Table save(Table table) {
         return tableRepository.save(table);
@@ -73,14 +79,14 @@ public class TableServiceImpl implements ITableService{
     }
 
     // 删除表
-    @CacheEvict()
+    @CacheEvict(allEntries = true)
     @Override
     public boolean deleteById(Integer operatorId, Integer tableId) {
         return tableRepository.deleteByIdAndOwner(tableId, operatorId) > 0;
     }
 
     // 停止收集
-    @CacheEvict(key="'t' + #tableId")
+    @CacheEvict(allEntries = true)
     @Override
     public boolean stopById(Integer operatorId, Integer tableId) {
         return tableRepository.stopByIdAndOwner(tableId, operatorId) > 0;
@@ -99,7 +105,7 @@ public class TableServiceImpl implements ITableService{
     }
 
     // 根据收集表 id 查询
-    @Cacheable()
+    @Cacheable
     @Override
     public List<Table> findAllById(List<Integer> tableIdList) {
         return tableRepository.findAllById(tableIdList);
@@ -107,6 +113,7 @@ public class TableServiceImpl implements ITableService{
 
     // 增加一次填写数目
     @Override
+    @CacheEvict(key = "'t' + #tableId")
     public void increaseFilledNum(Integer tableId) {
         tableRepository.increaseFilledNum(tableId);
     }

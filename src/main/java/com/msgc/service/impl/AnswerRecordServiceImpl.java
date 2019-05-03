@@ -32,8 +32,10 @@ public class AnswerRecordServiceImpl implements IAnswerRecordService{
 
 
     @Caching(evict={
-            @CacheEvict(key="'t' + #answerRecord.tableId"),
-            @CacheEvict(key="'u' + #answerRecord.userId")})
+            @CacheEvict(key = "'t' + #answerRecord.tableId"),
+            @CacheEvict(key = "'t' + #answerRecord.tableId + 'u' + #answerRecord.userId"),
+            @CacheEvict(key = "'u' + #answerRecord.userId")
+        })
     @Override
     public AnswerRecord save(AnswerRecord answerRecord) {
         return answerRecordRepository.save(answerRecord);

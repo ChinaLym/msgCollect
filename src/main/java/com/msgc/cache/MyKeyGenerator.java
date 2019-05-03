@@ -1,12 +1,11 @@
 package com.msgc.cache;
 
 import org.springframework.cache.interceptor.KeyGenerator;
-import org.springframework.context.annotation.Configuration;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-@Configuration
+//@Configuration
 public class MyKeyGenerator implements KeyGenerator {
 
     @Override

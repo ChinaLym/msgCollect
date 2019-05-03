@@ -1,5 +1,8 @@
 package com.msgc.constant.enums;
 
+import com.msgc.entity.Table;
+import org.springframework.beans.BeanUtils;
+
 /**
  * @ClassName:  TabletatusEnum
  * @Description:
@@ -24,20 +27,22 @@ public enum TableStatusEnum {
 
 	/**
 	 * 根据数据库字段，映射成中文
-	 * 该方法被调用全在 TableController 中，由于 JDK 自带的Array是浅拷贝，因此如果调用该方法，有可能会修改缓存中的值，因此不再枚举中即不更改
+	 * 使用 BeanUtils 拷贝（浅拷贝）
 	 */
-	public static String getNameBy(String value){
-		if(EDIT.equal(value))
-			return EDIT.name;
-		if(PUBLISHED.equal(value))
-			return PUBLISHED.name;
-		if(COLLECTING.equal(value))
-			return COLLECTING.name;
-		if(END.equal(value))
-			return END.name;
-		if(DELETE.equal(value))
-			return DELETE.name;
-		return value;
+	public static Table processTableState(Table table){
+		Table newTable = new Table();
+		BeanUtils.copyProperties(table, newTable);
+		if(EDIT.equal(table.getState()))
+			newTable.setState(EDIT.name);
+		else if(PUBLISHED.equal(table.getState()))
+			newTable.setState(PUBLISHED.name);
+		else if(COLLECTING.equal(table.getState()))
+			newTable.setState(COLLECTING.name);
+		else if(END.equal(table.getState()))
+			newTable.setState(END.name);
+		else if(DELETE.equal(table.getState()))
+			newTable.setState(DELETE.name);
+		return newTable;
 	}
 
 	@Override

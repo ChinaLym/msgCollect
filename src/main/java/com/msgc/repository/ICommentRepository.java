@@ -31,5 +31,5 @@ public interface ICommentRepository extends JpaRepository<Comment, Integer> {
     @Transactional
     @Modifying
     @Query("update Comment set effective=false where id=?1 and effective=true")
-    void setDeleteStateById(Integer id);
+    Integer setDeleteStateById(Integer id);
 }

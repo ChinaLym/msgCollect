@@ -13,7 +13,7 @@ import java.util.Date;
 @Entity
 @javax.persistence.Table(name="tb_table")
 @NamedQuery(name="Table.findAll", query="SELECT t FROM Table t")
-public class Table implements Serializable {
+public class Table implements Serializable, Cloneable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -193,4 +193,10 @@ public class Table implements Serializable {
 				", visibility=" + visibility +
 				'}';
 	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
 }

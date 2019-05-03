@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,13 +117,14 @@ public class TableController {
     }
 
     //复制表
-    @GetMapping("/new/byCopy")
-    public String newByCopyPage(HttpSession session, HttpServletRequest request, Model model){
-	    User user = (User)session.getAttribute(SessionKey.USER);
+    @GetMapping("/new/byCopy/{tableId}")
+    public String newByCopyPage(@PathVariable Integer tableId, Model model){
+	    User user = (User)WebUtil.getSessionKey(SessionKey.USER);
 	    if(user != null){
-            int tid = Integer.parseInt(request.getParameter("t"));
-            Table table = tableService.findById(tid);
-            if(table != null && table.getOwner().equals(user.getId())){
+            Table table = new Table();
+            // spring 包中的该方法是讲前者赋值给后者
+            BeanUtils.copyProperties(tableService.findById(tableId), table);
+            if(user.getId().equals(table.getOwner())){
                 List<Field> fieldList = fieldService.findAllByTableId(table.getId());
                 //初始化新表的数值
                 table.setId(null);
@@ -148,7 +150,7 @@ public class TableController {
 	public String selfCollectPage(HttpSession session, Model model) {
         User owner = (User)session.getAttribute(SessionKey.USER);
         List<Table> tableList = tableService.findAllActiveTable(owner.getId());
-        tableList.forEach(t -> t.setState(TableStatusEnum.getNameBy(t.getState())));
+        tableList = tableList.stream().map(TableStatusEnum::processTableState).collect(Collectors.toList());
         model.addAttribute("tableList", tableList);
 		return "collect/myCollect";
 	}
@@ -188,27 +190,27 @@ public class TableController {
 			return JsonUtil.toJson(ResponseWrapper.fail("项不能为空"));
 		}
         Table table;
-        table = reciveTableFromFront();//解析失败时抛出异常，数据回滚
+        table = receiveTableFromFront();//解析失败时抛出异常，数据回滚
         table = tableService.save(table);
 		Integer tableId = table.getId();
 		if(tableId == null){
 			return JsonUtil.toJson(ResponseWrapper.fail("保存出错"));
 		}
-        List<Field> fieldList = reciveFieldsFromFront(tableId);
+        List<Field> fieldList = receiveFieldsFromFront(tableId);
         fieldService.save(fieldList);
 		return JsonUtil.toJson(ResponseWrapper.success("已保存"));
 	}
 
 	//接收页面传来的 table 对象 公共部分，使用需要tryCatch
-	private Table reciveTableFromFront() throws ParseException {
+	private Table receiveTableFromFront() throws ParseException {
         HttpServletRequest request = WebUtil.getRequest();
         Table table = new Table();
         Date nowDateTime = new Date();
         //判断是否是修改
         if(StringUtils.isNotEmpty(request.getParameter("table-id"))){
-            table = tableService.findById(Integer.parseInt(request.getParameter("table-id")));
+            BeanUtils.copyProperties(table,tableService.findById(Integer.parseInt(request.getParameter("table-id"))));
             //修改一个不存在的收集表
-            if (table == null){
+            if (table.getId() == null){
                 throw new ResourceNotFoundException();
             }
             //非本人修改
@@ -241,7 +243,7 @@ public class TableController {
     }
 
     //接收页面传来的 field 对象 公共部分，使用需要tryCatch
-    private List<Field> reciveFieldsFromFront(int tableId){
+    private List<Field> receiveFieldsFromFront(int tableId){
         HttpServletRequest request = WebUtil.getRequest();
         List<Field> fieldList = new ArrayList<>();
         String[] indexArray = request.getParameter("table-item-index-array").split("-");
@@ -455,7 +457,9 @@ public class TableController {
 	//分享前的页面
 	@GetMapping("/share/{tableId}")
     public String sharePage(@PathVariable("tableId") Integer tableId, Model model){
-        Table table = tableService.findById(tableId);
+        Table table = new Table();
+        // spring 包中的该方法是讲前者赋值给后者
+        BeanUtils.copyProperties(tableService.findById(tableId), table);
         //如果是第一次点击发布
         if(TableStatusEnum.EDIT.equal(table.getState())){
             Date nowDate = new Date();
@@ -468,7 +472,7 @@ public class TableController {
             table.setUpdateTime(nowDate);
             tableService.save(table);
         }
-        table.setState(TableStatusEnum.getNameBy(table.getState()));
+        table = TableStatusEnum.processTableState(table);
         model.addAttribute("shareURL", getShareCollectURL(tableId));
         model.addAttribute("table", table);
         return "collect/share";
@@ -479,8 +483,8 @@ public class TableController {
     @PostMapping("/delete.action")
     public String deleteTable(HttpServletRequest request, HttpSession session){
         Integer tableId = Integer.parseInt(request.getParameter("t"));
-        Integer opreateUid = ((User)session.getAttribute(SessionKey.USER)).getId();
-        if(tableService.deleteById(opreateUid, tableId)){
+        Integer operateUid = ((User)session.getAttribute(SessionKey.USER)).getId();
+        if(tableService.deleteById(operateUid, tableId)){
             return JsonUtil.toJson(ResponseWrapper.success("删除成功!"));
         }else{
             return JsonUtil.toJson(ResponseWrapper.fail("删除失败!"));
@@ -492,8 +496,8 @@ public class TableController {
     @PostMapping("/stop.action")
     public String stopCollect(HttpServletRequest request, HttpSession session){
         Integer tableId = Integer.parseInt(request.getParameter("t"));
-        Integer opreateUid = ((User)session.getAttribute(SessionKey.USER)).getId();
-        if(tableService.stopById(opreateUid, tableId)){
+        Integer operateUid = ((User)session.getAttribute(SessionKey.USER)).getId();
+        if(tableService.stopById(operateUid, tableId)){
             return JsonUtil.toJson(ResponseWrapper.success("已停止"));
         }else{
             return JsonUtil.toJson(ResponseWrapper.fail(""));
@@ -551,7 +555,7 @@ public class TableController {
                     field.setTableId(table.getId());
                     field.setNum(fieldNum ++);
                     field.setType("普通");
-                    field.setMaxLength(220);
+                    field.setMaxLength(50);
                     field.setRequired(false);
                     field.setVisibility(true);
 
@@ -598,6 +602,7 @@ public class TableController {
                         File file = new File(answer.getContent());
                         FileTransportUtil.downloadFile(file);
                     }catch(Exception e){
+                        log.info(e.toString());
                         e.printStackTrace();
                     }
                 }else {
@@ -680,7 +685,7 @@ public class TableController {
             Table table = tableService.findById(tid);
             if(table != null && table.getOwner().equals(user.getId())){
                 List<Field> fieldList = fieldService.findAllByTableId(table.getId());
-                table.setState(TableStatusEnum.getNameBy(table.getState()));
+                table = TableStatusEnum.processTableState(table);
                 model.addAttribute("table", table);
                 model.addAttribute("fieldList", fieldList);
                 return "collect/tableDetail";
@@ -717,7 +722,7 @@ public class TableController {
             model.addAttribute("resultMessage", "只有表主人可以查看这张表哦~");
             return "displayMessage";
         }
-        table.setState(TableStatusEnum.getNameBy(table.getState()));
+        table = TableStatusEnum.processTableState(table);
         model.addAttribute("table", table);
         return "collect/tableData";
     }
