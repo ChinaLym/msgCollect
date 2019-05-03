@@ -22,6 +22,10 @@ public enum TableStatusEnum {
 		this.value = value;
 	}
 
+	/**
+	 * 根据数据库字段，映射成中文
+	 * 该方法被调用全在 TableController 中，由于 JDK 自带的Array是浅拷贝，因此如果调用该方法，有可能会修改缓存中的值，因此不再枚举中即不更改
+	 */
 	public static String getNameBy(String value){
 		if(EDIT.equal(value))
 			return EDIT.name;
@@ -33,7 +37,7 @@ public enum TableStatusEnum {
 			return END.name;
 		if(DELETE.equal(value))
 			return DELETE.name;
-		return "异常";
+		return value;
 	}
 
 	@Override
