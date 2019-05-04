@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="common/html_head :: head(~{::title},~{},~{})">
+<head th:replace="common/html_head :: head(~{::title},~{::link},~{})">
   <title>智汇| 注册</title>
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="/AdminLTE/plugins/iCheck/all.css">
 </head>
 <body class="hold-transition register-page">
 <div class="register-box">
@@ -38,7 +40,7 @@
         <div class="col-xs-8">
           <div class="checkbox icheck">
             <label>
-              <input type="checkbox"> 我同意 <a href="#">注册条款</a>
+              <input type="checkbox" checked="checked"> 我同意 <a href="#">注册条款</a>
             </label>
           </div>
         </div>
@@ -64,6 +66,10 @@
 
 <!-- Js 脚本 -->
 <div th:insert="common/html_js :: div_js"></div>
+<!-- Js 脚本 -->
+<div th:insert="common/html_js :: div_js"></div>
+<script src="/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+
 <script>
   $(function () {
     $('input').iCheck({

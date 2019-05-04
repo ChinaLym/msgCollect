@@ -22,7 +22,7 @@ public class ExcelUtilAdapterTest {
         strategy.setStart(0);
         strategy.setFieldNum(10);
         strategy.setTableNameStrategy(ExcelReadStrategyEnum.TABLE_NAME_BY_FILENAME);
-        strategy.setWithDefalutValue(true);
+        strategy.setWithDefaultValue(true);
         try {
             ExcelUtilAdapter.read("test.xls", table, fieldList, strategy);
             System.out.println("table---" + table);

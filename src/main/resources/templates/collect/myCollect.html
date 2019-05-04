@@ -67,14 +67,22 @@
                   <td th:text="${#dates.format(table.endTime,'yyyy-MM-dd HH:mm')}" th:id="'table-endTime-' + ${table.id}">2019-3-15</td>
                   <td th:text="${table.filledNum}">10</td>
                     <th>
-                        <button type="button" class="btn btn-sm btn-warning" th:onclick="'table_publish_fun(' + ${table.id} +  ')'"
-                            th:remove="${'已截止' == table.state? 'all' : 'none'}">
-                            <i class="glyphicon glyphicon-share-alt"> </i> 分享
-                        </button>
-
                         <a th:href="'/collect/edit?t=' + ${table.id}">
                             <button type="button" class="btn btn-sm btn-primary" th:remove="${'编辑中' == table.state ? 'none' : 'all'}">
                                 <i class="glyphicon glyphicon-edit"> </i> 设计
+                            </button>
+                        </a>
+                        <button type="button" class="btn btn-sm btn-warning" th:onclick="'table_publish_fun(' + ${table.id} +  ')'"
+                                th:remove="${'已截止' == table.state? 'all' : 'none'}">
+                            <i class="glyphicon glyphicon-share-alt"> </i> 分享
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger" th:onclick="'table_stop_fun(' + ${table.id} + ')'"
+                                th:remove="${'收集中' == table.state ? 'none' : 'all'}">
+                            <i class="glyphicon glyphicon-stop"> </i> 停止
+                        </button>
+                        <a th:href="'/collect/export?t=' + ${table.id}">
+                            <button type="button" class="btn btn-sm btn-success" th:remove="${'编辑中' == table.state ? 'all' : 'none'}">
+                                <i class="glyphicon glyphicon-export"> </i> 导出
                             </button>
                         </a>
                         <a th:href="'/collect/new/byCopy/' + ${table.id}">
@@ -82,15 +90,6 @@
                                 <i class="fa fa-copy"> </i> 复制
                             </button>
                         </a>
-                        <a th:href="'/collect/export?t=' + ${table.id}">
-                            <button type="button" class="btn btn-sm btn-success" th:remove="${'编辑中' == table.state ? 'all' : 'none'}">
-                                <i class="glyphicon glyphicon-export"> </i> 导出
-                            </button>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-danger" th:onclick="'table_stop_fun(' + ${table.id} + ')'"
-                                th:remove="${'收集中' == table.state ? 'none' : 'all'}">
-                          <i class="glyphicon glyphicon-stop"> </i> 停止
-                        </button>
                         <button type="button" class="btn btn-sm btn-danger" th:onclick="'table_del_fun(' + ${table.id} + ')'">
                           <i class="glyphicon glyphicon-trash"> </i> 删除
                         </button>

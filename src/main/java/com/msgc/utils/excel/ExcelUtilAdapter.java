@@ -117,7 +117,7 @@ public class ExcelUtilAdapter {
                     break;
                 if(!StringUtils.isEmpty(fieldNameCells[col])){
                     Field field = new Field();
-                    if (strategy.getWithDefalutValue())
+                    if (strategy.getWithDefaultValue() && col < fieldDefaultValueCells.length)
                         field.setDefaultValue(StringUtils.strip(fieldDefaultValueCells[col]));
                     field.setName(StringUtils.strip(fieldNameCells[col]));
                     fieldList.add(field);

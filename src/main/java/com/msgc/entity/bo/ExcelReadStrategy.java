@@ -13,7 +13,7 @@ public class ExcelReadStrategy {
     private Integer field_position;
     private Integer start;
     private Integer fieldNum;
-    private Boolean withDefalutValue;
+    private Boolean withDefaultValue;
 
     public String getId() {
         return id;
@@ -79,12 +79,12 @@ public class ExcelReadStrategy {
         this.fieldNum = fieldNum;
     }
 
-    public Boolean getWithDefalutValue() {
-        return withDefalutValue;
+    public Boolean getWithDefaultValue() {
+        return withDefaultValue;
     }
 
-    public void setWithDefalutValue(Boolean withDefalutValue) {
-        this.withDefalutValue = withDefalutValue;
+    public void setWithDefaultValue(Boolean withDefaultValue) {
+        this.withDefaultValue = withDefaultValue;
     }
 
     @Override
@@ -100,12 +100,12 @@ public class ExcelReadStrategy {
                 Objects.equals(field_position, that.field_position) &&
                 Objects.equals(start, that.start) &&
                 Objects.equals(fieldNum, that.fieldNum) &&
-                Objects.equals(withDefalutValue, that.withDefalutValue);
+                Objects.equals(withDefaultValue, that.withDefaultValue);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, name, tableNameStrategy, sheetIndex, field_position, start, fieldNum, withDefalutValue);
+        return Objects.hash(id, userId, name, tableNameStrategy, sheetIndex, field_position, start, fieldNum, withDefaultValue);
     }
 
     public ExcelReadStrategy() { }
@@ -116,7 +116,7 @@ public class ExcelReadStrategy {
         this.field_position = Integer.parseInt(fileAndStrategy.getFieldLine());
         this.start = Integer.parseInt(fileAndStrategy.getFieldStart());
         this.fieldNum = Integer.parseInt(fileAndStrategy.getFieldNum());
-        this.withDefalutValue = "on".equals(fileAndStrategy.getWithDefaultValue());
+        this.withDefaultValue = "on".equals(fileAndStrategy.getWithDefaultValue());
     }
 }
 
