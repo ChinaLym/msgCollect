@@ -25,7 +25,7 @@ import java.util.List;
 public interface IUnfilledRecordRepository extends JpaRepository<UnfilledRecord, Integer> {
 
 
-    UnfilledRecord findByUserIdAndTableId(Integer id, Integer tableId);
+    List<UnfilledRecord> findByUserIdAndTableId(Integer id, Integer tableId);
 
     void deleteAllByTableId(List<Integer> tableIdList);
 

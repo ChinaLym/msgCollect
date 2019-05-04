@@ -23,27 +23,29 @@ public class FieldServiceImpl implements IFieldService{
     private IFieldRepository fieldRepository;
     
     @Autowired
-    public void setFieldRepository(IFieldRepository fieldRepository) {
+    public FieldServiceImpl(IFieldRepository fieldRepository) {
         this.fieldRepository = fieldRepository;
     }
 
+    @CacheEvict(allEntries = true)
     @Override
     public List<Field> save(List<Field> fieldList) {
             return fieldRepository.saveAll(fieldList);
     }
 
+    @Cacheable(key = "'id' + #fieldId")
     @Override
     public Field findById(Integer fieldId) {
         return fieldRepository.findById(fieldId).orElse(null);
     }
 
-    @CacheEvict
+    @CacheEvict(allEntries = true)
     @Override
     public Boolean deleteByTableId(Integer tableId) {
         return fieldRepository.deleteByTableId(tableId) > 0;
     }
 
-    @Cacheable(sync = true)
+    @Cacheable(key = "'t' + #tableId")
     @Override
     public List<Field> findAllByTableId(Integer tableId) {
         return fieldRepository.findByTableId(tableId);

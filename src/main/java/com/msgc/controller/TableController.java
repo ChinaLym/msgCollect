@@ -668,7 +668,7 @@ public class TableController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "forward:" + WebMvcConfig.VIRTUAL_DIR +
+        return "redirect:" + WebMvcConfig.VIRTUAL_DIR +
                 "processed/" + tableId + "/" + FilePath.FILE_NAME_TABLE_QrCODE_JPEG;
     }
 

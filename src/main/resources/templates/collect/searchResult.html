@@ -49,8 +49,8 @@
                 <td th:text="${#dates.format(table.endTime,'yyyy-MM-dd HH:mm')}">截止时间</td>
                 <td>
                   <a th:href="'/collect/like/' + ${table.id}">
-                    <button type="button" class="btn btn-sm btn-danger" th:onclick="'table_like_fun(' + ${table.id} +  ')'">
-                      <i class="glyphicon glyphicon-flag"></i> 收藏
+                    <button type="button" class="btn btn-sm btn-info" th:onclick="'table_like_fun(' + ${table.id} +  ')'">
+                      <i class="fa fa-star"></i> 收藏
                     </button>
                   </a>
                   <a th:href="'/collect/share/start?t=' + ${table.id}">

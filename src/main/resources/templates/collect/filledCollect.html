@@ -48,7 +48,7 @@
                   <th>填写时间</th>
                   <th>IP</th>
                   <th>浏览器</th>
-                  <th>已填</th>
+                  <!--<th>已填</th>-->
                   <th width="10%">操作</th>
                 </tr>
                 </thead>
@@ -65,7 +65,7 @@
                   <td th:text="${#dates.format(recordList[iterator.index].update_time,'yyyy-MM-dd HH:mm')}">2019-3-15</td>
                   <td th:text="${ipList[iterator.index]}">192.168.1.1</td>
                   <td th:text="${recordList[iterator.index].browser}">192.168.1.1</td>
-                  <td th:text="${table.filledNum}">10</td>
+                  <!--<td th:text="${table.filledNum}">10</td>-->
                   <th>
                       <a th:if="${table.state ne 'END'}" th:href="'/collect/share/start?t=' + ${table.id}">
                           <button type="submit" class="btn btn-block btn-info" >
@@ -88,7 +88,7 @@
                   <th>填写时间</th>
                   <th>IP</th>
                   <th>浏览器</th>
-                  <th>已填</th>
+                  <!--<th>已填</th>-->
                   <th width="10%">操作</th>
                 </tr>
                 </tfoot>

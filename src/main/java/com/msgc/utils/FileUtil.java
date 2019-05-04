@@ -41,6 +41,9 @@ public class FileUtil {
     public static void ensureExist(File file) {
         if(file == null)
             throw new NullPointerException("param file is Null!");
+        // 已存在
+        if(file.exists())
+            return;
         File fileParent = file.getParentFile();
         if(!fileParent.exists()){
             if(!fileParent.mkdirs()){

@@ -48,7 +48,7 @@ public class AnswerServiceImpl implements IAnswerService{
         return answerRepository.findAllByAnswerRecordId(recordId);
     }
 
-    @CacheEvict(key="'r' + #answersList.get(0).answerRecordId")
+    @CacheEvict(allEntries = true)
     @Override
     public List<Answer> save(List<Answer> answersList) {
         return answerRepository.saveAll(answersList);

@@ -3,6 +3,7 @@ package com.msgc.service.impl;
 import com.msgc.entity.UnfilledRecord;
 import com.msgc.repository.IUnfilledRecordRepository;
 import com.msgc.service.IUnfilledRecordService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +55,7 @@ public class UnfilledRecordServiceImpl implements IUnfilledRecordService {
      */
     @Override
     public UnfilledRecord findByUserIdAndTableId(Integer userId, Integer tableId) {
-        return unfilledRecordRepository.findByUserIdAndTableId(userId, tableId);
+        List<UnfilledRecord> list = unfilledRecordRepository.findByUserIdAndTableId(userId, tableId);
+        return CollectionUtils.isEmpty(list) ? null : list.get(0);
     }
 }

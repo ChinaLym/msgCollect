@@ -86,14 +86,19 @@
 
             <div class="col-sm-2" style="float:left">
               <a href="/collect/filled">
-                <input type="button" class="btn btn-block btn-primary" value="返回">
+                <input type="button" class="btn btn-sm btn-primary" value="返回">
               </a>
             </div>
 
-            <div class="col-sm-2" style="float:right">
-              <button type="submit" class="btn btn-block btn-danger" >
+            <div class="col-sm-4" style="float:right">
+              <button type="submit" class="btn btn-sm btn-danger" style="float:right">
                 <i class="fa fa-save"> </i> 提交
               </button>
+              <a th:href="'/collect/like/' + ${table.id}" style="float:right">
+                <button type="button" class="btn btn-sm btn-info">
+                  <i class="fa fa-star"> </i> 收藏
+                </button>
+              </a>
             </div>
           </div>
         </form>
