@@ -120,7 +120,7 @@
               <img class="img-responsive img-circle img-sm" th:src="${session.user.headImage}" alt="我的头像">
               <!-- .img-push is used to add margin to elements next to floating images -->
               <div class="input-group margin img-push">
-                <input type="text" class="form-control input-sm"  placeholder="回车可以评论提问哟~"
+                <input type="text" class="form-control input-sm"  placeholder="回车也可以快速发表评论提问哟~"
                        name="commentContent" id="commentContent"
                        onkeydown="if(event.keyCode=='13') commentForm.submit.click();else if(event.keyCode=='8')resetContetnt();">
                 <span class="input-group-btn">
@@ -208,13 +208,18 @@
         $("#commentContent").focus();
         $("html,body").animate({scrollTop: $("#commentContent").offsetTop}, 1000);
     }
-    String.prototype.endWith=function(endStr){
-        var d=this.length-endStr.length;
-        return (d>=0&&this.lastIndexOf(endStr)==d)
+    String.prototype.endWith=function(str){
+        var reg=new RegExp(str+"$");
+        return reg.test(this);
+    }
+    function isStrEndWith(str, endStr){
+        var d = str.length-endStr.length;
+        return (d >= 0 && str.lastIndexOf(endStr)==d)
     }
     function resetContetnt(){
-        var content = $("#commentContent").val('');
-        if(content.indexOf('[reply]') && content.endWith('[/reply'))
+        var content = $("#commentContent").val();
+        content = new String(content);
+        if(content.indexOf('[reply]') != -1 && isStrEndWith(content, '[/reply]'))
           $("#commentContent").val('');
     }
   function deleteComentById(comentId){

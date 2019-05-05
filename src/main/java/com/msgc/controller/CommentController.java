@@ -1,11 +1,9 @@
 package com.msgc.controller;
 
-import com.msgc.constant.enums.MessageTypeEnum;
 import com.msgc.constant.response.ResponseWrapper;
-import com.msgc.entity.Comment;
 import com.msgc.entity.Table;
+import com.msgc.exception.ResourceNotFoundException;
 import com.msgc.service.ICommentService;
-import com.msgc.service.IMessageService;
 import com.msgc.service.ITableService;
 import com.msgc.utils.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +23,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class CommentController {
 	private final ICommentService commentService;
 	private final ITableService tableService;
-	private final IMessageService messageService;
 
 	@Autowired
-	public CommentController(ICommentService commentService, ITableService tableService, IMessageService messageService) {
+	public CommentController(ICommentService commentService, ITableService tableService) {
 		this.commentService = commentService;
 		this.tableService = tableService;
-		this.messageService = messageService;
 	}
 
 	/**
@@ -39,19 +35,13 @@ public class CommentController {
 	 * @param tableId 评论表 Id
 	 */
 	@PostMapping("/table/{tableId}")
-	@ResponseBody
 	public String addComment(@PathVariable("tableId") Integer tableId){
 		Table table = tableService.findById(tableId);
-		if(table != null){
-			Comment comment = commentService.addComment(tableId);
-			//发送消息
-			messageService.sendMessage(
-					comment.getParentId() == -1
-							? MessageTypeEnum.COMMENT
-							: MessageTypeEnum.REPLY,
-					table);
+		if(table == null){
+			throw new ResourceNotFoundException();
 		}
-		return JsonUtil.toJson(ResponseWrapper.success("评论成功"));
+		commentService.addComment(table);
+		return "redirect:/collect/data/" + tableId;
 	}
 
 	/**

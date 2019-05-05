@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -40,7 +41,7 @@ public class MessageController {
 	 */
 	@PostMapping("/delete/{messageId}")
 	@ResponseBody
-	public String deleteMessage(@PathVariable("messageId") String messageId){
+	public String deleteMessage(@PathVariable("messageId") Integer messageId){
 		messageService.deleteById(messageId);
 		return JsonUtil.toJson(ResponseWrapper.success("删除成功"));
 	}
@@ -52,7 +53,7 @@ public class MessageController {
 	 */
 	@PostMapping("/deleteAll/{typeCode}")
 	@ResponseBody
-	public String deleteMessage(@PathVariable("typeCode") Integer typeCode){
+	public String deleteAllMessage(@PathVariable("typeCode") Integer typeCode){
 		messageService.deleteAllByType(typeCode);
 		return JsonUtil.toJson(ResponseWrapper.success("删除成功"));
 	}
@@ -68,6 +69,7 @@ public class MessageController {
 		session.setAttribute(SessionKey.NEW_MESSAGES_FLAG, false);
 		User user = (User)session.getAttribute(SessionKey.USER);
 		List<Message> messageList = messageService.findAllByReceiverAndType(user.getId(), typeCode);
+		messageList.sort(Comparator.comparingInt(Message::getId));
 		model.addAttribute("messageType", MessageTypeEnum.getNameBy(typeCode));
 		model.addAttribute("messageList", messageList);
 		return "message/myMessage";
@@ -88,7 +90,7 @@ public class MessageController {
 	 */
 	@PostMapping("/read/{messageId}")
 	@ResponseBody
-	public String readMessage(@PathVariable("messageId") String messageId){
+	public String readMessage(@PathVariable("messageId") Integer messageId){
 		messageService.read(messageId);
 		return JsonUtil.toJson(ResponseWrapper.success("删除成功"));
 	}

@@ -64,7 +64,7 @@ public class TableController {
     // 一周的毫秒数
 	private final long ONE_WEEK_TIME = 7 * 24 * 60 * 60 * 1000;
 	// 默认的截止时间，当前时间 + 一周
-	private final long DEAFILT_END_TIME = ONE_WEEK_TIME;
+	private final long DEFAULT_END_TIME = ONE_WEEK_TIME;
 
     @Autowired
     public TableController(ITableService tableService, IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, IMessageService messageService) {
@@ -101,7 +101,7 @@ public class TableController {
 	    if(user != null){
             int tid = Integer.parseInt(request.getParameter("t"));
             Table table = tableService.findById(tid);
-            if(table != null && table.getOwner().equals(user.getId())){
+            if(table != null && user.getId().equals(table.getOwner())){
                 model.addAttribute("table", table);
                 if(TableStatusEnum.EDIT.equal(table.getState())){
                     List<Field> fieldList = fieldService.findAllByTableId(table.getId());
@@ -133,7 +133,7 @@ public class TableController {
                 table.setCreateTime(null);
                 Date nowDate = new Date();
                 table.setStartTime(nowDate);
-                table.setEndTime(new Date(nowDate.getTime() + DEAFILT_END_TIME));
+                table.setEndTime(new Date(nowDate.getTime() + DEFAULT_END_TIME));
                 table.setFilledNum(0);
                 table.setSecretKey(null);
                 model.addAttribute("table", table);
@@ -204,17 +204,20 @@ public class TableController {
 	//接收页面传来的 table 对象 公共部分，使用需要tryCatch
 	private Table receiveTableFromFront() throws ParseException {
         HttpServletRequest request = WebUtil.getRequest();
+        User user = (User)request.getSession().getAttribute(SessionKey.USER);
         Table table = new Table();
         Date nowDateTime = new Date();
         //判断是否是修改
-        if(StringUtils.isNotEmpty(request.getParameter("table-id"))){
-            BeanUtils.copyProperties(table,tableService.findById(Integer.parseInt(request.getParameter("table-id"))));
+        String strTableId = request.getParameter("table-id");
+        if(StringUtils.isNotEmpty(strTableId)){
+            Integer tableId = Integer.parseInt(strTableId);
+            BeanUtils.copyProperties(tableService.findById(tableId), table);
             //修改一个不存在的收集表
             if (table.getId() == null){
                 throw new ResourceNotFoundException();
             }
             //非本人修改
-            if(!table.getOwner().equals(((User)request.getSession().getAttribute(SessionKey.USER)).getId())){
+            if(! user.getId().equals(table.getOwner())){
                 throw new ResourceNotFoundException();
             }
             //合法修改表，删掉这个表之前所有的 fields
@@ -360,17 +363,16 @@ public class TableController {
             return "redirect:/login";
         }
         //创建一条 AnswerRecord
-        AnswerRecord record;
+        AnswerRecord record = new AnswerRecord();
         //是否曾经填写过该表
         if(!isReFill){
-            record = new AnswerRecord();
             record.setTableId(tid);
             record.setUserRealName(user.getRealname());
             record.setUserId(user.getId());
            //允许未登录填写未登录
             //     record.setUserRealName(request.getParameter("user-real-name"));
         } else{
-            record = answerRecordService.findByTableIdAndUserId(table.getId(), user.getId());
+            BeanUtils.copyProperties(answerRecordService.findByTableIdAndUserId(table.getId(), user.getId()), record);
         }
         record.setIp(IPUtil.ipv4StrToInt(IPUtil.getIpAddr(request)));
         record.setUpdate_time(new Date());
@@ -411,30 +413,24 @@ public class TableController {
                 String fileName = FilePath.getFieldFilesUploadPath(table.getId(), field);
                 File saveFile = new File(fileName);
                 if(!saveFile.exists() && !saveFile.mkdirs()) {
-                    throw new RuntimeException(saveFile + "mkdirs failed!");
+                    throw new RuntimeException(saveFile + " mkdirs failed!");
                 }
                 try {
                     String resourceFileName = file.getResource().getFilename();
                     //fileName，saveFile 表示上传文件保存路径+名称
                     if(StringUtils.isBlank(resourceFileName)){
-                        throw new RuntimeException("resourceFileName is blank");
+                        throw new RuntimeException("resourceFileName is blank(null)");
                     }
                     fileName += UUID.randomUUID() + (resourceFileName.indexOf(".") > 0 ? resourceFileName.substring(resourceFileName.lastIndexOf(".")) : "");
                     saveFile = new File(fileName);
-                    if(!saveFile.delete()){
-                        LOGGER.error(fileName + "delete failed!");
-                    }
-                    if(!saveFile.createNewFile()){
-                        throw new RuntimeException(saveFile + "mkdirs failed!");
-                    }
+
                     file.getOriginalFilename();
                     file.transferTo(saveFile);
                     answer.setContent(saveFile.getAbsolutePath());
                     fileIndex++;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    model.addAttribute("resultMessage","传输出错！");
-                    return "/displayMessage";
+                    throw new RuntimeException("file transport exception!");
                 }
             }
             answersList.add(answer);
@@ -450,8 +446,7 @@ public class TableController {
             model.addAttribute("resultMessage","感谢您的参与！");
             return "/displayMessage";
         }
-        model.addAttribute("resultMessage","保存失败！");
-        return "/displayMessage";
+        throw new RuntimeException("answers save to DB fail!");
 	}
 
 	//分享前的页面
@@ -540,7 +535,7 @@ public class TableController {
             table.setOwner(((User) WebUtil.getRequest().getSession().getAttribute(SessionKey.USER)).getId());
             Date nowDate = new Date();
             table.setStartTime(nowDate);
-            table.setEndTime(new Date(nowDate.getTime() + DEAFILT_END_TIME));
+            table.setEndTime(new Date(nowDate.getTime() + DEFAULT_END_TIME));
             table.setCreateTime(nowDate);
             table.setUpdateTime(nowDate);
             table.setState(TableStatusEnum.EDIT.getValue());
@@ -588,7 +583,7 @@ public class TableController {
             int tid = Integer.parseInt(request.getParameter("t"));
             Table table = tableService.findById(tid);
             //判断是否存在且是表的拥有者
-            if(table != null && table.getOwner().equals(user.getId())){
+            if(table != null && user.getId().equals(table.getOwner())){
                 String answerIdStr = request.getParameter("answerId");
                 //判断是否是单一文件
                 if(StringUtils.isNotEmpty(answerIdStr)){
@@ -683,7 +678,7 @@ public class TableController {
         if(user != null){
             int tid = Integer.parseInt(request.getParameter("t"));
             Table table = tableService.findById(tid);
-            if(table != null && table.getOwner().equals(user.getId())){
+            if(table != null && user.getId().equals(table.getOwner())){
                 List<Field> fieldList = fieldService.findAllByTableId(table.getId());
                 table = TableStatusEnum.processTableState(table);
                 model.addAttribute("table", table);
@@ -708,7 +703,7 @@ public class TableController {
         User user = (User)session.getAttribute(SessionKey.USER);
         //判断是否是表主人
         boolean isOwner = false;
-        if(table.getOwner().equals(user.getId()))
+        if(user.getId().equals(table.getOwner()))
             isOwner = true;
         //可见权限判断
         if(!isOwner && !table.getVisibility()){

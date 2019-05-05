@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class MessageDTO{
 
-	private String id;
+	private Integer id;
 
 	private Integer receiver;
 
@@ -41,11 +41,11 @@ public class MessageDTO{
 	}
 
 
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

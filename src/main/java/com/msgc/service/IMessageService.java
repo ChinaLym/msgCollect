@@ -13,19 +13,22 @@ public interface IMessageService {
 
     Message save(Message message);
 
-    Message findById(String id);
+    Message findById(Integer id);
     
     List<Message> findAllByReceiverAndType(Integer receiverId, Integer type);
 
-    void deleteById(String id);
+    void deleteById(Integer id);
     
-    void read(String messageId);
+    void read(Integer messageId);
 
     /**
      * 根据消息类型，收集表信息，自动发送异步消息
      * @param messageType 消息类型
      * @param table         收集表信息
+     * @param receiver         消息接收者
      */
+    void sendMessage(MessageTypeEnum messageType, Table table, Integer receiver);
+
     void sendMessage(MessageTypeEnum messageType, Table table);
 
     void readAll(Integer typeCode);

@@ -144,9 +144,10 @@ public class TableServiceImpl implements ITableService{
                     if(TableStatusEnum.END.equal(table.getState())){
                         // 若表已经截至 则查看是否已有缓存 且 是在截止后导出的
                         File cacheFile = new File(FilePath.getTableProcessedPath(table.getId()) + FilePath.getTableProcessedPath(table.getId()));
-                        if(cacheFile.exists() && cacheFile.lastModified() > table.getEndTime().getTime())
+                        if(cacheFile.exists() && cacheFile.lastModified() > table.getEndTime().getTime()){
                             FileTransportUtil.downloadFile(cacheFile, table.getName() + ".xlsx");
-                        return null;
+                            return null;
+                        }
                     }
                     File file = ExcelUtilAdapter.write(table, fieldList, answerRecordBOList);
                     FileTransportUtil.downloadFile(file, table.getName() + ".xlsx");

@@ -177,6 +177,7 @@ public class BaseController {
             tableDTOList = tableService.constructTableDTO(tableList);
         }
         model.addAttribute("tableList", tableDTOList);
+        model.addAttribute("searchKey", tableName);
         return "collect/searchResult";
     }
 }

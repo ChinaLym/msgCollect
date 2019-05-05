@@ -1,10 +1,14 @@
 package com.msgc.service.impl;
 
 import com.msgc.constant.SessionKey;
+import com.msgc.constant.enums.MessageTypeEnum;
 import com.msgc.entity.Comment;
+import com.msgc.entity.Table;
 import com.msgc.entity.User;
+import com.msgc.exception.ResourceNotFoundException;
 import com.msgc.repository.ICommentRepository;
 import com.msgc.service.ICommentService;
+import com.msgc.service.IMessageService;
 import com.msgc.utils.WebUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +35,17 @@ public class CommentServiceImpl implements ICommentService{
 
     private final ICommentRepository commentRepository;
 
+    private final IMessageService messageService;
+
     @Autowired
-    public CommentServiceImpl(ICommentRepository commentRepository) {
+    public CommentServiceImpl(ICommentRepository commentRepository, IMessageService messageService) {
         this.commentRepository = commentRepository;
+        this.messageService = messageService;
+    }
+
+    @Override
+    public Comment findById(Integer id) {
+        return commentRepository.findById(id).orElse(null);
     }
 
     /**
@@ -48,12 +60,13 @@ public class CommentServiceImpl implements ICommentService{
     
     /**
      * 添加一条评论，该方法未校验 表id(tableId) 对应的表是否存在，未校验目标评论是否存在
-     * @param tableId 目标表
+     * @param table 目标表
      * @throws RuntimeException 格式不正确等
      */
-    @CacheEvict(key = "'t' + #tableId")
+    @CacheEvict(allEntries = true)
     @Override
-    public Comment addComment(Integer tableId) throws RuntimeException{
+    public Comment addComment(Table table) throws RuntimeException{
+        Comment parentComment = null;
         HttpServletRequest request = WebUtil.getRequest();
         HttpSession session = request.getSession();
         Integer userId = ((User)session.getAttribute(SessionKey.USER)).getId();
@@ -68,15 +81,26 @@ public class CommentServiceImpl implements ICommentService{
             //是回复
             int cutIndex = content.indexOf("[/reply]");
             String replyAim = content.substring(7, cutIndex);
-            comment.setParentId(Integer.parseInt(replyAim));
+            Integer replyAimId = Integer.parseInt(replyAim);
+            parentComment = this.findById(replyAimId);
+            if(parentComment == null)
+                throw new ResourceNotFoundException();
+            comment.setParentId(replyAimId);
             content = content.substring(cutIndex + 8);
         }
-        comment.setTableId(tableId);
+        comment.setTableId(table.getId());
         comment.setUserId(userId);
         comment.setContent(content);
         comment.setCreateTime(new Date());
         comment.setEffective(true);
-        return commentRepository.save(comment);
+        Comment dbComment = commentRepository.save(comment);
+        //发送消息
+        if(parentComment == null){
+            messageService.sendMessage(MessageTypeEnum.COMMENT, table, table.getOwner());
+        }else{
+            messageService.sendMessage(MessageTypeEnum.REPLY, table, parentComment.getUserId());
+        }
+        return dbComment;
     }
 
     /**

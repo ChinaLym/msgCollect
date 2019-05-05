@@ -24,12 +24,12 @@ import java.util.List;
 *   modify ------------ updateXXX
 *
 */
-public interface IMessageRepository extends JpaRepository<Message, String> {
+public interface IMessageRepository extends JpaRepository<Message, Integer> {
 
     @Transactional
     @Modifying
     @Query(value = "update tb_message set is_delete=true where id=?1 and receiver=?2 and is_delete=false", nativeQuery = true)
-    void setDeleteStateById(String id, Integer userId);
+    void setDeleteStateById(Integer id, Integer userId);
 
     @Transactional
     @Modifying
@@ -39,7 +39,7 @@ public interface IMessageRepository extends JpaRepository<Message, String> {
     @Transactional
     @Modifying
     @Query(value = "update tb_message set is_read=true where id=?1 and receiver=?2 and is_read=false", nativeQuery = true)
-    void setReadStateById(String messageId, Integer userId);
+    void setReadStateById(Integer messageId, Integer userId);
 
     @Transactional
     @Modifying

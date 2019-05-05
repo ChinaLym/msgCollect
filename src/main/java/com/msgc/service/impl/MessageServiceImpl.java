@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
 * Type: MessageServiceImpl
@@ -37,7 +36,7 @@ public class MessageServiceImpl implements IMessageService{
     }
     
     @Override
-    public Message findById(String id) {
+    public Message findById(Integer id) {
         return messageRepository.findById(id).orElse(null);
     }
 
@@ -54,7 +53,7 @@ public class MessageServiceImpl implements IMessageService{
     
     //通过消息Id，假删除，需要用户 id == receiver
     @Override
-	public void deleteById(String id) {
+	public void deleteById(Integer id) {
         Integer userId = ((User)WebUtil.getSessionKey(SessionKey.USER)).getId();
 		messageRepository.setDeleteStateById(id, userId);
 	}
@@ -85,7 +84,7 @@ public class MessageServiceImpl implements IMessageService{
      * @param messageId 消息 Id
      */
     @Override
-    public void read(String messageId) {
+    public void read(Integer messageId) {
         Integer userId = ((User)WebUtil.getSessionKey(SessionKey.USER)).getId();
         messageRepository.setReadStateById(messageId, userId);
     }
@@ -100,19 +99,27 @@ public class MessageServiceImpl implements IMessageService{
         messageRepository.setAllReadStateByType(messageType, userId);
     }
 
+    // 默认向表主人发送
+    @Override
+    public void sendMessage(MessageTypeEnum messageType, Table table){
+        this.sendMessage(messageType, table, table.getOwner());
+    }
     /**
      * 根据消息类型，收集表信息，自动发送消息
      * @param messageType 消息类型
      * @param table         收集表信息
+     * @param receiver         消息接收者
      */
-    public void sendMessage(MessageTypeEnum messageType, Table table){
+    @Override
+    public void sendMessage(MessageTypeEnum messageType, Table table, Integer receiver){
         User user = (User)WebUtil.getSessionKey(SessionKey.USER);
         Message message = new Message();
+        message.setReceiver(receiver);
         if(messageType == MessageTypeEnum.COMMENT){
             // 自己评论自己的表则不发消息
             if(!table.getOwner().equals(user.getId())){
                 message.setType(messageType.getCode());
-                message.setContent(user.getNickname() + " 填写了您的收集表 [ " + table.getName() + " ]");
+                message.setContent(user.getNickname() + " 评论了您的收集表 [ " + table.getName() + " ]");
             }
         }else if(messageType == MessageTypeEnum.REPLY){
             message.setType(messageType.getCode());
@@ -127,7 +134,6 @@ public class MessageServiceImpl implements IMessageService{
             // 在这里添加更多类型的消息的支持
             throw new RuntimeException("还没添加这个类型的解析，快来完善");
         }
-        message.setReceiver(table.getOwner());
         message.setHref("/collect/data/" + table.getId());
         this.createMessageAndOfferToMQ(message);
     }
@@ -146,7 +152,7 @@ public class MessageServiceImpl implements IMessageService{
             title = MessageTypeEnum.REPLY.getName();
         }else title = "无标题";
         message.setTitle(title);
-        message.setId(UUID.randomUUID().toString());
+        //message.setId(UUID.randomUUID().toString());
         message.setRead(false);
         message.setDelete(false);
         message.setCreateTime(new Date());
