@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="common/html_head :: head(~{::title},~{},~{})">
-  <title>智汇| 待填写</title>
+  <title>智汇| 我的收藏</title>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -17,13 +17,13 @@
     <!-- 页面头部  -->
     <section class="content-header">
       <h1>
-        待参与
+        我的收藏
         <small>我收藏的收集表</small>
       </h1>
       <!-- 导航栏 -->
       <ol class="breadcrumb">
           <li><a href="/index"><i class="fa fa-dashboard"></i> 主页</a></li>
-        <li class="active">待参与</li>
+        <li class="active">我的收藏</li>
       </ol>
     </section>
 
@@ -55,7 +55,13 @@
 
                 <tbody>
                 <tr th:each="table : ${tableList}">
-                  <td th:text="${table.name}">表名</td>
+                  <td>
+                    <a th:href="'/collect/my/detail?t=' + ${table.id}">
+                      <b>
+                        <span th:id="'table-name-' + ${table.id}" th:text="${table.name}">15计科生源统计表</span>
+                      </b>
+                    </a>
+                  </td>
                   <td th:text="${table.ownerName}">发起人</td>
                   <td th:text="${#dates.format(table.startTime,'yyyy-MM-dd HH:mm')}">发起时间</td>
                   <td th:text="${#dates.format(table.endTime,'yyyy-MM-dd HH:mm')}">截止时间</td>
