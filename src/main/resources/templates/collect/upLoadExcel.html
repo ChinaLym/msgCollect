@@ -71,62 +71,63 @@
                   </select>
                 </div>-->
 
+                <div style="overflow:auto;">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th style="width:20%">表名</th>
+                      <th style="width:15%">第几张表</th>
+                      <th style="width:15%">字段所在行</th>
+                      <th style="width:15%"> 起始列</th>
+                      <th style="width:15%">字段数</th>
+                      <th style="width:10%">默认值</th>
+                    </tr>
+                    </thead>
 
-                <table class="table table-striped">
-                <thead>
-                <tr>
-                  <th style="width:20%">表名</th>
-                  <th style="width:15%">第几张表</th>
-                  <th style="width:15%">字段所在行</th>
-                  <th style="width:15%"> 起始列</th>
-                  <th style="width:15%">字段数</th>
-                  <th style="width:10%">默认值</th>
-                </tr>
-                </thead>
+                    <tbody id="table-tbody">
+                    <tr id="table-item-1">
+                      <!--<th><input class="form-control" type="text" th:placeholder="策略名"
+                                 onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5\w]/g,'')">
+                      </th>-->
+                      <th>
+                        <div class="form-group">
+                          <select class="form-control select2" name="tableNameBy" id="tableNameBy" onchange="autoSetFieldLine()">
+                            <option value="false">文件名</option>
+                            <option value="true">表第一行</option>
+                          </select>
+                        </div>
+                      </th>
+                      <th>
+                        <input class="form-control" type="text" placeholder="第几个表" value="1" name="sheetIndex"
+                                 onkeyup="this.value=this.value.replace(/\D/g,'');if(this.value>50)this.value = 50;" maxlength=2
+                                 required="required" >
+                      </th>
+                      <th>
+                        <input class="form-control" type="text" placeholder="字段所在行" value="0" name="fieldLine" id="fieldLine"
+                                 onkeyup="this.value=this.value.replace(/\D/g,'');if(this.value>50)this.value = 50;" maxlength=2
+                                 required="required">
+                      </th>
+                      <th>
+                        <input class="form-control" type="text" placeholder="起始列" value="0" name="fieldStart"
+                                 onkeyup="this.value=this.value.replace(/\D/g,'');if(this.value>50)this.value = 50;" maxlength=2
+                                 required="required">
+                      </th>
 
-                <tbody id="table-tbody">
-                <tr id="table-item-1">
-                  <!--<th><input class="form-control" type="text" th:placeholder="策略名"
-                             onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5\w]/g,'')">
-                  </th>-->
-                  <th>
-                    <div class="form-group">
-                      <select class="form-control select2" name="tableNameBy" id="tableNameBy" onchange="autoSetFieldLine()">
-                        <option value="false">文件名</option>
-                        <option value="true">表第一行</option>
-                      </select>
-                    </div>
-                  </th>
-                  <th>
-                    <input class="form-control" type="text" placeholder="第几个表" value="1" name="sheetIndex"
-                             onkeyup="this.value=this.value.replace(/\D/g,'');if(this.value>50)this.value = 50;" maxlength=2
-                             required="required" >
-                  </th>
-                  <th>
-                    <input class="form-control" type="text" placeholder="字段所在行" value="0" name="fieldLine" id="fieldLine"
-                             onkeyup="this.value=this.value.replace(/\D/g,'');if(this.value>50)this.value = 50;" maxlength=2
-                             required="required">
-                  </th>
-                  <th>
-                    <input class="form-control" type="text" placeholder="起始列" value="0" name="fieldStart"
-                             onkeyup="this.value=this.value.replace(/\D/g,'');if(this.value>50)this.value = 50;" maxlength=2
-                             required="required">
-                  </th>
+                      <th>
+                        <input class="form-control" type="text" placeholder="字段数" value="50" name="fieldNum"
+                                 onkeyup="this.value=this.value.replace(/\D/g,'');if(this.value>50)this.vale = 50;" maxlength=2
+                                 required="required">
+                      </th>
+                      <th>
+                        <label>
+                          <input type="checkbox" class="flat-red" checked="checked" name="withDefaultValue">
+                        </label>
+                      </th>
 
-                  <th>
-                    <input class="form-control" type="text" placeholder="字段数" value="50" name="fieldNum"
-                             onkeyup="this.value=this.value.replace(/\D/g,'');if(this.value>50)this.vale = 50;" maxlength=2
-                             required="required">
-                  </th>
-                  <th>
-                    <label>
-                      <input type="checkbox" class="flat-red" checked="checked" name="withDefaultValue">
-                    </label>
-                  </th>
-
-                </tr>
-                </tbody>
-              </table>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
                 <div class="col-sm-2" style="float:right">
                   <button class="btn btn-block btn-danger">
                     <i class="fa fa-save"> </i> 解析
