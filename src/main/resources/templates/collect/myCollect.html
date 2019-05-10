@@ -38,9 +38,16 @@
               <h3 class="box-title">我的收集表</h3>
             </div>
             <!-- /.box-header -->
+              <style>
+                  @media screen and (max-width: 900px) {
+                      table {
+                          overflow-x: auto;
+                      }
+                  }
+              </style>
             <h4 th:remove="${tableList.size() > 0 ? 'all' : 'none'}">&nbsp;&nbsp;&nbsp;&nbsp;空空如也，去<b><a href="/collect/new">创建</a></b>吧~</h4>
             <div class="box-body" th:remove="${tableList.size() > 0 ? 'none' : 'all'}">
-              <table class="table table-bordered table-striped">
+              <table id="table" class="table table-bordered table-striped">
 
                 <thead>
                 <tr>
@@ -230,7 +237,13 @@
 
 <!-- Js 脚本 -->
 <div th:insert="common/html_js :: div_js"></div>
-
+<!-- DataTable 脚本 -->
+<script>
+    if($(window).width() < 800){
+        document.getElementById("table").setAttribute("class",document.getElementById("table").getAttribute("class").concat(" data-table"));
+    }
+</script>
+<div th:insert="common/html_js :: data_table_js"></div>
 <script>
     var opreateTableId = 0;
 

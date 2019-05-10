@@ -30,7 +30,7 @@
         <div class="box box-widget">
           <!-- /.box-header -->
           <div class="box-body" id="tableArea">
-            <table id="example1" class="table table-bordered table-striped table-responsive" style="width:100%">
+            <table class="table table-bordered table-striped table-responsive data-table" style="width:100%">
               <thead>
               <tr>
                 <th>表名</th>
@@ -92,5 +92,7 @@
 <!-- ./wrapper -->
 <!-- Js 脚本 -->
 <div th:insert="common/html_js :: div_js"></div>
+<!-- DataTable 脚本 -->
+<div th:insert="common/html_js :: data_table_js"></div>
 </body>
 </html>

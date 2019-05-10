@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html  xmlns:th="http://www.thymeleaf.org">
-<head th:replace="common/html_head :: head(~{::title},~{::link},~{})">
+<head th:replace="common/html_head :: head(~{::title},~{},~{})">
   <title th:text="${table.name}">xxx信息收集表</title>
-  <!-- DataTables -->
-  <link rel="stylesheet" href="/AdminLTE/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
 </head>
 <!-- ADD THE CLASS layout-top-nav TO REMOVE THE SIDEBAR. -->
 <body class="hold-transition skin-blue layout-top-nav">
@@ -73,7 +71,7 @@
           </div>
           <!-- /.box-header -->
           <div class="box-body" id="tableArea">
-            <table id="example1" class="table table-bordered table-striped table-responsive" style="width:100%">
+            <table class="table table-bordered table-striped table-responsive data-table" style="width:100%">
               <thead>
               <tr>
                 <th th:each="head : ${headers}" th:text="${head}">Rendering engine</th>
@@ -198,9 +196,8 @@
 <!-- ./wrapper -->
 <!-- Js 脚本 -->
 <div th:insert="common/html_js :: div_js"></div>
-<!-- DataTables -->
-<script src="/AdminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<!-- DataTable 脚本 -->
+<div th:insert="common/html_js :: data_table_js"></div>
 <!-- page script -->
 <script>
     function replyComment(comentId){
@@ -242,38 +239,6 @@
       })
   }
 
-    $(function () {
-        $('#example1').DataTable({
-            scrollX:true,
-            lengthMenu:[10, 20, 35, 50],
-            language: {
-                "sProcessing": "处理中...",
-                "sLengthMenu": "显示 _MENU_ 项结果",
-                "sZeroRecords": "没有匹配结果",
-                "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
-                "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
-                "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
-                "sInfoPostFix": "",
-                "sSearch": "过滤:",
-                "sUrl": "",
-                "sEmptyTable": "表中数据为空",
-                "sLoadingRecords": "载入中...",
-                "sInfoThousands": ",",
-                "oPaginate": {
-                    "sFirst": "首页",
-                    "sPrevious": "上页",
-                    "sNext": "下页",
-                    "sLast": "尾页"
-                },
-                "decimal":",",
-                "thousands":".",
-                "oAria": {
-                    "sSortAscending": ": 以升序排列此列",
-                    "sSortDescending": ": 以降序排列此列"
-                }
-            }
-        })
-    })
 </script>
 
 </body>

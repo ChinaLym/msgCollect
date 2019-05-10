@@ -21,5 +21,45 @@
     <script src="/AdminLTE/bower_components/fastclick/lib/fastclick.js"></script>
 </div>
 
+<!-- 將使用到dataTable的部分提取出來-->
+<div th:fragment="data_table_js">
+    <!-- DataTables -->
+    <script src="/AdminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script>
+        $(function() {
+            $('table.data-table').DataTable({
+                scrollX: true,
+                lengthMenu: [10, 20, 35, 50],
+                language: {
+                    "sProcessing": "处理中...",
+                    "sLengthMenu": "显示 _MENU_ 项结果",
+                    "sZeroRecords": "没有匹配结果",
+                    "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                    "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                    "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                    "sInfoPostFix": "",
+                    "sSearch": "过滤:",
+                    "sUrl": "",
+                    "sEmptyTable": "表中数据为空",
+                    "sLoadingRecords": "载入中...",
+                    "sInfoThousands": ",",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "上页",
+                        "sNext": "下页",
+                        "sLast": "尾页"
+                    },
+                    "decimal": ",",
+                    "thousands": ".",
+                    "oAria": {
+                        "sSortAscending": ": 以升序排列此列",
+                        "sSortDescending": ": 以降序排列此列"
+                    }
+                }
+            })
+        })
+    </script>
+</div>
 </body>
 </html>

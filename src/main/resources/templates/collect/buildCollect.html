@@ -43,7 +43,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="box">
-            <div class="box-body">
+            <div class="box-body" style="overflow-x: auto;">
               <form action="/collect/new/byOnlineProduction/tableForm.action" method="post" id="tableForm">
                 <div th:remove="${table}?'none':'all'">
                   <input id = "table-id" name="table-id" hidden="hidden"  th:value="${table}?${table.id}:''">
@@ -89,7 +89,7 @@
                   </table>
                   <h3>表字段</h3>
                   <input name="table-item-index-array" id="table-item-index-array" hidden="hidden">
-                <table class="table table-striped">
+                <table class="table table-striped ">
                   <thead>
                     <tr>
                       <th style="width:20%">字段名</th>
@@ -201,7 +201,8 @@
 <script src="/laydate/laydate.js"></script>
 <!-- iCheck 1.0.1 -->
 <script src="/AdminLTE/plugins/iCheck/icheck.min.js"></script>
-
+<!-- DataTable 脚本 -->
+<div th:insert="common/html_js :: data_table_js"></div>
 <!-- Page script -->
 <script>
     //laydate

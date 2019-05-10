@@ -42,7 +42,7 @@
             <!-- /.box-header -->
             <h4 th:remove="${tableList.size() > 0 ? 'all' : 'none'}">&nbsp;&nbsp;&nbsp;&nbsp;空空如也，遇到喜欢的表就不要犹豫收藏啦~</h4>
             <div class="box-body" th:remove="${tableList.size() > 0 ? 'none' : 'all'}">
-              <table class="table table-bordered table-striped">
+              <table id="table" class="table table-bordered table-striped">
                 <thead>
                   <tr>
                     <th>表名</th>
@@ -113,5 +113,12 @@
 
 <!-- Js 脚本 -->
 <div th:insert="common/html_js :: div_js"></div>
+<!-- DataTable 脚本 -->
+<script>
+    if($(window).width() < 800){
+        document.getElementById("table").setAttribute("class",document.getElementById("table").getAttribute("class").concat(" data-table"));
+    }
+</script>
+<div th:insert="common/html_js :: data_table_js"></div>
 </body>
 </html>
