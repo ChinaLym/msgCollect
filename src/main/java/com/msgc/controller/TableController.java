@@ -20,8 +20,6 @@ import com.msgc.utils.zip.ZipUtil;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -53,7 +51,6 @@ import java.util.stream.Stream;
 @Controller
 @RequestMapping("/collect")
 public class TableController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TableController.class);
 
 	private final ITableService tableService;
 	private final IFieldService fieldService;
@@ -393,7 +390,14 @@ public class TableController {
         //找出该收集表的全部字段
         List<Field> fieldList = fieldService.findAllByTableId(table.getId());
         //fields.sort(Comparator.comparing(Field::getNum));
-        //最好是更新原有的answer，这里采用删除原有的，然后添加新的****************
+        // TODO BUG 目前无法部分更新。若第二次填写没有提交文件，会导致错误，deleteAllByRecordId 删除原来所有的记录且无法回滚
+        /**
+         * BUG 原因：当前是删除原有的，然后添加新的。应该更新原有的 answer
+         * 解决方案：采用更新answer替换删除再添加。
+         *      成功执行完该事务后发送消息，异步删除旧文件。
+         *          或
+         *      定时任务：每天晚上删除数据库中不存在文件。
+         */
         if(isReFill){
             answerService.deleteAllByRecordId(record.getId());
         }

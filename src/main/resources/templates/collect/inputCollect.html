@@ -25,7 +25,7 @@
           <div class="box-body">
             <input name="isReFill" th:value="${answerList} ? 'true' : 'false'" hidden="hidden">
             <div class="form-group" th:each="field, i : ${fieldList}">
-              <label th:for="'item-' + ${field.num}" th:text="${field.name}">项名</label>
+              <label th:for="'item-' + ${field.num}" th:text="${field.name}">项名</label> <small th:if="${!table.visibility || !field.visibility}" class="text-blue">（ 保密 ）</small>
               <input th:type="${field.type.htmlType}" class="form-control"
                      th:id="'item-' + ${field.num}"
                      th:name="${'file'.equals(field.type.htmlType)} ? 'file' : 'item-' + ${field.num} "
@@ -85,8 +85,8 @@
             </div>
 
             <div class="col-sm-2" style="float:left">
-              <a href="/collect/filled">
-                <input type="button" class="btn btn-sm btn-primary" value="返回">
+              <a th:href="'/collect/data/' + ${table.id}">
+                <input type="button" class="btn btn-sm btn-primary" value="表数据">
               </a>
             </div>
 

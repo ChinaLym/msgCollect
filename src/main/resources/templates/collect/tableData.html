@@ -59,7 +59,7 @@
 
         <div class="box">
           <div class="box-header">
-            <h3 class="box-title">表数据</h3>
+            <h3 class="box-title">表数据 <a th:href="'/collect/share/start?t=' + ${table.id}">去填写</a></h3>
             <div class=" pull-right" th:if="${table.owner eq session.user.id}">
               <a th:href="'/collect/export?t=' + ${table.id}">
                 <button type="button" class="btn btn-sm btn-success" th:remove="${'编辑中' == table.state ? 'all' : 'none'}">

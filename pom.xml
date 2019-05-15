@@ -180,10 +180,10 @@
             <version>3.3.3</version>
         </dependency>
         <!-- 文件传输相关 -->
-        <dependency>
+<!--        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-        </dependency>
+        </dependency>-->
 
         <!-- 自动生成实体类的基本方法，减少代码量，如get，set，toString 等 -->
         <dependency>
