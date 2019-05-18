@@ -34,8 +34,8 @@ public class VerificationCodeUtils {
             } else {
                 CHARStr = dataStr.substring(start + 2, end);
             }
-            char letter = (char) Integer.parseInt(CHARStr, 16); // 16进制parse整形字符串。
-            buffer.append(new Character(letter).toString());
+            char letter = (char) Integer.valueOf(CHARStr, 16).intValue(); // 16进制parse整形字符串。
+            buffer.append(Character.toString(letter));
             start = end;
         }
         return buffer.toString();

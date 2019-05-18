@@ -62,6 +62,8 @@ public class MD5Utils {
 			}
  
 			return new String(str);
+		} catch (RuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			return null;
 		}

@@ -13,7 +13,7 @@ public class ContentRefreshListener implements ApplicationListener<ContextRefres
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        new Thread(MessageSender.getInstance()).start();
+        new Thread(MessageSender.getInstance(), "notify_Thread").start();
         logger.info("send order to messageSender start!");
     }
 }

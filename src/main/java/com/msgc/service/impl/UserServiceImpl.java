@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -45,19 +44,17 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public User register(User user) {
-        //TODO 这里需要将判断账号是否已经存在放到插入中
         if(userRepository.countByAccount(user.getAccount()) > 0)
             return null;
         user.setHeadImage(RandomHeadImageUtil.next());
-        user.setNickname("用户" + UUID.randomUUID().toString().substring(0, 10));
-        user.setCreateTime(new Timestamp(System.currentTimeMillis()));
-        user.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         if (StringUtils.isBlank(user.getNickname())) {
-            user.setNickname("用户" + new Random().nextInt());
+            user.setNickname("用户" + UUID.randomUUID().toString().substring(0, 10));
         }
         if(StringUtils.isBlank(user.getHeadImage())){
             user.setHeadImage(RandomHeadImageUtil.next());
         }
+        user.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        user.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         user = userRepository.save(user);
         return user;
     }

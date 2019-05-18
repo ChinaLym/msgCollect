@@ -98,9 +98,7 @@ public class Comment implements Serializable, Comparable{
 	@Override
 	public int compareTo(Object obj) {
 		if(obj instanceof Comment)
-			if(this.createTime.getTime() > ((Comment) obj).getCreateTime().getTime()){
-				return 1;
-			}else return -1;
+			return this.createTime.compareTo(((Comment) obj).getCreateTime());
 		return 0;
 	}
 }

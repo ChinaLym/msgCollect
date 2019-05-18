@@ -1,5 +1,7 @@
 package com.msgc.utils.csv;
 
+import com.msgc.utils.FileUtil;
+
 import java.io.*;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -22,17 +24,18 @@ public class CsvUtil {
      * @throws IOException
      */
     public static List<List<String>> read(String fileName, int ignoreLine, String separator) throws IOException {
-        DataInputStream  din = new DataInputStream (new FileInputStream(fileName));
-        BufferedReader reader = new BufferedReader(new InputStreamReader(din,"utf-8"));
-        for (int i = 0; i < ignoreLine; i++) {
-            reader.readLine();
+        try(DataInputStream  din = new DataInputStream (new FileInputStream(fileName));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(din,"utf-8"))) {
+            for (int i = 0; i < ignoreLine; i++) {
+                reader.readLine();
+            }
+            List<List<String>> resultList = new LinkedList<>();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                resultList.add(Arrays.asList(line.split(separator)));
+            }
+            return resultList;
         }
-        List<List<String>> resultList = new LinkedList<>();
-        String line;
-        while((line=reader.readLine())!=null) {
-            resultList.add(Arrays.asList(line.split(separator)));
-        }
-        return resultList;
     }
 
     /**
@@ -46,35 +49,22 @@ public class CsvUtil {
     public static File write(List<Object> head, List<List<Object>> dataList,
                                      String outPutPath, String filename) {
 
-        File csvFile = null;
-        BufferedWriter csvWtriter = null;
-        try {
-            csvFile = new File(outPutPath + File.separator + filename + ".csv");
-            File parent = csvFile.getParentFile();
-            if (parent != null && !parent.exists()) {
-                parent.mkdirs();
-            }
-            csvFile.createNewFile();
-
-            // GB2312使正确读取分隔符","
-            csvWtriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-                    csvFile), "GB2312"), 1024);
+        File csvFile = new File(outPutPath + File.separator + filename + ".csv");
+        FileUtil.ensureExist(csvFile);
+        // GB2312使正确读取分隔符","
+        try (BufferedWriter csvWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
+                csvFile), "GB2312"), 1024)){
             // 写入文件头部
-            writeRow(head, csvWtriter);
-
+            writeRow(head, csvWriter);
             // 写入文件内容
             for (List<Object> row : dataList) {
-                writeRow(row, csvWtriter);
+                writeRow(row, csvWriter);
             }
-            csvWtriter.flush();
-        } catch (Exception e) {
+            csvWriter.flush();
+        } catch (RuntimeException re){
+            throw re;
+        }catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                csvWtriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
         return csvFile;
     }
@@ -88,8 +78,7 @@ public class CsvUtil {
     private static void writeRow(List<Object> row, BufferedWriter csvWriter) throws IOException {
         // 写入文件头部
         for (Object data : row) {
-            StringBuffer sb = new StringBuffer();
-            String rowStr = sb.append("\"").append(data).append("\",").toString();
+            String rowStr = "\"" + data + "\",";
             csvWriter.write(rowStr);
         }
         csvWriter.newLine();

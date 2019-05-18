@@ -5,21 +5,27 @@ import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.metadata.Table;
 import com.alibaba.excel.support.ExcelTypeEnum;
+import com.msgc.utils.FileUtil;
 
 import java.io.*;
 import java.util.List;
 
 public class ExcelUtil {
 
-    /*
-    导出数据收集表
-    单行表头
-    数据在第一个sheet
+    /**
+     * 导出数据收集表
+     *     单行表头
+     *     数据在第一个sheet
+     * @param excelName 文件名带路径，本函数内部将保证其必定存在
+     * @param sheetName 表名
+     * @param headers 表头
+     * @param data 数据
+     * @return 写好的文件引用
+     * @throws IOException 异常
      */
     public static File write(String excelName, String sheetName, List<List<String>> headers, List<List<String>> data) throws IOException {
         File exportExcel = new File(excelName);
-        if(!exportExcel.exists())
-            exportExcel.createNewFile();
+        FileUtil.ensureExist(exportExcel);
         try (OutputStream out = new FileOutputStream(exportExcel)) {
             ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX);
             Sheet sheet1 = new Sheet(1, 0);

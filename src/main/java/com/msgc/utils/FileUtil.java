@@ -14,10 +14,11 @@ public class FileUtil {
      * @param content 需要写入的内容
      * @throws Exception 该方法需要上层捕获异常
      */
-    public static void writeFile(File file, byte[] content) throws Exception {
-    	FileOutputStream fos = new FileOutputStream(file);
-        fos.write(content);
-        fos.close();
+    public static void writeFile(File file, byte[] content) throws IOException {
+    	try(FileOutputStream fos = new FileOutputStream(file)){
+            fos.write(content);
+        }
+
     }
     
     /**

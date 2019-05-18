@@ -29,21 +29,14 @@ public class ExcelUtilAdapter {
                                List<Field> fieldList,
                                List<AnswerRecordBO> answerRecordBOList) throws IOException {
 
-        String fileName = FilePath.getTableProcessedPath(table.getId());
-        //先保证路径存在
-        File outputPath = new File(fileName);
-        if(!outputPath.exists()){
-            outputPath.mkdirs();
-        }
-        //添加文件名
-        fileName += FilePath.FILE_NAME_ALL_FIELDS_EXCEL;
+        String fileName = FilePath.getTableProcessedPath(table.getId()) + FilePath.FILE_NAME_ALL_FIELDS_EXCEL;
         List<List<String>> headers = new ArrayList<>();
         fieldList.sort(Comparator.comparing(Field::getNum));
         //处理表头
         for (Field field : fieldList){
-            List<String> coulumn = new ArrayList<>();
-            coulumn.add(field.getName());
-            headers.add(coulumn);
+            List<String> column = new ArrayList<>();
+            column.add(field.getName());
+            headers.add(column);
         }
         headers.add(Collections.singletonList("操作 ip"));
         headers.add(Collections.singletonList("使用系统"));
@@ -92,7 +85,7 @@ public class ExcelUtilAdapter {
         }
 
         List<Object> objectList = ExcelUtil.read(file, strategy.getSheetIndex());
-        if(objectList != null && objectList.size() > 0){
+        if(objectList.size() > 0){
             //定位到 Field_position 所在行，内容类似 [xx,xxx,xxxx]，defaultValue默认为下一行
             String fields = objectList.get(strategy.getField_position()).toString();
             String defaultValues = objectList.get(strategy.getField_position() + 1).toString();
