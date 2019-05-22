@@ -1,5 +1,6 @@
 package com.msgc.aop;
 
+import com.msgc.utils.IPUtil;
 import com.msgc.utils.WebUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -43,7 +44,7 @@ public class ControllerLoggerAspectJConfig {
 		StringBuilder requestContent = new StringBuilder("( ");
 		requestContent.append(request.getMethod()).append(" ) URL : ");
 		requestContent.append(request.getRequestURL().toString());
-		requestContent.append(" From -IP : ").append(request.getRemoteAddr()).append(" —— aim: ");
+		requestContent.append(" From -IP : ").append(IPUtil.getRequestIpAddress(request)).append(" —— aim: ");
 		// 包+类名
 		requestContent.append(joinPoint.getSignature().getDeclaringTypeName()).append('.');
 		// 方法名

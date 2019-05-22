@@ -1,5 +1,7 @@
 package com.msgc.utils;
 
+import lombok.extern.java.Log;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -8,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 * @author LYM
 * @date Dec 18, 2018
  */
+@Log
 public class IPUtil {
 	
 	/**
@@ -16,7 +19,7 @@ public class IPUtil {
 	 * @param request
 	 * @return
 	 */
-	public static String getIpAddr(HttpServletRequest request) {
+	public static String getRequestIpAddress(HttpServletRequest request) {
 	    String ip = request.getHeader("x-forwarded-for"); 
 	    if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) { 
 	        ip = request.getHeader("Proxy-Client-IP"); 
@@ -37,8 +40,9 @@ public class IPUtil {
 	 */
 	public static int ipv4StrToInt(String ip){
 		if(ip.contains(":")){
-			//TODO ipv6,不支持，设置为默认 127.0.0.1，压制bug，这里需要判断，抛出异常
+			//TODO ipv6,不支持，设置为默认 127.0.0.1，压制bug，这里需要正则判断，抛出异常
 			ip="127.0.0.1";
+			log.info(String.format("param ip is [{}] which is not supported!", ip));
 		}
 		String[] ips = ip.split("\\.");
 		int ipFour = 0;

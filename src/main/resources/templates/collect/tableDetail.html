@@ -90,7 +90,7 @@
                               th:value="${table.name}">
               </h3>
               <h3>简介</h3>
-              <textarea disabled style="width: 100%; height: 100px;resize: none" th:value="${table.detail}"></textarea>
+              <textarea disabled style="width: 100%; height: 100px;resize: none" th:text="${table.detail}"></textarea>
               <h3>表属性</h3>
               <table class="table table-striped">
                 <thead>

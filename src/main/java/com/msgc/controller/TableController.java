@@ -57,6 +57,7 @@ public class TableController {
 	private final IAnswerRecordService answerRecordService;
 	private final IAnswerService answerService;
     private final IMessageService messageService;
+    private final IUnfilledRecordService unfilledRecordService;
 
     // 一周的毫秒数
 	private final long ONE_WEEK_TIME = 7 * 24 * 60 * 60 * 1000;
@@ -64,12 +65,13 @@ public class TableController {
 	private final long DEFAULT_END_TIME = ONE_WEEK_TIME;
 
     @Autowired
-    public TableController(ITableService tableService, IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, IMessageService messageService) {
+    public TableController(ITableService tableService, IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, IMessageService messageService, IUnfilledRecordService unfilledRecordService) {
         this.tableService = tableService;
         this.fieldService = fieldService;
         this.answerRecordService = answerRecordService;
         this.answerService = answerService;
         this.messageService = messageService;
+        this.unfilledRecordService = unfilledRecordService;
     }
 
 
@@ -268,6 +270,8 @@ public class TableController {
     //进入填写收集表页面，并判断是否输入 暗号
     @GetMapping("/share/start")
     public String startInputCollectPage(HttpServletRequest request, Model model, HttpSession session) {
+        if(StringUtils.isEmpty(request.getParameter("t")))
+            return "redirect:/index";
         int tid = Integer.parseInt(request.getParameter("t"));
         try {
             Table table = tableService.findById(tid);
@@ -291,6 +295,8 @@ public class TableController {
                 model.addAttribute("table_id", table.getId());
                 return "collect/initCollect";
             }
+            // 自动收藏
+            tableService.addLikeTable(table.getId());
             //不需要输入，返回收集表填写页面
             return inputPage(table, model, (User)session.getAttribute(SessionKey.USER));
         }catch (Exception e){
@@ -371,7 +377,7 @@ public class TableController {
         } else{
             BeanUtils.copyProperties(answerRecordService.findByTableIdAndUserId(table.getId(), user.getId()), record);
         }
-        record.setIp(IPUtil.ipv4StrToInt(IPUtil.getIpAddr(request)));
+        record.setIp(IPUtil.ipv4StrToInt(IPUtil.getRequestIpAddress(request)));
         record.setUpdate_time(new Date());
         boolean hasSetDeviceSystem = false;
         try {
@@ -679,7 +685,7 @@ public class TableController {
         HttpServletRequest request = WebUtil.getRequest();
         HttpSession session = request.getSession();
         User user = (User)session.getAttribute(SessionKey.USER);
-        if(user != null){
+        if(user != null && StringUtils.isNotEmpty(request.getParameter("t"))){
             int tid = Integer.parseInt(request.getParameter("t"));
             Table table = tableService.findById(tid);
             if(table != null && user.getId().equals(table.getOwner())){
@@ -688,6 +694,9 @@ public class TableController {
                 model.addAttribute("table", table);
                 model.addAttribute("fieldList", fieldList);
                 return "collect/tableDetail";
+            }else {
+                return "redirect:/index";
+                // 未找到
             }
         }
         throw new ResourceNotFoundException();
