@@ -6,6 +6,7 @@ import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.util.unit.DataSize;
 
 import javax.servlet.MultipartConfigElement;
@@ -13,6 +14,7 @@ import javax.servlet.MultipartConfigElement;
 @EnableCaching
 @SpringBootApplication
 @ServletComponentScan
+@EnableAsync
 public class MsgCollectApplication {
     //设置时区,出现时区乱码问题则使用 SET GLOBAL time_zone='+8:00';
     public static void main(String[] args) {
