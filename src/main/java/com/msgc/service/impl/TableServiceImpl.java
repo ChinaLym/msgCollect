@@ -212,7 +212,7 @@ public class TableServiceImpl implements ITableService{
             answerRecordBO.getAnswerList().forEach(
                 anw -> anw.setContent(
                     "文件".equals(anw.getType())
-                         ?  FilePath.generaterDownloadURL(tableId,
+                         ?  FilePath.generateDownloadURL(tableId,
                              tempMap.get(anw.getFieldId()),
                              FileUtil.getFileName(anw.getContent()))
                          : anw.getContent()

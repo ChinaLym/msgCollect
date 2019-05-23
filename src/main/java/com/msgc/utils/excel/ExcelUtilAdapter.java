@@ -54,7 +54,7 @@ public class ExcelUtilAdapter {
                     // "" 换成生成下载该文件的 URL********************
                     .map( answer -> !"文件".equals(answer.getType()) ? answer.getContent() :
                             ExcelUtil.generateHyperlink(
-                                    FilePath.generaterDownloadURL(table.getId(), tempMap.get(answer.getFieldId()), FileUtil.getFileName(answer.getContent())),
+                                    FilePath.generateDownloadURL(table.getId(), tempMap.get(answer.getFieldId()), FileUtil.getFileName(answer.getContent())),
                                     FileUtil.getFileName(answer.getContent()))
                     )
                     .collect(Collectors.toList());
@@ -78,7 +78,7 @@ public class ExcelUtilAdapter {
     public static void read(String fileName, Table table, List<Field> fieldList, ExcelReadStrategy strategy) throws IOException {
         //fieldList = new ArrayList<>();
         //table = new Table();
-        File file =new File(FilePath.DEFAULT_EXCEL_UPLOAD_DIR + fileName);
+        File file =new File(FilePath.BASE_DIR + FilePath.DEFAULT_EXCEL_UPLOAD_DIR + fileName);
         if (!file.exists()){
             System.out.println(fileName + "not exists");
             return;

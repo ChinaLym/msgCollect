@@ -1,7 +1,6 @@
 package com.msgc.controller;
 
 import com.msgc.cache.FieldTypeFlyweightFactory;
-import com.msgc.config.WebMvcConfig;
 import com.msgc.constant.FilePath;
 import com.msgc.constant.SessionKey;
 import com.msgc.constant.enums.MessageTypeEnum;
@@ -673,8 +672,7 @@ public class TableController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "redirect:" + WebMvcConfig.VIRTUAL_DIR +
-                "processed/" + tableId + "/" + FilePath.FILE_NAME_TABLE_QrCODE_JPEG;
+        return "redirect:" + FilePath.getQrCodeUrl(tableId);
     }
 
     /**

@@ -4,6 +4,8 @@ import com.msgc.config.WebMvcConfig;
 import com.msgc.entity.Field;
 import com.msgc.utils.WebUtil;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 统一管理上传下载文件目录
  *
@@ -18,16 +20,16 @@ public class FilePath {
 
     public static final String FILE_SEPARATOR = java.io.File.separator;
 
-    private static final String BASE_DIR =WebMvcConfig.FILE_DIR;
+    public static final String BASE_DIR = WebMvcConfig.FILE_DIR;
 
-    public static final String DEFAULT_EXCEL_UPLOAD_DIR = BASE_DIR + "upload" + FILE_SEPARATOR;
-    private static final String DEFAULT_PROCESSED_DIR = BASE_DIR + "processed" + FILE_SEPARATOR;
+    public static final String DEFAULT_EXCEL_UPLOAD_DIR = "upload" + FILE_SEPARATOR;
+    private static final String DEFAULT_PROCESSED_PATH = "processed" + FILE_SEPARATOR;
 
     private static final String FILE_NAME_CONNECT = "_";
 
     public static final String FILE_NAME_ALL_FIELDS_ZIP = "all.zip";
     public static final String FILE_NAME_ALL_FIELDS_EXCEL = "all.xlsx";
-    public static final String FILE_NAME_TABLE_QrCODE_JPEG= "QrCode.jpeg";
+    private static final String FILE_NAME_QR_CODE_SUFFIX= ".jpeg";
 
 
     /**
@@ -36,9 +38,9 @@ public class FilePath {
      * @return 路径 String, 示例：   BASE_DIR/upload/{tableId}/
      */
     public static String getTableFilesUploadPath(Integer tableId){
-        StringBuilder resourceDirPath = new StringBuilder(FilePath.DEFAULT_EXCEL_UPLOAD_DIR);
+        StringBuilder resourceDirPath = new StringBuilder(BASE_DIR + DEFAULT_EXCEL_UPLOAD_DIR);
         resourceDirPath.append(tableId);
-        resourceDirPath.append(FilePath.FILE_SEPARATOR);
+        resourceDirPath.append(FILE_SEPARATOR);
         //
         return resourceDirPath.toString();
     }
@@ -49,9 +51,39 @@ public class FilePath {
      * @return 路径 String, 示例：  BASE_DIR/processed/{tableId}/
      */
     public static String getTableProcessedPath(Integer tableId){
-        StringBuilder zipPath = new StringBuilder(FilePath.DEFAULT_PROCESSED_DIR);
+        StringBuilder zipPath = new StringBuilder(BASE_DIR + DEFAULT_PROCESSED_PATH);
         zipPath.append(tableId);
-        zipPath.append(FilePath.FILE_SEPARATOR);
+        zipPath.append(FILE_SEPARATOR);
+        return zipPath.toString();
+    }
+
+    /**
+     * 获取这个 表 对应域名的二维码缓存文件路径
+     * @param tableId 收集表id
+     * @return 二维码文件路径 String, 示例：  BASE_DIR/processed/{tableId}/xxx.com.jpeg
+     */
+    public static String getQrCodeFilePath(Integer tableId){
+        return BASE_DIR + getQrCodePath(tableId);
+    }
+
+    /**
+     * 获取这个 表 对应域名的二维码 URL
+     * @param tableId 收集表id
+     * @return 二维码文件路径 String, 示例：  BASE_DIR/processed/{tableId}/xxx.com.jpeg
+     */
+    public static String getQrCodeUrl(Integer tableId){
+        return WebMvcConfig.VIRTUAL_DIR + getQrCodePath(tableId);
+    }
+
+    private static String getQrCodePath(Integer tableId){
+        HttpServletRequest request = WebUtil.getRequest();
+        StringBuilder zipPath = new StringBuilder(DEFAULT_PROCESSED_PATH);
+        zipPath.append(tableId);
+        zipPath.append(FILE_SEPARATOR);
+        zipPath.append(request.getServerName());
+        zipPath.append(FILE_NAME_CONNECT);
+        zipPath.append(request.getServerPort());
+        zipPath.append(FILE_NAME_QR_CODE_SUFFIX);
         return zipPath.toString();
     }
 
@@ -64,9 +96,9 @@ public class FilePath {
     public static String getFieldFilesUploadPath(Integer tableId, Field field){
         StringBuilder resourceDirPath = new StringBuilder(getTableFilesUploadPath(tableId));
         resourceDirPath.append(field.getNum());
-        resourceDirPath.append(FilePath.FILE_NAME_CONNECT);
+        resourceDirPath.append(FILE_NAME_CONNECT);
         resourceDirPath.append(field.getName());
-        resourceDirPath.append(FilePath.FILE_SEPARATOR);
+        resourceDirPath.append(FILE_SEPARATOR);
         return resourceDirPath.toString();
     }
 
@@ -89,7 +121,7 @@ public class FilePath {
      * @return 匹配 BaseController downloadResource 的 URL
      *          如：/api/v1/download/table/{tableId}/field/{fieldIdAndName}/{fileName}
      */
-    public static String generaterDownloadURL(int tableId, Field field, String fileName){
+    public static String generateDownloadURL(int tableId, Field field, String fileName){
         if(field == null)
             return null;
         return WebUtil.getServerURL() +  "/api/v1/download/table/" +

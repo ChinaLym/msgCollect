@@ -77,7 +77,7 @@ public class FileTransportUtil {
             String oldFileName = file.getOriginalFilename();
             String randomStr = UUID.randomUUID().toString();
             String newFileName = randomStr + oldFileName.substring(oldFileName.lastIndexOf("."));
-            File aimFile = new File(FilePath.DEFAULT_EXCEL_UPLOAD_DIR, newFileName);
+            File aimFile = new File(FilePath.BASE_DIR + FilePath.DEFAULT_EXCEL_UPLOAD_DIR, newFileName);
             file.transferTo(aimFile);
             return newFileName;
         }
