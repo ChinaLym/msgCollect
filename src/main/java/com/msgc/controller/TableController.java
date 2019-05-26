@@ -157,20 +157,16 @@ public class TableController {
 	@GetMapping("/filled")
 	public String filledCollectPage(HttpSession session, Model model) {
         User user = (User)session.getAttribute(SessionKey.USER);
-        if(user != null){
-            List<AnswerRecord> answerRecordList = answerRecordService.findAllByUserId(user.getId());
-            //将 answerRecordList 中的 record 提取出所有的 id 并以 List 的形式返回
-            List<Integer> tableIdList = answerRecordList.stream().map(AnswerRecord::getTableId).collect(Collectors.toList());
-            List<Table> tableList = tableService.findAllById(tableIdList);
-            Stream<Table> tableStream = tableList.stream().filter(table -> !TableStatusEnum.DELETE.getValue().equals(table.getState()));
-            tableList = tableStream.collect(Collectors.toList());
-            List<String> ipList = answerRecordList.stream().map(a -> IPUtil.intToIPv4Str(a.getIp())).collect(Collectors.toList());
-            model.addAttribute("tableList", tableList);
-            model.addAttribute("recordList", answerRecordList);
-            model.addAttribute("ipList", ipList);
-        }else {
-            return "redirect:/login?redirectUrl=%2fcollect%2ffilled";
-        }
+        List<AnswerRecord> answerRecordList = answerRecordService.findAllByUserId(user.getId());
+        //将 answerRecordList 中的 record 提取出所有的 id 并以 List 的形式返回
+        List<Integer> tableIdList = answerRecordList.stream().map(AnswerRecord::getTableId).collect(Collectors.toList());
+        List<Table> tableList = tableService.findAllById(tableIdList);
+        Stream<Table> tableStream = tableList.stream().filter(table -> !TableStatusEnum.DELETE.getValue().equals(table.getState()));
+        tableList = tableStream.collect(Collectors.toList());
+        List<String> ipList = answerRecordList.stream().map(a -> IPUtil.intToIPv4Str(a.getIp())).collect(Collectors.toList());
+        model.addAttribute("tableList", tableList);
+        model.addAttribute("recordList", answerRecordList);
+        model.addAttribute("ipList", ipList);
 		return "collect/filledCollect";
 	}
 

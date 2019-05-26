@@ -70,7 +70,7 @@ public class UserController {
 					userCookieService.save(mapping);
 					// 将凭据保存至浏览器 cookie
 					int twoWeeks_second = 60 * 60 * 24 * 14;
-					WebUtil.setCookie("auto-login", mapping.getCookie(), twoWeeks_second);
+					WebUtil.setCookie(SessionKey.AUTO_LOGIN, mapping.getCookie(), twoWeeks_second);
 				}catch (Exception e){
 					e.printStackTrace();
 					//写数据库 cookieUserMapping 失败
@@ -117,7 +117,7 @@ public class UserController {
 	// 退出登录，清空 session 中的 user, 清除cookie
 	@GetMapping(value = "/logout.action")
 	public String logout(HttpSession session) {
-		WebUtil.expireCookie("auto-login");
+		WebUtil.expireCookie(SessionKey.AUTO_LOGIN);
 		User user = (User)session.getAttribute(SessionKey.USER);
         LoggedUserSessionContext.remove(user.getId());
 		session.invalidate();

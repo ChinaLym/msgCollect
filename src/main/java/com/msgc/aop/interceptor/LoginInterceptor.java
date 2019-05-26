@@ -24,7 +24,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             Enumeration<String> parameterNames = request.getParameterNames();
             if(parameterNames.hasMoreElements())
                 realRequestURL.append("?");
-            do {
+            while (parameterNames.hasMoreElements()) {
                 String paramName = parameterNames.nextElement();
                 String paramValue = request.getParameter(paramName);
                 if(StringUtils.isEmpty(paramName)){
@@ -35,8 +35,8 @@ public class LoginInterceptor implements HandlerInterceptor {
                 realRequestURL.append(paramValue);
                 realRequestURL.append("&");
 
-            }while (parameterNames.hasMoreElements());
-            session.setAttribute(SessionKey.REDIRECT_URL, realRequestURL);
+            }
+            session.setAttribute(SessionKey.REDIRECT_URL, realRequestURL.toString());
         }
         return false;
     }

@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LoggedUserSessionContext{
 	//默认容量为 16 ，可以根据自己网站的访问量设置一个合理的初始值，避免刚开始时候的频繁扩容。
+
+    // 应该改成列表 Map<Integer, List<HttpSession>>
     private static volatile Map<Integer, HttpSession> sessionMap  = new ConcurrentHashMap<>(128);
 
     public static HttpSession putIfAbsent(Integer userId, HttpSession session) {

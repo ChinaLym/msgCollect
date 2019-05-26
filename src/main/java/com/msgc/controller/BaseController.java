@@ -56,9 +56,10 @@ public class BaseController {
 
     @GetMapping("/login")
     public String loginPage(HttpServletRequest request, HttpSession httpSession) {
+        //inputCollect.html 中用到该参数
         if (StringUtils.isNotEmpty(request.getParameter("redirectUrl")))
             httpSession.setAttribute(SessionKey.REDIRECT_URL, request.getParameter("redirectUrl"));
-        String autoLoginCookie = WebUtil.getCookie("auto-login");
+        String autoLoginCookie = WebUtil.getCookie(SessionKey.AUTO_LOGIN);
         // 有自动登录的 cookie
         if(autoLoginCookie != null){
             UserCookie cuMapping = userCookieService.findByCookie(autoLoginCookie);
@@ -70,8 +71,8 @@ public class BaseController {
                     User u = userService.findById(userId);
                     if(u != null){
                         HttpSession session = WebUtil.setSessionUser(u);
-                        if (StringUtils.isNotEmpty(request.getParameter("redirectUrl"))){
-                            String redirect = "redirect:" + request.getParameter("redirectUrl");
+                        if (StringUtils.isNotEmpty((String)session.getAttribute(SessionKey.REDIRECT_URL))){
+                            String redirect = "redirect:" + session.getAttribute(SessionKey.REDIRECT_URL);
                             session.removeAttribute(SessionKey.REDIRECT_URL);
                             return redirect;
                         }
@@ -89,7 +90,7 @@ public class BaseController {
 
     @GetMapping("/register")
     public String registerPage(HttpServletRequest request, HttpSession session) {
-        if (request.getParameter("redirectUrl") != null && !request.getParameter("redirectUrl").isEmpty())
+        if (StringUtils.isNotEmpty(request.getParameter("redirectUrl")))
             session.setAttribute(SessionKey.REDIRECT_URL, request.getParameter("redirectUrl"));
         return "register";
     }
@@ -151,6 +152,7 @@ public class BaseController {
     /**
      * 转发下载资源请求，为了不让用户看到真正的虚拟路径
      * @return 转至下载资源的真正路径
+     * @deprecated 不就之后将删除，换一种思路
      */
     @RequestMapping("/api/v1/download/table/{tableId}/field/{fieldIdAndName}/{fileName}")
     public String downloadResource(@PathVariable("tableId") String tableId,

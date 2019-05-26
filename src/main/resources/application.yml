@@ -1,3 +1,4 @@
+fileDir: 'E:/files/msg_collect_files/'              # 本系统保存 上传 | 下载缓存 的文件目录
 spring:
   profiles:
     active: dev

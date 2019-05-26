@@ -11,6 +11,9 @@ public class SessionKey {
 	//登录的用户 User
 	public static final String USER = "user";
 
+	//cookie 中的自动登录凭证 String
+	public static final String AUTO_LOGIN = "auto-login";
+
 	//未读的消息List	   List<Message>
 	public static final String UNREAD_MESSAGE = "unreadMessage";
 
