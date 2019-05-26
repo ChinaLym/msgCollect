@@ -1,5 +1,6 @@
 package com.msgc.aop;
 
+import com.msgc.annotation.ServiceLogger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
@@ -12,7 +13,7 @@ import java.util.Arrays;
 * Type: ServiceLoggerAspectJConfig
 * Description: 
 * com.msgc.service.impl中所有以ServiceImpl结尾的类中的所有public方法
-* 或者添加@ServiceLogger注解的方法，都会前后记录日志及异常
+* 或者添加 {@link ServiceLogger} 注解的方法，都会前后记录日志及异常
 * @author LYM
 * @date Dec 16, 2018
  */

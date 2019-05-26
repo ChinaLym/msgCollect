@@ -10,10 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.annotation.Annotation;
 /**
-* Type: LoginRequiredInterceptor
-* Description: 实现注解(com.edeclare.annotation.LoginRequired)
-* @author LYM
-* @date Dec 16, 2018
+ * Type: LoginRequiredInterceptor
+ * Description: 实现注解
+ * @see com.msgc.annotation.LoginRequired
+ * @author LYM
+ * @date Dec 16, 2018
  */
 public class LoginRequiredInterceptor implements HandlerInterceptor{
 

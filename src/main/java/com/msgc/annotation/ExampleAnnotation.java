@@ -17,6 +17,7 @@ import java.lang.annotation.Target;*/
 		...
 * @author LYM
 * @date Dec 16, 2018
+ * @deprecated 这只是个学习用的示例，禁止使用
  */
 /*@Target({ElementType.METHOD, ElementType.TYPE}) 
 @Retention(RetentionPolicy.RUNTIME) */

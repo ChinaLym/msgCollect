@@ -34,7 +34,6 @@ public class LoginInterceptor implements HandlerInterceptor {
                 realRequestURL.append("=");
                 realRequestURL.append(paramValue);
                 realRequestURL.append("&");
-
             }
             session.setAttribute(SessionKey.REDIRECT_URL, realRequestURL.toString());
         }

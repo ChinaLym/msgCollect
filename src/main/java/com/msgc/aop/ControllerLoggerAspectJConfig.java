@@ -1,5 +1,6 @@
 package com.msgc.aop;
 
+import com.msgc.annotation.ControllerLogger;
 import com.msgc.utils.IPUtil;
 import com.msgc.utils.WebUtil;
 import org.aspectj.lang.JoinPoint;
@@ -15,7 +16,7 @@ import java.util.Arrays;
 * Type: ControllerLoggerAspectJConfig
 * Description: 
 * com.msgc.controller中所有以Controller结尾的类中的所有public方法
-* 或者添加@ControllerLogger注解的方法，都会前后记录日志及异常
+* 或者添加 {@link ControllerLogger} 注解的方法，都会前后记录日志及异常
 * @author LYM
 * @date Dec 16, 2018
  */

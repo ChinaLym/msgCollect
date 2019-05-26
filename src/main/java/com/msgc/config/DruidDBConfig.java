@@ -10,11 +10,12 @@ import org.springframework.context.annotation.Primary;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 /**
-* Type: DruidDBConfig
-* Description: 采用阿里的Druid连接池，提高数据库连接的性能
-* 			该类为配置类，默认读取appliction.yml 下spring.datasource中的配置
-* @author LYM
-* @date Dec 16, 2018
+ * Type: DruidDBConfig
+ * Description: 采用阿里的Druid连接池，提高数据库连接的性能
+ * 			该类为配置类，默认读取appliction.yml 下spring.datasource中的配置
+ * @author LYM
+ * @date Dec 16, 2018
+ ** @deprecated
  */
 //@Configuration
 // 使用配置文件，不用该配置类了
