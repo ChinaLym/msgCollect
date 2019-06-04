@@ -24,7 +24,7 @@ public class CaffeineConfig {
         commentCache(100),      //表评论缓存
         answerRecordCache,      //用户-表 填写记录缓存
         answerCache,            //表填写内容缓存
-        unfilledRecord          //收藏缓存
+        favoriteRecord          //收藏缓存
         ;
         Caches(){}
         Caches(int ttl){

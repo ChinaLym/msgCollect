@@ -56,7 +56,7 @@ public class TableController {
 	private final IAnswerRecordService answerRecordService;
 	private final IAnswerService answerService;
     private final IMessageService messageService;
-    private final IUnfilledRecordService unfilledRecordService;
+    private final IFavoriteRecordService favoriteRecordService;
 
     // 一周的毫秒数
 	private final long ONE_WEEK_TIME = 7 * 24 * 60 * 60 * 1000;
@@ -64,13 +64,13 @@ public class TableController {
 	private final long DEFAULT_END_TIME = ONE_WEEK_TIME;
 
     @Autowired
-    public TableController(ITableService tableService, IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, IMessageService messageService, IUnfilledRecordService unfilledRecordService) {
+    public TableController(ITableService tableService, IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, IMessageService messageService, IFavoriteRecordService favoriteRecordService) {
         this.tableService = tableService;
         this.fieldService = fieldService;
         this.answerRecordService = answerRecordService;
         this.answerService = answerService;
         this.messageService = messageService;
-        this.unfilledRecordService = unfilledRecordService;
+        this.favoriteRecordService = favoriteRecordService;
     }
 
 
@@ -738,6 +738,13 @@ public class TableController {
     @RequestMapping("/like/{tableId}")
     public String like(@PathVariable("tableId") Integer tableId){
         tableService.addLikeTable(tableId);
+        return "redirect:/index";
+    }
+
+    @RequestMapping("/unlike/{tableId}")
+    public String unlike(@PathVariable("tableId") Integer tableId){
+        User concurrentUser = (User)WebUtil.getSessionKey(SessionKey.USER);
+        favoriteRecordService.unLikeTable(concurrentUser.getId(), tableId);
         return "redirect:/index";
     }
 }

@@ -36,11 +36,11 @@ public class BaseController {
     private final IUserService userService;
     private final IUserCookieService userCookieService;
     private final ITableService tableService;
-    private final IUnfilledRecordService unfilledRecordService;
+    private final IFavoriteRecordService unfilledRecordService;
     private final IMessageService messageService;
 
     @Autowired
-    public BaseController(IUserService userService, IUserCookieService userCookieService, ITableService tableService, IUnfilledRecordService unfilledRecordService, IMessageService messageService) {
+    public BaseController(IUserService userService, IUserCookieService userCookieService, ITableService tableService, IFavoriteRecordService unfilledRecordService, IMessageService messageService) {
         this.userService = userService;
         this.userCookieService = userCookieService;
         this.tableService = tableService;
@@ -102,9 +102,9 @@ public class BaseController {
         List<Message> unReadMessageList = messageService.findUnreadByReceiverAndLimit(user.getId(), 5);
 
         // 找出所有待填写的收集表
-        List<UnfilledRecord> recordList = unfilledRecordService.findAllByUserId(user.getId());
+        List<FavoriteRecord> recordList = unfilledRecordService.findAllByUserId(user.getId());
         List<Integer> unfilledTableIdList = recordList.stream()
-                .map(UnfilledRecord::getTableId)
+                .map(FavoriteRecord::getTableId)
                 .collect(Collectors.toList());
         List<Table> unfilledTableList = tableService.findAllById(unfilledTableIdList);
         // 从收藏中移除不可填写的表记录（状态为已经截止,或者删除）

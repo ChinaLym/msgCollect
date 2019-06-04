@@ -11,9 +11,9 @@ import java.util.Date;
  * 
  */
 @Entity
-@Table(name="tb_unfilled_record")
-@NamedQuery(name="UnfilledRecord.findAll", query="SELECT u FROM UnfilledRecord u")
-public class UnfilledRecord implements Serializable {
+@Table(name="tb_favorite_record")
+@NamedQuery(name="FavoriteRecord.findAll", query="SELECT u FROM FavoriteRecord u")
+public class FavoriteRecord implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -39,7 +39,7 @@ public class UnfilledRecord implements Serializable {
 	@Column(name="create_time")
 	private Date createTime;
 
-	public UnfilledRecord() {
+	public FavoriteRecord() {
 	}
 
 	public Integer getId() {

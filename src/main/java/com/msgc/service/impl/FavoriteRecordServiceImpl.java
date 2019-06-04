@@ -1,8 +1,8 @@
 package com.msgc.service.impl;
 
-import com.msgc.entity.UnfilledRecord;
-import com.msgc.repository.IUnfilledRecordRepository;
-import com.msgc.service.IUnfilledRecordService;
+import com.msgc.entity.FavoriteRecord;
+import com.msgc.repository.IFavoriteRecordRepository;
+import com.msgc.service.IFavoriteRecordService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -14,28 +14,33 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 /**
-* Type: UnfilledTableServiceImpl
+* Type: FavoriteRecordServiceImpl
 * Description: 业务逻辑实现类
 * @author LYM
  */
 @Service
-@CacheConfig(cacheNames = "unfilledRecord")
-public class UnfilledRecordServiceImpl implements IUnfilledRecordService {
+@CacheConfig(cacheNames = "favoriteRecord")
+public class FavoriteRecordServiceImpl implements IFavoriteRecordService {
 
-    private final IUnfilledRecordRepository unfilledRecordRepository;
+    private final IFavoriteRecordRepository favoriteRecordRepository;
 
     @Autowired
-    public UnfilledRecordServiceImpl(IUnfilledRecordRepository unfilledRecordRepository) {
-        this.unfilledRecordRepository = unfilledRecordRepository;
+    public FavoriteRecordServiceImpl(IFavoriteRecordRepository favoriteRecordRepository) {
+        this.favoriteRecordRepository = favoriteRecordRepository;
     }
 
+    /**
+     * 保存或更新
+     * @param unfilledTable 要存数据库的实体
+     * @return 保存后的
+     */
     @Override
     @Caching(evict={
             @CacheEvict(key = "'u' + #unfilledTable.userId"),
             @CacheEvict(key = "'u' + #unfilledTable.userId + 't' + #unfilledTable.tableId")
     })
-    public UnfilledRecord save(UnfilledRecord unfilledTable) {
-        return unfilledRecordRepository.save(unfilledTable);
+    public FavoriteRecord save(FavoriteRecord unfilledTable) {
+        return favoriteRecordRepository.save(unfilledTable);
     }
 
     /**
@@ -45,8 +50,8 @@ public class UnfilledRecordServiceImpl implements IUnfilledRecordService {
      */
     @Override
     @Cacheable(key = "'u' + #userId")
-    public List<UnfilledRecord> findAllByUserId(Integer userId) {
-        return unfilledRecordRepository.findAllByUserIdAndFilledAndDelete(userId, false, false);
+    public List<FavoriteRecord> findAllByUserId(Integer userId) {
+        return favoriteRecordRepository.findAllByUserIdAndFilledAndDelete(userId, false, false);
     }
 
     /**
@@ -57,7 +62,7 @@ public class UnfilledRecordServiceImpl implements IUnfilledRecordService {
     @Transactional
     @CacheEvict(allEntries = true)
     public void deleteByTableIds(List<Integer> tableIdList) {
-        unfilledRecordRepository.deleteAllByTableId(tableIdList);
+        favoriteRecordRepository.deleteAllByTableId(tableIdList);
     }
 
     /**
@@ -68,8 +73,19 @@ public class UnfilledRecordServiceImpl implements IUnfilledRecordService {
      */
     @Override
     @Cacheable(key = "'u' + #userId + 't' + #tableId")
-    public UnfilledRecord findByUserIdAndTableId(Integer userId, Integer tableId) {
-        List<UnfilledRecord> list = unfilledRecordRepository.findByUserIdAndTableId(userId, tableId);
+    public FavoriteRecord findByUserIdAndTableId(Integer userId, Integer tableId) {
+        List<FavoriteRecord> list = favoriteRecordRepository.findByUserIdAndTableId(userId, tableId);
         return CollectionUtils.isEmpty(list) ? null : list.get(0);
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(key = "'u' + #userId + 't' + #tableId")
+    public void unLikeTable(Integer userId, Integer tableId) {
+        FavoriteRecord favoriteRecord = this.findByUserIdAndTableId(userId, tableId);
+        if(favoriteRecord == null)
+            return;
+        favoriteRecord.setDelete(true);
+        this.save(favoriteRecord);
     }
 }

@@ -67,14 +67,23 @@
                   <td th:text="${#dates.format(table.endTime,'yyyy-MM-dd HH:mm')}">截止时间</td>
                   <td>
                     <a th:href="'/collect/share/start?t=' + ${table.id}">
-                      <button type="button" class="btn btn-sm btn-primary" th:onclick="'table_edit_fun(' + ${table.id} +  ')'">
+                      <button type="button" class="btn btn-sm btn-primary">
                         <i class="fa fa-edit"></i> 填写
                       </button>
                     </a>
+
                     <a th:href="'/collect/share/' + ${table.id}">
-                      <button type="button" class="btn btn-sm btn-warning" th:onclick="'table_share_fun(' + ${table.id} +  ')'">
+                      <button type="button" class="btn btn-sm btn-warning">
                         <i class="glyphicon glyphicon-share-alt"></i> 分享
                       </button>
+                    </a>
+
+                    <a th:href="'/collect/unlike/' + ${table.id}">
+                      <button type="button" class="btn btn-sm">
+                        <i class="glyphicon glyphicon-star-empty"></i> 取消收藏
+                      </button>
+                    </a>
+
                   </td>
                 </tr>
                 </tbody>

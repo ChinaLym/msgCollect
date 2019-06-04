@@ -49,17 +49,17 @@ public class TableServiceImpl implements ITableService{
     private final IAnswerService answerService;
     private final IUserService userService;
     private final ICommentService commentService;
-    private final IUnfilledRecordService unfilledRecordService;
+    private final IFavoriteRecordService favoriteRecordService;
 
     @Autowired
-    public TableServiceImpl(IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, ITableRepository tableRepositry, IUserService userService, ICommentService commentService, IUnfilledRecordService unfilledRecordService) {
+    public TableServiceImpl(IFieldService fieldService, IAnswerRecordService answerRecordService, IAnswerService answerService, ITableRepository tableRepositry, IUserService userService, ICommentService commentService, IFavoriteRecordService favoriteRecordService) {
         this.fieldService = fieldService;
         this.answerRecordService = answerRecordService;
         this.answerService = answerService;
         this.tableRepository = tableRepositry;
         this.userService = userService;
         this.commentService = commentService;
-        this.unfilledRecordService = unfilledRecordService;
+        this.favoriteRecordService = favoriteRecordService;
     }
 
     @Caching(evict={
@@ -321,13 +321,13 @@ public class TableServiceImpl implements ITableService{
     public void addLikeTable(Integer tableId) {
         HttpSession session = WebUtil.getSession();
         User user =(User)session.getAttribute(SessionKey.USER);
-        UnfilledRecord record = new UnfilledRecord();
+        FavoriteRecord record = new FavoriteRecord();
         record.setTableId(tableId);
         record.setUserId(user.getId());
         record.setDelete(false);
         record.setFilled(false);
         record.setCreateTime(new Date());
-        UnfilledRecord dbRecord = unfilledRecordService.findByUserIdAndTableId(user.getId(), tableId);
+        FavoriteRecord dbRecord = favoriteRecordService.findByUserIdAndTableId(user.getId(), tableId);
         //如果之前删除了，则重新置为未删除
         if(dbRecord != null && !dbRecord.getDelete()){
             return;
@@ -336,7 +336,7 @@ public class TableServiceImpl implements ITableService{
             dbRecord.setDelete(false);
             record = dbRecord;
         }
-        unfilledRecordService.save(record);
+        favoriteRecordService.save(record);
     }
 
     // 批量更新表，如更新表的截止状态
