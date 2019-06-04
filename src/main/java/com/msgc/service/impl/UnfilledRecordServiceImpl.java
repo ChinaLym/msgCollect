@@ -5,8 +5,13 @@ import com.msgc.repository.IUnfilledRecordRepository;
 import com.msgc.service.IUnfilledRecordService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 /**
 * Type: UnfilledTableServiceImpl
@@ -14,6 +19,7 @@ import java.util.List;
 * @author LYM
  */
 @Service
+@CacheConfig(cacheNames = "unfilledRecord")
 public class UnfilledRecordServiceImpl implements IUnfilledRecordService {
 
     private final IUnfilledRecordRepository unfilledRecordRepository;
@@ -24,6 +30,10 @@ public class UnfilledRecordServiceImpl implements IUnfilledRecordService {
     }
 
     @Override
+    @Caching(evict={
+            @CacheEvict(key = "'u' + #unfilledTable.userId"),
+            @CacheEvict(key = "'u' + #unfilledTable.userId + 't' + #unfilledTable.tableId")
+    })
     public UnfilledRecord save(UnfilledRecord unfilledTable) {
         return unfilledRecordRepository.save(unfilledTable);
     }
@@ -34,6 +44,7 @@ public class UnfilledRecordServiceImpl implements IUnfilledRecordService {
      * @return 收藏记录列表
      */
     @Override
+    @Cacheable(key = "'u' + #userId")
     public List<UnfilledRecord> findAllByUserId(Integer userId) {
         return unfilledRecordRepository.findAllByUserIdAndFilledAndDelete(userId, false, false);
     }
@@ -43,6 +54,8 @@ public class UnfilledRecordServiceImpl implements IUnfilledRecordService {
      * @param tableIdList 收集表id 
      */
     @Override
+    @Transactional
+    @CacheEvict(allEntries = true)
     public void deleteByTableIds(List<Integer> tableIdList) {
         unfilledRecordRepository.deleteAllByTableId(tableIdList);
     }
@@ -54,6 +67,7 @@ public class UnfilledRecordServiceImpl implements IUnfilledRecordService {
      * @return  一条收藏记录
      */
     @Override
+    @Cacheable(key = "'u' + #userId + 't' + #tableId")
     public UnfilledRecord findByUserIdAndTableId(Integer userId, Integer tableId) {
         List<UnfilledRecord> list = unfilledRecordRepository.findByUserIdAndTableId(userId, tableId);
         return CollectionUtils.isEmpty(list) ? null : list.get(0);

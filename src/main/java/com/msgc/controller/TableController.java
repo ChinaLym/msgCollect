@@ -431,7 +431,7 @@ public class TableController {
 
                     file.getOriginalFilename();
                     file.transferTo(saveFile);
-                    answer.setContent(saveFile.getAbsolutePath());
+                    answer.setContent(FilePath.getRelativePath(saveFile.getAbsolutePath()));
                     fileIndex++;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -597,9 +597,9 @@ public class TableController {
                         int answer_id = Integer.parseInt(answerIdStr);
                         Answer answer = answerService.findById(answer_id);
                         if(!"文件".equals(answer.getType())){
-                            return JsonUtil.toJson(ResponseWrapper.fail("要下载的文件是非文件字段"));
+                            return JsonUtil.toJson(ResponseWrapper.fail("没有要下载的文件"));
                         }
-                        File file = new File(answer.getContent());
+                        File file = new File(FilePath.getRealPath(answer.getContent()));
                         FileTransportUtil.downloadFile(file);
                     }catch(Exception e){
                         log.info(e.toString());

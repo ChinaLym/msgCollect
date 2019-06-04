@@ -20,10 +20,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final LoginInterceptor loginInterceptor;
 
-    // 保存上传文件的目录
-    public static String FILE_DIR;// = "E:/files/msg_collect_files/";
+    // 保存上传文件的目录, 如 E:/files/msg_collect_files/
+    public static String FILE_DIR;;
 
-    //虚拟路径, 即访问 /appName/collect_data/xxx 会访问到  F:/msg_collect_files/xxx
+    //虚拟路径, 即访问 url /VIRTUAL_DIR/xxx 会访问到  FILE_DIR/xxx
     public final static String VIRTUAL_DIR = "/collect_data/";
 
     //拦截虚拟路径所有请求

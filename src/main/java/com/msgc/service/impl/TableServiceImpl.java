@@ -329,6 +329,9 @@ public class TableServiceImpl implements ITableService{
         record.setCreateTime(new Date());
         UnfilledRecord dbRecord = unfilledRecordService.findByUserIdAndTableId(user.getId(), tableId);
         //如果之前删除了，则重新置为未删除
+        if(dbRecord != null && !dbRecord.getDelete()){
+            return;
+        }
         if(dbRecord != null && dbRecord.getDelete()){
             dbRecord.setDelete(false);
             record = dbRecord;

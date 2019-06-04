@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Configuration
 public class CaffeineConfig {
-    private static final int DEFAULT_MAXSIZE = 100;
+    private static final int DEFAULT_MAXSIZE = 500;
     private static final int DEFAULT_TTL = 600;
 
     public enum Caches{
@@ -24,6 +24,7 @@ public class CaffeineConfig {
         commentCache(100),      //表评论缓存
         answerRecordCache,      //用户-表 填写记录缓存
         answerCache,            //表填写内容缓存
+        unfilledRecord          //收藏缓存
         ;
         Caches(){}
         Caches(int ttl){

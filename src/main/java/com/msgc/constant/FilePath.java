@@ -33,6 +33,24 @@ public class FilePath {
 
 
     /**
+     * 获取文件的相对路径 （相对于 BASE_DIR）
+     * @param realPath 实际路径
+     * @return 相对路径
+     */
+    public static String getRelativePath(String realPath){
+        return realPath.replace(BASE_DIR, "").replace("\\", "/");
+    }
+
+    /**
+     * 获取文件的实际路径 （相对于 BASE_DIR）
+     * @param relativePath 相对路径
+     * @return 实际路径
+     */
+    public static String getRealPath(String relativePath){
+        return BASE_DIR + relativePath;
+    }
+
+    /**
      * 获取这个 表 的根目录
      * @param tableId 收集表id
      * @return 路径 String, 示例：   BASE_DIR/upload/{tableId}/

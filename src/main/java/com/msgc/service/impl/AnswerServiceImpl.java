@@ -1,5 +1,6 @@
 package com.msgc.service.impl;
 
+import com.msgc.constant.FilePath;
 import com.msgc.entity.Answer;
 import com.msgc.repository.IAnswerRepository;
 import com.msgc.service.IAnswerService;
@@ -65,7 +66,7 @@ public class AnswerServiceImpl implements IAnswerService{
                 .filter(answer -> "文件".equals(answer.getType()))
                 .forEach(answer -> {
                     //删除之前的文件
-                    File oldFile = new File(answer.getContent());
+                    File oldFile = new File(FilePath.getRealPath(answer.getContent()));
                     if(!oldFile.delete()){
                         log.info("旧文件(" + oldFile.getAbsolutePath() +")删除失败，answerId=" + answer.getId());
                     }
