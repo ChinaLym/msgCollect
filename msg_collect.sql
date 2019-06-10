@@ -1,8 +1,8 @@
 /*
-SQLyog v10.2 
-MySQL - 5.7.20 : Database - msg_collect
+SQLyog Ultimate v12.09 (64 bit)
+MySQL - 5.5.62 : Database - msg_collect
 *********************************************************************
-*/
+*/
 
 /*!40101 SET NAMES utf8 */;
 
@@ -15,38 +15,6 @@ MySQL - 5.7.20 : Database - msg_collect
 CREATE DATABASE /*!32312 IF NOT EXISTS*/`msg_collect` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 USE `msg_collect`;
-
-/*Table structure for table `tb_admin` */
-
-DROP TABLE IF EXISTS `tb_admin`;
-
-CREATE TABLE `tb_admin` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `account` varchar(20) DEFAULT NULL,
-  `password` varchar(100) DEFAULT NULL,
-  `nickname` varchar(50) DEFAULT NULL,
-  `realname` varchar(50) DEFAULT NULL,
-  `head_uri` varchar(100) DEFAULT NULL,
-  `tel` varchar(20) DEFAULT NULL,
-  `email` varchar(50) DEFAULT NULL,
-  `create_time` datetime DEFAULT NULL,
-  `update_time` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='管理员表，管理后台，目前未使用，启用时应分离数据库，保证系统安全';
-
-/*Table structure for table `tb_admin_login_record` */
-
-DROP TABLE IF EXISTS `tb_admin_login_record`;
-
-CREATE TABLE `tb_admin_login_record` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `account` varchar(20) DEFAULT NULL,
-  `ip` varchar(46) DEFAULT NULL,
-  `position` varchar(50) DEFAULT NULL,
-  `is_pass` tinyint(1) DEFAULT NULL,
-  `datetime` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='管理员登陆记录表，未使用，启用时应分离数据库，保证系统安全';
 
 /*Table structure for table `tb_answer` */
 
@@ -61,7 +29,7 @@ CREATE TABLE `tb_answer` (
   PRIMARY KEY (`id`),
   KEY `answer_record_id` (`answer_record_id`),
   KEY `idx_field_id` (`field_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8 COMMENT='答案表，一次回答里，每个表字段均对应一条答案记录';
+) ENGINE=InnoDB AUTO_INCREMENT=180 DEFAULT CHARSET=utf8 COMMENT='答案表，一次回答里，每个表字段均对应一条答案记录';
 
 /*Table structure for table `tb_answer_record` */
 
@@ -79,7 +47,7 @@ CREATE TABLE `tb_answer_record` (
   PRIMARY KEY (`id`),
   KEY `idx_table_id` (`table_id`),
   KEY `idx_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COMMENT='回答记录表，保存用户填表记录，一条记录可对应多条回复表';
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8 COMMENT='回答记录表，保存用户填表记录，一条记录可对应多条回复表';
 
 /*Table structure for table `tb_area` */
 
@@ -135,7 +103,7 @@ CREATE TABLE `tb_comment` (
   `is_effective` tinyint(1) DEFAULT '1' COMMENT '1 有效 0已删除',
   PRIMARY KEY (`id`),
   KEY `idx_table_id` (`table_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='评论表，提问，评论，回复均包含在内';
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COMMENT='评论表，提问，评论，回复均包含在内';
 
 /*Table structure for table `tb_comment_like` */
 
@@ -167,6 +135,42 @@ CREATE TABLE `tb_excel_read_strategy` (
   KEY `idx_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='excel策略表，读取excel的策略，以后支持自定义读取策略时，可以添加一字段表示解析方向为横向或纵向';
 
+/*Table structure for table `tb_favorite_record` */
+
+DROP TABLE IF EXISTS `tb_favorite_record`;
+
+CREATE TABLE `tb_favorite_record` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL COMMENT 'user表id',
+  `table_id` int(11) NOT NULL COMMENT 'table表id',
+  `table_name` varchar(100) DEFAULT NULL COMMENT '表名，冗余字段，但不需要同步',
+  `is_filled` tinyint(1) DEFAULT NULL COMMENT '是否填写',
+  `is_delete` tinyint(1) DEFAULT NULL COMMENT '删除标记（删除该提醒）',
+  `create_time` datetime DEFAULT NULL COMMENT '收藏时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='记录用户要填写的表';
+
+/*Table structure for table `tb_feedback` */
+
+DROP TABLE IF EXISTS `tb_feedback`;
+
+CREATE TABLE `tb_feedback` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` int(11) NOT NULL COMMENT '反馈用户',
+  `title` varchar(48) DEFAULT NULL COMMENT '标题',
+  `description` text COMMENT '问题描述',
+  `screenshot` varchar(256) DEFAULT NULL COMMENT '截图',
+  `occurrence_time` datetime DEFAULT NULL COMMENT '发生时间',
+  `email` varchar(256) DEFAULT NULL COMMENT '联系方式邮箱',
+  `qq` varchar(16) DEFAULT NULL COMMENT '联系方式QQ',
+  `ip` int(11) DEFAULT NULL COMMENT '转为int后的ip地址',
+  `device_system` varchar(64) DEFAULT NULL COMMENT '访问设备的系统名称',
+  `browser` varchar(64) DEFAULT NULL COMMENT '访问者使用的浏览器',
+  `create_time` datetime DEFAULT NULL COMMENT '提交时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户反馈表';
+
 /*Table structure for table `tb_field` */
 
 DROP TABLE IF EXISTS `tb_field`;
@@ -183,7 +187,7 @@ CREATE TABLE `tb_field` (
   `default_value` varchar(256) DEFAULT NULL COMMENT '默认值',
   PRIMARY KEY (`id`),
   KEY `table_id` (`table_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=231 DEFAULT CHARSET=utf8 COMMENT='字段表，所有tb_table的列（字段）都在这里';
+) ENGINE=InnoDB AUTO_INCREMENT=373 DEFAULT CHARSET=utf8 COMMENT='字段表，所有tb_table的列（字段）都在这里';
 
 /*Table structure for table `tb_field_type` */
 
@@ -238,7 +242,7 @@ CREATE TABLE `tb_group_to_user` (
 DROP TABLE IF EXISTS `tb_message`;
 
 CREATE TABLE `tb_message` (
-  `id` varchar(48) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `receiver` int(11) NOT NULL COMMENT 'user表id，接收者',
   `title` varchar(48) DEFAULT NULL COMMENT '标题',
   `content` varchar(256) DEFAULT NULL COMMENT '内容',
@@ -249,7 +253,7 @@ CREATE TABLE `tb_message` (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `idx_receiver` (`receiver`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='消息表，简短的，发送给特定用户的';
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COMMENT='消息表，简短的，发送给特定用户的';
 
 /*Table structure for table `tb_message_type` */
 
@@ -307,7 +311,7 @@ CREATE TABLE `tb_table` (
   `secret_key` varchar(4) DEFAULT NULL COMMENT '访问秘钥',
   PRIMARY KEY (`id`),
   KEY `idx_owner` (`owner`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COMMENT='信息收集表';
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8 COMMENT='信息收集表';
 
 /*Table structure for table `tb_table_group_white_list` */
 
@@ -320,22 +324,6 @@ CREATE TABLE `tb_table_group_white_list` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `coverage_index` (`table_id`,`group_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='表-组白名单 关联表';
-
-/*Table structure for table `tb_unfilled_record` */
-
-DROP TABLE IF EXISTS `tb_unfilled_record`;
-
-CREATE TABLE `tb_unfilled_record` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL COMMENT 'user表id',
-  `table_id` int(11) NOT NULL COMMENT 'table表id',
-  `table_name` varchar(100) DEFAULT NULL COMMENT '表名，冗余字段，但不需要同步',
-  `is_filled` tinyint(1) DEFAULT NULL COMMENT '是否填写',
-  `is_delete` tinyint(1) DEFAULT NULL COMMENT '删除标记（删除该提醒）',
-  `create_time` datetime DEFAULT NULL COMMENT '收藏时间',
-  PRIMARY KEY (`id`),
-  KEY `idx_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='记录用户要填写的表';
 
 /*Table structure for table `tb_user` */
 
@@ -361,7 +349,7 @@ CREATE TABLE `tb_user` (
   `is_delete` tinyint(1) DEFAULT '0' COMMENT '删除标记位',
   PRIMARY KEY (`id`),
   UNIQUE KEY `account` (`account`)
-) ENGINE=InnoDB AUTO_INCREMENT=268 DEFAULT CHARSET=utf8 COMMENT='用户表，后期可以将该表分为用户表和person表，person表代表现实中真正存在的人，user表仅表示平台用户';
+) ENGINE=InnoDB AUTO_INCREMENT=274 DEFAULT CHARSET=utf8 COMMENT='用户表，后期可以将该表分为用户表和person表，person表代表现实中真正存在的人，user表仅表示平台用户';
 
 /*Table structure for table `tb_user_cookie` */
 
@@ -390,6 +378,12 @@ CREATE TABLE `tb_user_settings` (
   `auto_unlike` tinyint(1) DEFAULT '1' COMMENT '自动删除我的收藏中不可访问的表',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='保存用户的个性化设置，作为user表的扩展表';
+
+insert into `tb_field_type`(`id`,`name`,`html_type`,`html_class`,`html_pattern`,`html_title`,`note`) values (1,'普通','text',NULL,'.*?',NULL,'除个别特殊字符外均可'),(2,'文件','file',NULL,'.*?',NULL,'需要上传文件'),(3,'日期','date',NULL,'.*?',NULL,'日期选择器'),(4,'时间','time',NULL,'.*?',NULL,'时间选择器'),(5,'日期时间','datetime-local',NULL,'.*?',NULL,'日期时间选择器'),(6,'判断','checkbox',NULL,'.*?',NULL,'判断框');
+insert into `tb_message_type`(`id`,`name`,`note`) values (1,'系统消息','系统所发送的消息'),(2,'组通知','组长发起了一个表单填写'),(3,'回复','表主人回复了你'),(4,'提问','有用户向你的表提出疑问'),(5,'私信','用户发送的消息');
+insert into `tb_user` (`account`, `password`, `sex`, `nickname`, `realname`, `head_image`, `birthday`, `idcard`, `tel`, `email`, `qq`, `home`, `wechat`, `create_time`, `update_time`, `is_delete`) values('0','0','空','系统','系统','/AdminLTE/dist/img/user2-160x160.jpg',NULL,'123456789012345678',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'0');
+insert into `tb_user` (`account`, `password`, `sex`, `nickname`, `realname`, `head_image`, `birthday`, `idcard`, `tel`, `email`, `qq`, `home`, `wechat`, `create_time`, `update_time`, `is_delete`) values('2015329620093','lym240057','男','侦探不机灵','刘颜铭','/collect_data/headImage/base/img_0_3.jpg','2019-01-29','123456789012345678','12345678901','lymdhr@qq.com','111111','330104','','2019-01-29 15:43:23','2019-01-29 15:43:25',NULL);
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

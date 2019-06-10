@@ -228,6 +228,7 @@ public class TableController {
             table.setCreateTime(nowDateTime);
         }
         table.setName(request.getParameter("table-name"));
+        table.setDetail(request.getParameter("table-detail"));
         table.setUpdateTime(nowDateTime);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         table.setStartTime(sdf.parse(request.getParameter("table-time-start")));

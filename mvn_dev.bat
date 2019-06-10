@@ -1,1 +1,1 @@
-D:/software/maven-3.5.4/bin/mvn.cmd clean compile package -Dmaven.test.skip=true -Pdev
+D:/software/maven-3.5.4/bin/mvn.cmd clean compile package -Dmaven.test.skip=true -Pprod

@@ -34,7 +34,7 @@ public class User implements Serializable {
 	@Column(name="head_image")
 	private String headImage;
 
-	private Integer home;
+	private String home;
 
 	private String idcard;
 
@@ -110,11 +110,11 @@ public class User implements Serializable {
 		this.headImage = headImage;
 	}
 
-	public Integer getHome() {
+	public String getHome() {
 		return this.home;
 	}
 
-	public void setHome(Integer home) {
+	public void setHome(String home) {
 		this.home = home;
 	}
 

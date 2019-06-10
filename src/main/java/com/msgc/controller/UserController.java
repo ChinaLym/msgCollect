@@ -22,9 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
 *Type: UserController
@@ -191,13 +190,22 @@ public class UserController {
 		if(!user.getId().equals(1)){
 			throw new ResourceNotFoundException();
 		}
+		List<User> nonExistUserList;
 		try {
-			List<User> userList = CsvUtilAdapter.read("C:\\Users\\Administrator\\Desktop\\importUser.csv");
-			userService.save(userList);
+			List<User> userList = CsvUtilAdapter.read("C:\\Users\\14278\\Desktop\\importUser.csv");
+			List<User> allUser = userService.findAll();
+			Map<String, User> allUserMap = new HashMap<>(userList.size() + allUser.size());
+			allUser.forEach(u -> {
+				if (u != null)
+					allUserMap.put(u.getAccount(), u);
+			});
+			nonExistUserList = userList.stream().filter(u -> !allUserMap.containsKey(u.getAccount())).collect(Collectors.toList());
+			userService.save(nonExistUserList);
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new RuntimeException("保存失败");
 		}
-		return "ok";
+		return "saved " + nonExistUserList.size() + " records: \n" + nonExistUserList.toString();
 	}
 
 	// 更新所有用户的头像 仅测试使用
