@@ -342,7 +342,7 @@ CREATE TABLE `tb_user` (
   `tel` varchar(20) DEFAULT NULL COMMENT '手机号',
   `email` varchar(50) DEFAULT NULL COMMENT '邮箱',
   `qq` varchar(20) DEFAULT NULL COMMENT 'qq号',
-  `home` int(10) DEFAULT NULL COMMENT '地址',
+  `home` varchar(256) DEFAULT NULL COMMENT '地址',
   `wechat` varchar(50) DEFAULT NULL COMMENT '微信号',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '修改时间',

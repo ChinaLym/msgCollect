@@ -51,14 +51,14 @@ public class BaseController {
 
     @GetMapping("/")
     public String defaultPage() {
-        return "redirect:login";
+        return "redirect:/index";
     }
 
     @GetMapping("/login")
     public String loginPage(HttpServletRequest request, HttpSession httpSession) {
         //inputCollect.html 中用到该参数
-        if (StringUtils.isNotEmpty(request.getParameter("redirectUrl")))
-            httpSession.setAttribute(SessionKey.REDIRECT_URL, request.getParameter("redirectUrl"));
+        if (StringUtils.isNotEmpty(request.getParameter(SessionKey.REDIRECT_URL)))
+            httpSession.setAttribute(SessionKey.REDIRECT_URL, request.getParameter(SessionKey.REDIRECT_URL));
         String autoLoginCookie = WebUtil.getCookie(SessionKey.AUTO_LOGIN);
         // 有自动登录的 cookie
         if(autoLoginCookie != null){
@@ -90,8 +90,8 @@ public class BaseController {
 
     @GetMapping("/register")
     public String registerPage(HttpServletRequest request, HttpSession session) {
-        if (StringUtils.isNotEmpty(request.getParameter("redirectUrl")))
-            session.setAttribute(SessionKey.REDIRECT_URL, request.getParameter("redirectUrl"));
+        if (StringUtils.isNotEmpty(request.getParameter(SessionKey.REDIRECT_URL)))
+            session.setAttribute(SessionKey.REDIRECT_URL, request.getParameter(SessionKey.REDIRECT_URL));
         return "register";
     }
 

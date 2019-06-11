@@ -92,7 +92,7 @@ public class WebUtil implements ApplicationContextAware {
 		}else{
 			session = WebUtil.getSession();
 			session.setAttribute(SessionKey.USER, user);
-			LoggedUserSessionContext.putIfAbsent(user.getId(), session);
+			LoggedUserSessionContext.putIfAbsent(user.getId(), session);//CAS操作，避免并发引入的问题
 		}
 		return session;
 	}

@@ -116,9 +116,10 @@ public class UserController {
 	// 退出登录，清空 session 中的 user, 清除cookie
 	@GetMapping(value = "/logout.action")
 	public String logout(HttpSession session) {
-		WebUtil.expireCookie(SessionKey.AUTO_LOGIN);
 		User user = (User)session.getAttribute(SessionKey.USER);
-        LoggedUserSessionContext.remove(user.getId());
+		userCookieService.deleteByCookie(WebUtil.getCookie(SessionKey.AUTO_LOGIN));
+		LoggedUserSessionContext.remove(user.getId());
+		WebUtil.expireCookie(SessionKey.AUTO_LOGIN);
 		session.invalidate();
 		return "redirect:/login";
 	}

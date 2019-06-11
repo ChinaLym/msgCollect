@@ -136,7 +136,7 @@
                         <a href="/user/profile" class="btn btn-default btn-flat">个人信息</a>
                     </div>
                     <div class="pull-right">
-                        <a href="/user/logout.action" class="btn btn-default btn-danger">
+                        <a href="javascript:document.cookie='auto-login=null; expires='+((new Date((new Date()).getTime()-1000)).toGMTString());location.href='/user/logout.action';" class="btn btn-default btn-danger">
                             <b style="color: #EEEEEE">退出登录</b>
                         </a>
                     </div>
@@ -151,6 +151,5 @@
 
     </ul>
 </div>
-
 </body>
 </html>
