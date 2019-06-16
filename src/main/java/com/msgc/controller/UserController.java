@@ -97,7 +97,7 @@ public class UserController {
 		if(registerUser == null) {
 			// 注册失败
 			model.addAttribute("msg", "账号已存在");
-			return "/register";
+			return "register";
 		} else {
 			// 注册成功
 			HttpSession session = WebUtil.getRequest().getSession();
