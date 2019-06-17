@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -184,19 +185,23 @@ public class TableController {
 			return JsonUtil.toJson(ResponseWrapper.fail("项不能为空"));
 		}
         Table table;
-        table = receiveTableFromFront();//解析失败时抛出异常，数据回滚
-        table = tableService.save(table);
-		Integer tableId = table.getId();
-		if(tableId == null){
-			return JsonUtil.toJson(ResponseWrapper.fail("保存出错"));
-		}
-        List<Field> fieldList = receiveFieldsFromFront(tableId);
-        fieldService.save(fieldList);
-		return JsonUtil.toJson(ResponseWrapper.success("已保存"));
+		try{
+            table = receiveTableFromFront();//解析失败时抛出异常，数据回滚
+            table = tableService.save(table);
+            Integer tableId = table.getId();
+            if(tableId == null){
+                return JsonUtil.toJson(ResponseWrapper.fail("保存出错"));
+            }
+            List<Field> fieldList = receiveFieldsFromFront(tableId);
+            fieldService.save(fieldList);
+            return JsonUtil.toJson(ResponseWrapper.success("已保存"));
+        }catch (TimeoutException timeoutE){
+		    return JsonUtil.toJson(ResponseWrapper.fail("时间设置错误"));
+        }
 	}
 
 	//接收页面传来的 table 对象 公共部分，使用需要tryCatch
-	private Table receiveTableFromFront() throws ParseException {
+	private Table receiveTableFromFront() throws ParseException, TimeoutException {
         HttpServletRequest request = WebUtil.getRequest();
         User user = (User)request.getSession().getAttribute(SessionKey.USER);
         Table table = new Table();
@@ -236,7 +241,7 @@ public class TableController {
         table.setVisibility("on".equalsIgnoreCase(request.getParameter("table-visibility")));
         table.setMaxFillNum(StringUtils.isEmpty(request.getParameter("table-maxFillNum")) ?0:Integer.parseInt(request.getParameter("table-maxFillNum")));
         if(table.getStartTime().getTime() >= table.getEndTime().getTime() || nowDateTime.getTime() >= table.getEndTime().getTime())
-            throw new ParseException("时间设置出错", 0);
+            throw new TimeoutException("时间设置出错");
         return table;
     }
 

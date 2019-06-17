@@ -50,14 +50,13 @@
                   <input id="table-filledNum" hidden="hidden"  th:value="${table}?${table.filledNum}:''">
                 </div>
                   <h3 class="box-title">
-                      收集表名称: <span class="text-red">(必填)</span> <input class="input-large" type="input" maxlength="50"
+                      收集表名称: <span class="text-red">(必填)</span>
+                      <input class="input-large sql-injection-filter" maxlength="50"
                              name="table-name" id="table-name" placeholder="收集表名"
-                             onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5\w]/g,'')"
                              th:value="${table}?${table.name}:''">
                   </h3>
                   <h3>简介</h3>
-                  <textarea style="width: 100%; height: 100px;resize: none" name="table-detail"
-                            onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5\w]/g,'')"
+                  <textarea style="width: 100%; height: 100px;resize: none" name="table-detail" class=" sql-injection-filter"
                             placeholder="介绍一下这个表的注意事项吧~" th:value="${table}?${table.detail}:''"></textarea>
                   <h3>表属性</h3>
                   <table class="table table-striped">
@@ -104,9 +103,8 @@
 
                   <tbody id="table-tbody">
                     <tr th:id="'table-item-' + ${field.num}" th:each="field : ${fieldList}" >
-                      <th><input class="form-control" th:name="'table-item-name-' + ${field.num}" type="text" th:placeholder="字段名"
-                                 th:value="${field.name}"
-                                 onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5\w]/g,'')"></th>
+                      <th><input class="form-control sql-injection-filter" th:name="'table-item-name-' + ${field.num}" type="text" th:placeholder="字段名"
+                                 th:value="${field.name}"></th>
                       <th>
                         <div class="form-group">
                           <select class="form-control select2" th:name="'table-item-type-' + ${field.num}" style="width: 100%;"
@@ -124,7 +122,7 @@
                                  onkeyup="this.value=this.value.replace(/\D/g,'');if(this.value>220)this.value = 220;" maxlength=3
                                 th:value="${field.maxLength} ? ${field.maxLength} : '100'">
                       </th>
-                      <th><input class="form-control" th:name="'table-item-default-' + ${field.num}" type="text" placeholder="空"
+                      <th><input class="form-control sql-injection-filter" th:name="'table-item-default-' + ${field.num}" type="text" placeholder="空"
                                  th:value="${field.defaultValue}"></th>
                       <th>
                         <label>
@@ -313,7 +311,7 @@
     //tableForm - item-new-btn 新增项
     function item_new_fun(){
         var htmlText = '<tr id="table-item-xxxNUMxxx">' +
-            '                      <th><input class="form-control" name="table-item-name-xxxNUMxxx" type="text" placeholder="字段名"></th>' +
+            '                      <th><input class="form-control" name="table-item-name-xxxNUMxxx" type="text" placeholder="字段名"  onkeyup="this.value=this.value.replace(/select|update|delete|truncate|join|union|exec|insert|drop|count|\'|;|>|<|%/i,\'\')"></th>' +
             '                      <th>' +
             '                        <div class="form-group">' +
             '                          <select class="form-control select2" name="table-item-type-xxxNUMxxx" style="width: 100%;" onchange="changeType(xxxNUMxxx)">' +
@@ -326,7 +324,7 @@
             '                        </div>' +
             '                      </th>' +
             '                      <th><input class="form-control" name="table-item-maxlength-xxxNUMxxx" type="text" placeholder="最长" onkeyup="this.value=this.value.replace(/\\D/g,\'\');if(this.value>220)this.value=220;" maxlength=3 value="100"></th>' +
-            '                      <th><input class="form-control" name="table-item-default-xxxNUMxxx" type="text" placeholder="空"></th>' +
+            '                      <th><input class="form-control" name="table-item-default-xxxNUMxxx" type="text" placeholder="空" onkeyup="this.value=this.value.replace(/select|update|delete|truncate|join|union|exec|insert|drop|count|\'|\;|>|<|%/i,\'\')"></th>' +
             '                      <th>' +
             '                        <label>' +
             '                          <input type="checkbox" name="table-item-required-xxxNUMxxx" class="flat-red">' +

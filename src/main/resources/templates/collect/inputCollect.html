@@ -26,7 +26,7 @@
             <input name="isReFill" th:value="${answerList} ? 'true' : 'false'" hidden="hidden">
             <div class="form-group" th:each="field, i : ${fieldList}">
               <label th:for="'item-' + ${field.num}" th:text="${field.name}">项名</label> <small th:if="${!table.visibility || !field.visibility}" class="text-blue">（ 保密 ）</small>
-              <input th:type="${field.type.htmlType}" class="form-control"
+              <input th:type="${field.type.htmlType}" th:class="${'text'.equals(field.type.htmlType)} ? 'form-control sql-injection-filter' : 'form-control'"
                      th:id="'item-' + ${field.num}"
                      th:name="${'file'.equals(field.type.htmlType)} ? 'file' : 'item-' + ${field.num} "
                      th:required="${field.required}?'required':''"
@@ -37,52 +37,24 @@
                 <small style="color: red" th:text="${answerList} ? (${'file'.equals(field.type.htmlType)} ? '已上传，再次上传将覆盖原文件。' : '' ): ''"></small>
             </div>
               <!-- 若没有登录则需要提供自己的真实姓名 -->
-              <div class="form-group" th:remove="${session.user} ? 'all' : 'none'">
-                <br>
-                <hr>
-                  <label >您的真实姓名</label>
-                  <input name="user-real-name" class="form-control"
-                         onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5\w]/g,'')"
-                         required="required">
-              </div>
-           <!-- <div class="form-group">
-              <label for="item-2">项2</label>
-              <input type="input" class="form-control" id="item-2" placeholder="项2"
-                     onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5\w]/g,'')">
-            </div>
-            <div class="form-group">
-              <label for="item-3">项3</label>
-              <input type="file" id="item-3">
-              <p class="help-block">提示信息.</p>
-            </div>
-            <div class="form-group">
-              <label for="item-4">项4</label><br>
-              <input type="checkbox" class="flat-red" id="item-4">
-            </div>
-            <div class="form-group">
-              <label for="item-5">项5</label>
-              <input class="form-control" id="item-5" placeholder="项5">
-            </div>
-            <div class="form-group">
-              <label for="item-6">项6</label>
-              <input class="form-control" id="item-6" placeholder="项6">
-            </div>
-            <div class="form-group">
-              <label for="item-7">项7</label>
-              <input class="form-control" id="item-7" placeholder="项7">
-            </div>-->
-
+              <!--<div class="form-group" th:remove="${session.user} ? 'all' : 'none'">-->
+                <!--<br>-->
+                <!--<hr>-->
+                  <!--<label >您的真实姓名</label>-->
+                  <!--<input name="user-real-name" class="form-control sql-injection-filter"-->
+                         <!--required="required">-->
+              <!--</div>-->
           </div>
           <!-- /.box-body -->
 
           <div class="box-footer" >
-            <div class="col-sm-2" style="float:left" th:remove="${session.user} ? 'all' : 'none'">
+            <!--<div class="col-sm-2" style="float:left" th:remove="${session.user} ? 'all' : 'none'">
               <a th:href="'/login?redirectUrl=%2fcollect%2fshare%2fstart%3ft%3d' + ${table.id}">
                 <button type="button" class="btn btn-block btn-primary">
                   <i class="fa fa-user"> </i> 登录
                 </button>
               </a>
-            </div>
+            </div>-->
 
             <div class="col-sm-2" style="float:left">
               <a th:href="'/collect/data/' + ${table.id}">
@@ -121,7 +93,6 @@
                 src="http://static.bshare.cn/b/bshareC0.js"></script>
       </div>
       <!-- /.box -->
-
     </div>
     <!--/.col (left) -->
     <!-- right column -->
@@ -137,7 +108,6 @@
   </div>
 </div>
 <!-- /.center -->
-
 
 <!-- Js 脚本 -->
 <div th:include="common/html_js :: div_js"></div>

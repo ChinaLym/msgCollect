@@ -33,8 +33,7 @@
         <!-- 搜索 form (Optional) -->
         <form action="/search" method="get" class="sidebar-form">
             <div class="input-group">
-                <input type="text" name="tableName" class="form-control" placeholder="搜索收集表..." required
-                       onkeyup="this.value=this.value.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\w]/g,'')">
+                <input type="text" name="tableName" class="form-control sql-injection-filter" placeholder="搜索收集表..." required>
                 <span class="input-group-btn">
               <button type="submit" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
               </button>

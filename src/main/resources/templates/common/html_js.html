@@ -19,6 +19,15 @@
     <script src="/AdminLTE/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick 绕过浏览器的 300ms 点击延时-->
     <script src="/AdminLTE/bower_components/fastclick/lib/fastclick.js"></script>
+    <!-- sql 注入过滤 -->
+    <script language="javascript">
+        var re = /select|update|delete|truncate|join|union|exec|insert|drop|count|'|"|;|>|<|%/i;
+        $(function() {
+            $('.sql-injection-filter').keyup(function () {
+                this.value = this.value.replace(re, '');
+            })
+        })
+    </script>
 </div>
 
 <!-- 將使用到dataTable的部分提取出來-->
