@@ -279,17 +279,17 @@ public class TableController {
             Date now = new Date();
             if (TableStatusEnum.EDIT.equal(table.getState())){
                 model.addAttribute("resultMessage", "表主人未准备好哦~");
-                return "/displayMessage";
+                return "displayMessage";
             }else if(!TableStatusEnum.COLLECTING.equal(table.getState())){
                 model.addAttribute("resultMessage", "表已经截止啦~");
-                return "/displayMessage";
+                return "displayMessage";
             }
             if(now.getTime() < table.getStartTime().getTime()){
                 model.addAttribute("resultMessage", "还未到开始时间哦~");
-                return "/displayMessage";
+                return "displayMessage";
             }else if(now.getTime() > table.getEndTime().getTime()){
                 model.addAttribute("resultMessage", "该表已截止收集啦~");
-                return "/displayMessage";
+                return "displayMessage";
             }
             //是否需要输入暗号
             if(table.getSecretKey() != null){
@@ -455,7 +455,7 @@ public class TableController {
             messageService.sendMessage(MessageTypeEnum.TABLE_FILLED, table);
             //返回前端
             model.addAttribute("resultMessage","感谢您的参与！");
-            return "/displayMessage";
+            return "displayMessage";
         }
         throw new RuntimeException("answers save to DB fail!");
 	}

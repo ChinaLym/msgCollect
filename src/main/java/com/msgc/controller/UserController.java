@@ -127,13 +127,13 @@ public class UserController {
     //到个人中心页profile
     @GetMapping(value = "/profile")
     public String profilePage() {
-        return "/user/profile";
+        return "user/profile";
     }
 
     // 到修改密码页
     @GetMapping(value = "/changepasswd")
     public String changePasswdPage() {
-        return "/user/modifyPassword";
+        return "user/modifyPassword";
     }
 
 	// 修改密码提交
@@ -177,7 +177,7 @@ public class UserController {
 			user.setEmail(userParam.getEmail());
 			user = userService.save(user);
 			session.setAttribute(SessionKey.USER, user);
-			return "/user/profile";
+			return "user/profile";
 		}
 		return "login";
     }
