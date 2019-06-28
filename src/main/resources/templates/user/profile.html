@@ -67,8 +67,8 @@
                     <div class="col-sm-8">
                       <input type="text" class="form-control" id="realName" placeholder="真实姓名" name="realName"
                              th:value="${#strings.substring(session.user.realname,0,1) + '*'}"
-                             th:disabled="${!#strings.isEmpty(session.user.realname)}"
-                      >
+                             th:disabled="${!#strings.isEmpty(session.user.realname)}">
+                        <small class="danger" th:if="${#strings.isEmpty(session.user.realname)}">只可填写一次，请谨慎填写</small>
                     </div>
                   </div>
 
@@ -76,7 +76,8 @@
                     <label for="sex" class="col-sm-2 control-label">性别</label>
                     <div class="col-sm-8">
                       <input type="text" class="form-control" id="sex" name="sex" th:value="${session.user.sex}"
-                             th:disabled="${!#strings.equals('空',session.user.sex)}">
+                             th:disabled="${!#strings.isEmpty(session.user.sex)}">
+                        <small class="danger" th:if="${#strings.isEmpty(session.user.sex)}">只可填写一次，请谨慎填写</small>
                     </div>
                   </div>
 
@@ -156,7 +157,7 @@
                                   <div class="col-md-9">
                                       <!-- <h3 class="page-header">示例:</h3> -->
                                       <div class="img-container">
-                                          <img src="" alt="点击选择图片上传新头像">
+                                          <img src="" alt="点击选择图片上传新头像" id="newHeadImage">
                                       </div>
                                   </div>
                               </div>
@@ -296,7 +297,7 @@
                       </div><!-- modal-body END-->
                       <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                        <button type="button" class="btn btn-primary">确定</button>
+                        <button type="button" class="btn btn-primary" onclick="sureNewHeadImage()">确定</button>
                       </div>
                     </div><!-- /.modal-content -->
                   </div><!-- /.modal -->
@@ -359,7 +360,37 @@
             }
         }, 300);
     });
+    // 确定按钮点击事件
+    function sureNewHeadImage() {
+        if ($("#newHeadImage").attr("src") == null) {
+            return false;
+        } else {
+            console.log($('#newHeadImage'));
+            console.log($('#newHeadImage').cropper('getCroppedCanvas'));
+            var cas = $('#newHeadImage').cropper('getCroppedCanvas');// 获取被裁剪后的canvas
+            var base64 = cas.toDataURL('image/jpeg'); // 转换为base64
 
+            $("#finalImg").prop("src", base64);// 显示图片
+            uploadNewHeadImage(encodeURIComponent(base64))//编码后上传服务器
+            // 关闭裁剪框
+        }
+    }
+
+    //ajax请求上传
+    function uploadNewHeadImage(file) {
+        $.ajax({
+            url : '/user/updateHeadImage.action',
+            type : 'POST',
+            data : "base64Image=" + file,
+            async : true,
+            success : function(data) {
+                alert(data);
+
+            }, error : function () {
+                alert('上传失败');
+            }
+        });
+    }
 </script>
 </body>
 </html>

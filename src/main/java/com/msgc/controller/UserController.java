@@ -1,6 +1,7 @@
 package com.msgc.controller;
 
 import com.msgc.config.LoggedUserSessionContext;
+import com.msgc.constant.FilePath;
 import com.msgc.constant.SessionKey;
 import com.msgc.constant.response.ResponseWrapper;
 import com.msgc.entity.User;
@@ -8,19 +9,19 @@ import com.msgc.entity.UserCookie;
 import com.msgc.exception.ResourceNotFoundException;
 import com.msgc.service.IUserCookieService;
 import com.msgc.service.IUserService;
-import com.msgc.utils.JsonUtil;
-import com.msgc.utils.RandomHeadImageUtil;
-import com.msgc.utils.RegexCheckUtils;
-import com.msgc.utils.WebUtil;
+import com.msgc.utils.*;
 import com.msgc.utils.csv.CsvUtilAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -130,6 +131,12 @@ public class UserController {
         return "user/profile";
     }
 
+    //到他人介绍页 info
+    @GetMapping(value = "/info")
+    public String infoPage() {
+        return "user/info";
+    }
+
     // 到修改密码页
     @GetMapping(value = "/changepasswd")
     public String changePasswdPage() {
@@ -182,6 +189,38 @@ public class UserController {
 		return "login";
     }
 
+	@PostMapping("/updateHeadImage.action")
+	@ResponseBody
+	@Transactional(rollbackFor = Exception.class)
+	public String cropper(@RequestParam("base64Image") String base64Image) throws IOException {
+
+		String imageName = UUID.randomUUID().toString() + ".jpg";
+		String filePath = FilePath.UPLOAD_HEAD_IMAGE_FULL_DIR + imageName;
+		FileUtil.ensureExist(new File(filePath));
+		try (FileOutputStream out = new FileOutputStream(filePath)){
+			byte[] imageBytes = FileUtil.getByteFromBase64(base64Image);
+			// 如果过大则先压缩
+			out.write(imageBytes);
+			String imageUrl = FilePath.getHeadImageUrl(imageName);
+			User user = (User)WebUtil.getSessionKey(SessionKey.USER);
+			String oldHeadUrl = user.getHeadImage();
+			// 保存到数据库，更新session
+			user.setHeadImage(imageUrl);
+			WebUtil.getSession().setAttribute(SessionKey.USER, userService.save(user));
+			if(!oldHeadUrl.startsWith(FilePath.BASE_HEAD_IMAGE_URL_PERFFIX)){
+				// 找到原头像实际文件，异步删除。
+				String oldHeadImageFilePath = FilePath.UPLOAD_HEAD_IMAGE_FULL_DIR + oldHeadUrl.substring(FilePath.UPLOAD_HEAD_IMAGE_URL_PREFFIX.length());
+				File oldImage = new File(oldHeadImageFilePath);
+				oldImage.delete();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return "success";
+	}
+
+//---------------------------------------------------
     // 批量导入，只测试用
 	@ResponseBody
 	@GetMapping(value = "/import")
