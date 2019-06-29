@@ -16,9 +16,13 @@
     <!-- AdminLTE App -->
     <script src="https://cdn.bootcss.com/admin-lte/2.4.5/js/adminlte.min.js"></script>
     <!-- SlimScroll 好看的滚动条-->
-    <script src="/AdminLTE/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="https://cdn.bootcss.com/jQuery-slimScroll/1.3.8/jquery.slimscroll.min.js"></script>
     <!-- FastClick 绕过浏览器的 300ms 点击延时-->
-    <script src="/AdminLTE/bower_components/fastclick/lib/fastclick.js"></script>
+    <script src="https://cdn.bootcss.com/fastclick/1.0.6/fastclick.js"></script>
+    <!-- iCheck 1.0.1 -->
+    <script src="https://cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
+    <!-- Select2 -->
+    <script src="https://cdn.bootcss.com/select2/4.0.7/js/select2.min.js"></script>
     <!-- sql 注入过滤 -->
     <script language="javascript">
         var re = /select|update|delete|truncate|join|union|exec|insert|drop|count|'|"|;|>|<|%/i;
@@ -33,8 +37,8 @@
 <!-- 將使用到dataTable的部分提取出來-->
 <div th:fragment="data_table_js">
     <!-- DataTables -->
-    <script src="/AdminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script src="/static/AdminLTE/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="/static/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
     <script>
         $(function() {
             $('table.data-table').DataTable({

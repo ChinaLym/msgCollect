@@ -3,10 +3,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="common/html_head :: head(~{::title},~{::link},~{})">
   <title>在线制作</title>
-    <!-- iCheck for checkboxes and radio inputs -->
-    <link rel="stylesheet" href="/AdminLTE/plugins/iCheck/all.css">
-    <!-- Select2 -->
-    <link rel="stylesheet" href="/AdminLTE/bower_components/select2/dist/css/select2.min.css">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -193,12 +189,9 @@
 <!-- ./wrapper -->
 
 <div th:insert="common/html_js :: div_js"></div>
-<!-- Select2 -->
-<script src="/AdminLTE/bower_components/select2/dist/js/select2.full.min.js"></script>
 <!-- layUI time picker -->
-<script src="/laydate/laydate.js"></script>
-<!-- iCheck 1.0.1 -->
-<script src="/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+<script src="/static/laydate/laydate.js"></script>
+
 <!-- DataTable 脚本 -->
 <div th:insert="common/html_js :: data_table_js"></div>
 <!-- Page script -->

@@ -2,8 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="common/html_head :: head(~{::title},~{::link},~{})">
   <title th:text="${table.name} + '-详情'">xxx信息收集表详情</title>
-  <!-- iCheck for checkboxes and radio inputs -->
-  <link rel="stylesheet" href="/AdminLTE/plugins/iCheck/all.css">
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -158,8 +156,6 @@
 <!-- ./wrapper -->
 <!-- Js 脚本 -->
 <div th:insert="common/html_js :: div_js"></div>
-<!-- iCheck 1.0.1 -->
-<script src="/AdminLTE/plugins/iCheck/icheck.min.js"></script>
 <script>
     //Flat red color scheme for iCheck
     $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({

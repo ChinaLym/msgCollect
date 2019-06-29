@@ -1,7 +1,5 @@
 fileDir: 'E:/files/msg_collect_files/'              # 本系统保存 上传 | 下载缓存 的文件目录
 spring:
-  profiles:
-    active: dev
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.jdbc.Driver
@@ -27,6 +25,8 @@ spring:
       content-type: text/html
     prefix:
       classpath: /templates
+  mvc:
+    static-path-pattern: /static/**
 
   servlet:
     multipart:

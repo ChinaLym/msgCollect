@@ -2,8 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head th:replace="common/html_head :: head(~{::title},~{::link},~{})">
   <title>智汇 | 填写</title>
-  <!-- iCheck for checkboxes and radio inputs -->
-  <link rel="stylesheet" href="/AdminLTE/plugins/iCheck/all.css">
 </head>
 <body class="hold-transition lockscreen">
 <!-- Automatic element centering -->
@@ -111,12 +109,10 @@
 
 <!-- Js 脚本 -->
 <div th:include="common/html_js :: div_js"></div>
-<!-- iCheck 1.0.1 -->
-<script src="/AdminLTE/plugins/iCheck/icheck.min.js"></script>
 <!-- layUI time picker -->
-<script src="/laydate/laydate.js"></script>
+<script src="/static/laydate/laydate.js"></script>
 <script>
-    //laydate
+    // laydate
 /*    laydate.render({
         elem: '#item-5'
         ,trigger: 'click'

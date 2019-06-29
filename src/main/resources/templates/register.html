@@ -2,13 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="common/html_head :: head(~{::title},~{::link},~{})">
   <title>智汇| 注册</title>
-  <!-- iCheck for checkboxes and radio inputs -->
-  <link rel="stylesheet" href="/AdminLTE/plugins/iCheck/all.css">
 </head>
 <body class="hold-transition register-page">
 <div class="register-box">
   <div class="register-logo">
-    <a href="/AdminLTE/index2.html"><b>智汇</b>信息</a>
+    <a href="/"><b>智汇</b>信息</a>
   </div>
 
   <div class="register-box-body">
@@ -66,9 +64,6 @@
 
 <!-- Js 脚本 -->
 <div th:insert="common/html_js :: div_js"></div>
-<!-- Js 脚本 -->
-<div th:insert="common/html_js :: div_js"></div>
-<script src="/AdminLTE/plugins/iCheck/icheck.min.js"></script>
 
 <script>
   $(function () {
