@@ -42,7 +42,7 @@
     <div class="container">
       <!-- Content Header (Page header) -->
       <section class="content-header">
-        <h1><span th:text="${table.name}"></span>
+        <h1><span th:text="${table.name}">xxx收集表</span>
           <small th:text="${table.state}">收集中</small>
         </h1>
         <ol class="breadcrumb">
@@ -81,18 +81,19 @@
               </tr>
               </thead>
               <tbody>
-                <tr th:each="answerRecord : ${answerRecords}">
-                  <div th:each="answer : ${answerRecord.answerList}">
+              <tr th:each="answerRecord : ${answerRecords}">
+                <div th:each="answer : ${answerRecord.answerList}">
                     <td th:text="${answer.content}" th:remove="${answer.type == '文件'} ? 'all' : 'none'">回答内容</td>
                     <td th:remove="${answer.type == '文件'} ? 'none' : 'all'">
                       <a th:href="${answer.content}" th:text="文件"></a>
                        </td>
                   </div>
-                  <td th:if="${session.user.id eq table.owner}" th:text="${answerRecord.ip}">IP</td>
-                  <td th:if="${session.user.id eq table.owner}" th:text="${answerRecord.deviceSystem}">IP</td>
-                  <td th:if="${session.user.id eq table.owner}" th:text="${answerRecord.browser}">IP</td>
-                  <td th:if="${session.user.id eq table.owner}" th:text="${#dates.format(answerRecord.update_time, 'yyyy-MM-dd HH:mm')}">5-20</td>
-                </tr>
+                <td th:if="${session.user.id eq table.owner}" th:text="${answerRecord.ip}">IP</td>
+                  <td th:if="${session.user.id eq table.owner}" th:text="${answerRecord.deviceSystem}">操作系统</td>
+                  <td th:if="${session.user.id eq table.owner}" th:text="${answerRecord.browser}">浏览器</td>
+                  <td th:if="${session.user.id eq table.owner}" th:text="${#dates.format(answerRecord.updateTime, 'yyyy-MM-dd HH:mm')}">填写日期</td>
+                <td><a th:href="'/user/info/' + ${answerRecord.userId}">填写者</a></td>
+              </tr>
               </tbody>
               <tfoot>
               <tr>
@@ -108,6 +109,7 @@
                 <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share"></i> 分享</button>
               </a>
                 <button type="button" class="btn btn-default btn-xs"><i class="fa fa-thumbs-o-up"></i> 赞</button>
+            <a th:href="'/user/info/' + ${table.owner}">  看主表人</a>
             <span class="pull-right text-muted"><span >1</span> 赞 - <span th:text="${#lists.size(commentList)}"></span> 评论</span>
           </div>
           <!-- /.box-body -->
@@ -132,11 +134,14 @@
 
             <div class="box-comment" th:each="comment : ${commentList}" th:id="'comment-' + ${comment.id}">
               <!-- User image -->
-              <img class="img-circle img-sm" th:src="${comment.userHeadImage}" th:alt="${comment.userName}">
-
+              <a th:href="'/user/info/' + ${comment.userId}">
+                <img class="img-circle img-sm" th:src="${comment.userHeadImage}" th:alt="${comment.userName}">
+              </a>
               <div class="comment-text">
                 <span class="username">
-                  <span th:text="${comment.userName}">张三</span>
+                  <a th:href="'/user/info/' + ${comment.userId}">
+                    <span th:text="${comment.userName}">张三</span>
+                  </a>
                   <span class="text-muted pull-right" th:text="${#dates.format(comment.createTime, 'MM-dd HH:mm')}"> 10-16 13:14</span>
                 </span>
                 <span th:text="${comment.content}">我是张三的评论内容</span>
@@ -152,11 +157,14 @@
                 <!-- 回复 -->
                 <div class="box-comment" style="margin-left:30px" th:each="reply : ${comment.replyList}" th:id="'comment-' + ${reply.id}">
                     <!-- User image -->
+                  <a th:href="'/user/info/' + ${reply.userId}">
                     <img class="img-circle img-sm" th:src="${reply.userHeadImage}" th:alt="${reply.userName}">
-
+                  </a>
                     <div class="comment-text">
                 <span class="username">
-                  <span th:text="${reply.userName}">李四</span>
+                  <a th:href="'/user/info/' + ${reply.userId}">
+                    <span th:text="${reply.userName}">李四</span>
+                  </a>
                   <span class="text-muted pull-right" th:text="${#dates.format(reply.createTime, 'MM-dd HH:mm')}"> 10-16 13:14</span>
                 </span>
                         <span  style="color: #999999;" oncopy="event.returnValue=false;" ondragstart="window.event.returnValue=false" oncontextmenu="window.event.returnValue=false" onselectstart="event.returnValue=false">

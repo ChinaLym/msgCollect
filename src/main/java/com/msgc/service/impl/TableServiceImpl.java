@@ -21,9 +21,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -337,6 +335,16 @@ public class TableServiceImpl implements ITableService{
             record = dbRecord;
         }
         favoriteRecordService.save(record);
+    }
+
+    @Override
+    public List<Table> findRecentCreateByOwner(Integer owner, Integer limitNum) {
+        Sort sort = new Sort(Sort.Direction.DESC, "createTime");
+        Pageable pageable = PageRequest.of(0,limitNum, sort);
+       Table table = new Table();
+       table.setOwner(owner);
+       //table.setState(TableStatusEnum.COLLECTING.getValue());
+        return tableRepository.findAll(Example.of(table), pageable).getContent();
     }
 
     // 批量更新表，如更新表的截止状态

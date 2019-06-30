@@ -11,6 +11,8 @@ public class AnswerRecordBO {
 
 	private Integer id;
 
+	private Integer userId;
+
 	private Integer tableId;
 
 	private String ip;
@@ -21,7 +23,7 @@ public class AnswerRecordBO {
 
 	private String userRealName;
 
-	private Date update_time;
+	private Date updateTime;
 
 	private transient List<Answer> answerList;
 
@@ -36,12 +38,21 @@ public class AnswerRecordBO {
 	public AnswerRecordBO(AnswerRecord answerRecord, List<Answer> answerList) {
 		id = answerRecord.getId();
 		tableId = answerRecord.getTableId();
+		userId = answerRecord.getUserId();
 		ip = IPUtil.intToIPv4Str(answerRecord.getIp());
 		userRealName = answerRecord.getUserRealName();
 		deviceSystem = answerRecord.getDeviceSystem();
 		browser = answerRecord.getBrowser();
-		update_time = answerRecord.getUpdate_time();
+		updateTime = answerRecord.getUpdateTime();
 		this.answerList = answerList;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 
 	public List<Answer> getAnswerList() {
@@ -100,11 +111,11 @@ public class AnswerRecordBO {
 		this.userRealName = userRealName;
 	}
 
-	public Date getUpdate_time() {
-		return update_time;
+	public Date getUpdateTime() {
+		return updateTime;
 	}
 
-	public void setUpdate_time(Date update_time) {
-		this.update_time = update_time;
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 }

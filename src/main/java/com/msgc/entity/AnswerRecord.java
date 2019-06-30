@@ -36,7 +36,7 @@ public class AnswerRecord implements Serializable {
 	private String userRealName;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date update_time;
+	private Date updateTime;
 
 	public AnswerRecord() {
 	}
@@ -97,11 +97,11 @@ public class AnswerRecord implements Serializable {
 		this.userRealName = userRealName;
 	}
 
-	public Date getUpdate_time() {
-		return update_time;
+	public Date getUpdateTime() {
+		return updateTime;
 	}
 
-	public void setUpdate_time(Date update_time) {
-		this.update_time = update_time;
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 }

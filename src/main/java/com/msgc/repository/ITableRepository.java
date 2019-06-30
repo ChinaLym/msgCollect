@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,4 +47,6 @@ public interface ITableRepository extends JpaRepository<Table, Integer> {
 
     //由于 tableName 未使用全文索引，所以将 State 放在前，优化查询
     List<Table> findAllByStateAndNameContaining(String value, String tableName);
+
+    List<Table> findAllByOwnerAndCreateTimeGreaterThan(Integer owner, Date createTime);
 }

@@ -42,7 +42,7 @@ public class ExcelUtilAdapter {
             row.add(answerRecordBO.getIp());
             row.add(answerRecordBO.getDeviceSystem());
             row.add(answerRecordBO.getBrowser());
-            row.add(sdFormatter.format(answerRecordBO.getUpdate_time()));
+            row.add(sdFormatter.format(answerRecordBO.getUpdateTime()));
             data.add(row);
         }
         ExcelUtil.write(fileName, tableName, headers, data);

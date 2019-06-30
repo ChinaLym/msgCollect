@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="common/html_head :: head(~{::title},~{::link},~{})">
+<head th:replace="common/html_head :: head(~{::title},~{},~{})">
   <title th:text="${table.name} + '-详情'">xxx信息收集表详情</title>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -65,7 +65,7 @@
         </div>
         <div class="col-lg-3 col-xs-6">
           <!-- small box -->
-          <a th:href="${table.state == 'EDIT'? '/collect/edit?t=' + table.id : '/collect/new/byCopy?t=' + table.id}">
+          <a th:href="${table.state == 'EDIT'? '/collect/edit?t=' + table.id : '/collect/new/byCopy/' + table.id}">
             <div class="small-box bg-aqua">
                 <div class="inner">
                   <h3 class="remainingTime" th:data-remaining-aimTime="${#dates.format(table.endTime,'yyyy-MM-dd HH:mm')}"></h3>

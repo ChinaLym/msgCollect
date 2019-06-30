@@ -10,6 +10,10 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -64,6 +68,17 @@ public class AnswerRecordServiceImpl implements IAnswerRecordService{
         }
         log.error("多个 用户-表 填写记录！tableId=" + tableId + "  userId=" + userId);
         throw new IllegalStateException("多个 用户-表 填写记录！");
-
     }
+
+    @Cacheable(key = "'ru' + #userId")
+    @Override
+    public List<AnswerRecord> findRecentCreateByUserId(Integer userId, int limitNum) {
+        Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
+        Pageable pageable = PageRequest.of(0,limitNum, sort);
+        AnswerRecord record = new AnswerRecord();
+        record.setUserId(userId);
+        return answerRecordRepository.findAll(Example.of(record), pageable).getContent();
+    }
+
+
 }

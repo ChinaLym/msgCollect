@@ -13,4 +13,6 @@ public interface IAnswerRecordService {
     List<AnswerRecord> findAllByUserId(Integer userId);
 
     AnswerRecord findByTableIdAndUserId(Integer userId, Integer tableId);
+
+    List<AnswerRecord> findRecentCreateByUserId(Integer userId, int limitNum);
 }

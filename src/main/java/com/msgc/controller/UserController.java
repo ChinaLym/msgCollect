@@ -4,9 +4,14 @@ import com.msgc.config.LoggedUserSessionContext;
 import com.msgc.constant.FilePath;
 import com.msgc.constant.SessionKey;
 import com.msgc.constant.response.ResponseWrapper;
+import com.msgc.entity.AnswerRecord;
+import com.msgc.entity.Table;
 import com.msgc.entity.User;
 import com.msgc.entity.UserCookie;
+import com.msgc.entity.dto.RecentTable;
 import com.msgc.exception.ResourceNotFoundException;
+import com.msgc.service.IAnswerRecordService;
+import com.msgc.service.ITableService;
 import com.msgc.service.IUserCookieService;
 import com.msgc.service.IUserService;
 import com.msgc.utils.*;
@@ -36,11 +41,15 @@ import java.util.stream.Collectors;
 public class UserController {
 	private final IUserService userService;
 	private final IUserCookieService userCookieService;
+	private final ITableService tableService;
+	private final IAnswerRecordService answerRecordService;
 
 	@Autowired
-	public UserController(IUserCookieService userCookieService, IUserService userService) {
+	public UserController(IUserCookieService userCookieService, IUserService userService, ITableService tableService, IAnswerRecordService answerRecordService) {
 		this.userCookieService = userCookieService;
 		this.userService = userService;
+		this.tableService = tableService;
+		this.answerRecordService = answerRecordService;
 	}
 
 	/**
@@ -132,8 +141,59 @@ public class UserController {
     }
 
     //到他人介绍页 info
-    @GetMapping(value = "/info")
-    public String infoPage() {
+    @GetMapping(value = "/info/{userId}")
+    public String infoPage(@PathVariable("userId") Integer userId, Model model) {
+		User aimUser = userService.findById(userId);
+		if(aimUser == null)
+			throw new ResourceNotFoundException();
+		int limitNum = 5;
+		// ta 最近发起的5个表
+		List<Table> recentCreateTableList = tableService.findRecentCreateByOwner(userId, limitNum);
+		// 最近参与的 5 条记录
+		List<AnswerRecord> recentFilledRecordList = answerRecordService.findRecentCreateByUserId(userId, limitNum);
+		Map<Integer, AnswerRecord> recordMap = new HashMap<>(recentFilledRecordList.size());
+		recentFilledRecordList.forEach(t -> {
+			recordMap.put(t.getTableId(), t);
+		});
+		// Map
+		// 根据这些记录找出相关表
+		List<Table> recentFilledTableList = tableService.findAllById(new ArrayList<>(recordMap.keySet()));
+		List<RecentTable> recentTableList = new ArrayList<>(recentCreateTableList.size() + recentFilledTableList.size());
+		recentCreateTableList.forEach(t -> {
+			recentTableList.add(new RecentTable(t));
+		});
+		recentFilledTableList.forEach(t -> {
+			recentTableList.add(new RecentTable(t, recordMap.get(t.getId()).getUpdateTime()));
+		});
+		recentTableList.sort(new Comparator<RecentTable>() {
+			@Override
+			public int compare(RecentTable o1, RecentTable o2) {
+				// 倒序排序
+				return -o1.getOperateTime().compareTo(o2.getOperateTime());
+			}
+		});
+
+		// 三类：表主人，正在收集
+		// 表主人，已截止
+		// 非表主人，正在收集
+		// 非表主人，已截止
+		// 按照创建日期的年份分组 CreteY, list(group)_index
+		/*Map<Integer, Integer> map = new HashMap<>(limitNum);
+		List<List<Table>> tableListList = new ArrayList<>(limitNum);
+		int index = 0;
+		for(Table t : recentCreateTableList){
+			int createYear = t.getCreateTime().getYear();
+			if(map.containsKey(createYear)){
+				tableListList.get(map.get(createYear)).add(t);
+			}else {
+				List<Table> tableList = new ArrayList<>(limitNum);
+				tableList.add(t);
+				tableListList.add(tableList);
+				map.put(createYear, index ++);
+			}
+		}*/
+		model.addAttribute("aimUser", aimUser);
+		model.addAttribute("recentTableList", recentTableList);
         return "user/info";
     }
 

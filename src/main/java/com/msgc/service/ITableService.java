@@ -12,19 +12,23 @@ public interface ITableService {
 
     Table save(Table table);
 
-    Table findById(Integer id);
+    void save(List<Table> endTableList);
 
-    boolean deleteById(Integer operatorId, Integer tableId);
+    Table findById(Integer id);
 
     List<Table> findAllByExample(Table tableExample);
 
     List<Table> findAllById(List<Integer> tableIdList);
 
+    List<Table> findAllActiveTable(Integer owner);
+
+    List<Table> searchByNameAndState(String tableName, TableStatusEnum state);
+
     void increaseFilledNum(Integer tableId);
 
     boolean stopById(Integer operatorId, Integer tableId);
 
-    List<Table> findAllActiveTable(Integer owner);
+    boolean deleteById(Integer operatorId, Integer tableId);
 
     String export();
 
@@ -32,12 +36,11 @@ public interface ITableService {
 
     Page<Table> getPageTable(int pageNumber, int pageSize);
 
-    List<Table> searchByNameAndState(String tableName, TableStatusEnum state);
-
     //组装tableDTO
     List<TableDTO> constructTableDTO(List<Table> tableList);
 
     void addLikeTable(Integer tableId);
 
-    void save(List<Table> endTableList);
+    List<Table> findRecentCreateByOwner(Integer owner, Integer limitNum);
+
 }

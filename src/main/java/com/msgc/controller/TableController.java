@@ -379,7 +379,7 @@ public class TableController {
             BeanUtils.copyProperties(answerRecordService.findByTableIdAndUserId(table.getId(), user.getId()), record);
         }
         record.setIp(IPUtil.ipv4StrToInt(IPUtil.getRequestIpAddress(request)));
-        record.setUpdate_time(new Date());
+        record.setUpdateTime(new Date());
         boolean hasSetDeviceSystem = false;
         try {
             UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
