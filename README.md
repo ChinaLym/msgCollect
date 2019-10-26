@@ -1,3 +1,9 @@
+
+# 新地址：
+[https://gitee.com/giteeLym/msgCollect](https://gitee.com/giteeLym/msgCollect)
+
+----
+
 # 部署
 ## 基础环境
 ### 必须：
